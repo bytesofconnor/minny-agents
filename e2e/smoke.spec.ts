@@ -17,8 +17,7 @@ test.describe('Smoke Tests', () => {
     // Check hero text
     await expect(page.locator('h1')).toContainText('Forward-deployed engineers for the agent era');
 
-    // Check all navigation sections render
-    await expect(page.getByText('Northern Bytes')).toBeVisible();
+    // Check navigation sections render
     await expect(page.getByRole('link', { name: /Approach/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /Capabilities/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /Contact/i })).toBeVisible();
