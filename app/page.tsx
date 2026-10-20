@@ -1,8 +1,6 @@
 import Fig from "./Fig";
 import Flow from "./Flow";
-
 const MAIL = "mailto:hello@northernbytes.co";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://northern-bytes.vercel.app";
 
 const steps = [
   { n: "01", t: "Discovery", w: "Week 1", s: 0, e: 1, c: "bg-green", d: "Workflows, success metrics, architecture, and a working v0." },
@@ -22,16 +20,6 @@ const apps = [
   { a: "Reporting & dashboards", t: "Someone exports spreadsheets every week and rebuilds the same report.", w: "Pulls from source systems, reconciles, refreshes the dashboard, and writes the summary.", s: "Spreadsheets · BI", i: "SOURCES", o: ["DASHBOARD", "SUMMARY"], c: "#52c9d6" },
   { a: "Customer support, tier 1", t: "Repeat questions eat the queue; answers live in people’s heads.", w: "Answers from your knowledge base, resolves the routine, escalates the rest with context.", s: "Helpdesk · Knowledge base", i: "TICKET", o: ["ANSWER", "ESCALATE"], c: "#87a0f7" },
   { a: "Back-office operations", t: "Invoices, receipts, and forms are re-keyed between systems by hand.", w: "Extracts the data, validates it, enters it where it belongs, and flags exceptions.", s: "Accounting · Forms · ERP", i: "DOCUMENT", o: ["ENTERED", "FLAGGED"], c: "#9b8cff" },
-];
-
-const faqs = [
-  { q: "What is a forward-deployed engineer?", a: "We work on-site or embedded with your team, building directly in your environment. No handoffs, no decks — we scope outcomes, ship working software, and stay accountable to what runs in production." },
-  { q: "How is Northern Bytes different from an agency or consultancy?", a: "We don't do staff augmentation, roadmaps, or discovery-only engagements. We commit to outcomes, build in your stack, and deliver production systems in weeks, not months." },
-  { q: "What kinds of work do you take on?", a: "AI agents and automation, AI-native internal tools, web platforms, and data pipelines. We focus on high-leverage work that removes bottlenecks or replaces repetitive manual processes." },
-  { q: "How does an engagement start?", a: "Week 1 is Discovery: we map workflows, define success metrics, agree on architecture, and deliver a working v0. If it's a fit, we move to Production (weeks 2–6) to ship the full system." },
-  { q: "How long until something is in production?", a: "Week 1 delivers a working v0. By the end of week 6, the highest-leverage agent or system is live with evals, guardrails, and monitoring. Ongoing work begins week 7." },
-  { q: "Do you work with small businesses?", a: "Yes, if the work is a good fit. We prioritize engagements where an agent or system can deliver measurable value quickly, regardless of company size." },
-  { q: "Where are you based?", a: "Minneapolis, MN. We work with teams across the United States." },
 ];
 
 function Mono({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -58,76 +46,8 @@ function Sec({ id, n, label, children }: { id?: string; n: string; label: string
 }
 
 export default function Home() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": `${SITE_URL}/#organization`,
-        name: "Northern Bytes",
-        url: SITE_URL,
-        logo: `${SITE_URL}/opengraph-image`,
-        foundingDate: "2026",
-        founder: {
-          "@type": "Person",
-          name: "Connor Barrett",
-        },
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: "Minneapolis",
-          addressRegion: "MN",
-          addressCountry: "US",
-        },
-        geo: {
-          "@type": "GeoCoordinates",
-          latitude: "44.98",
-          longitude: "-93.27",
-        },
-        contactPoint: {
-          "@type": "ContactPoint",
-          email: "hello@northernbytes.co",
-          contactType: "Business Inquiries",
-        },
-        areaServed: {
-          "@type": "Country",
-          name: "United States",
-        },
-      },
-      {
-        "@type": "ProfessionalService",
-        "@id": `${SITE_URL}/#service`,
-        name: "Northern Bytes",
-        provider: { "@id": `${SITE_URL}/#organization` },
-        serviceType: "Forward-deployed engineering",
-        areaServed: { "@type": "Country", name: "United States" },
-        hasOfferCatalog: {
-          "@type": "OfferCatalog",
-          name: "Engineering Services",
-          itemListElement: [
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Agents & automation", description: "Agents that take repetitive work off your team — triage, follow-up, reporting, operations." } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI-native internal tools", description: "Software designed around models from the start, wired into the systems you already run." } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Web platforms", description: "Fast, production-grade web products, from booking flows to customer portals." } },
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Data & analytics", description: "Pipelines and dashboards that turn scattered data into decisions." } },
-          ],
-        },
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: faqs.map((faq) => ({
-          "@type": "Question",
-          name: faq.q,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.a,
-          },
-        })),
-      },
-    ],
-  };
-
   return (
     <div className="cols min-h-screen">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="mx-auto max-w-[1440px] border-x border-line bg-ink/0">
         {/* column markers */}
         <div className="grid grid-cols-4 border-b border-line md:grid-cols-12">
@@ -143,7 +63,7 @@ export default function Home() {
               <Mono className="hidden text-dim lg:inline">NB/26</Mono>
             </a>
             <div className="col-span-5 hidden gap-8 md:flex">
-              {[["Approach", "02"], ["Capabilities", "03"], ["FAQ", "05"], ["Contact", "06"]].map(([l, n]) => (
+              {[["Approach", "02"], ["Capabilities", "03"], ["Contact", "05"]].map(([l, n]) => (
                 <a key={l} href={`#${l.toLowerCase()}`} className="group flex items-baseline gap-2 text-sm text-mute hover:text-paper">
                   <Mono className="text-dim group-hover:text-teal">{n}</Mono>{l}
                 </a>
@@ -186,7 +106,7 @@ export default function Home() {
         </section>
 
         {/* figure */}
-        <figure className="border-t border-line" aria-label="Aurora visualization showing signal intensity across 9 bands over 24 hours">
+        <figure className="border-t border-line">
           <div className="flex items-baseline justify-between border-b border-line px-5 py-3 md:px-6">
             <Mono className="text-paper">Fig. 01 — Aurora, as signal</Mono>
             <Mono className="hidden text-dim sm:inline">9 bands · 24h window · synthetic</Mono>
@@ -197,7 +117,7 @@ export default function Home() {
             <span className="col-span-4 font-mono text-[11px] text-dim md:col-span-6">Illustrative. Generated, not measured — a nod to the northern sky over Minnesota.</span>
             <div className="col-span-4 flex flex-wrap gap-5 md:col-span-6 md:justify-end">
               {[["bg-green", "Low"], ["bg-teal", "Moderate"], ["bg-violet", "High"]].map(([c, l]) => (
-                <span key={l} className="flex items-center gap-2"><span className={`h-2 w-4 ${c}`} aria-hidden="true" /><Mono className="text-mute">{l}</Mono></span>
+                <span key={l} className="flex items-center gap-2"><span className={`h-2 w-4 ${c}`} /><Mono className="text-mute">{l}</Mono></span>
               ))}
             </div>
           </figcaption>
@@ -308,21 +228,7 @@ export default function Home() {
           </div>
         </Sec>
 
-        <Sec id="faq" n="05" label="FAQ">
-          <div className="px-5 pb-20 pt-10 md:px-6 md:pb-32 md:pt-8">
-            <h2 className="text-4xl font-medium tracking-[-0.03em] md:text-6xl">Frequently asked questions.</h2>
-            <dl className="mt-12 border-t border-line">
-              {faqs.map((faq, i) => (
-                <div key={i} className="border-b border-line py-8">
-                  <dt className="text-xl font-medium tracking-tight md:text-2xl">{faq.q}</dt>
-                  <dd className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mute">{faq.a}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </Sec>
-
-        <Sec id="contact" n="06" label="Contact">
+        <Sec id="contact" n="05" label="Contact">
           <div className="px-5 pb-20 pt-10 md:px-6 md:pb-28 md:pt-8">
             <h2 className="max-w-[12ch] text-5xl font-medium leading-[0.95] tracking-[-0.035em] md:text-[96px]">Bring us a workflow.</h2>
             <div className="mt-12 grid gap-8 border-t border-line pt-8 md:grid-cols-9">
