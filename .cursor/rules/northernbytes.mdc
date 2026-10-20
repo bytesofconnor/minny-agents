@@ -1,0 +1,168 @@
+# Northern Bytes Marketing Site — Development Rules
+
+## Core Principles
+
+This is a production marketing site with **established design and copy**. Agents should focus on technical improvements, not creative changes.
+
+## Strict Rules
+
+### Do Not Change
+
+1. **Copy & Messaging**
+   - All text content is final
+   - Contact information (hello@northernbytes.co)
+   - Company positioning and value props
+   - Timeline, pricing, or service details
+
+2. **Visual Design**
+   - Color palette (teal, green, violet accents on dark ink)
+   - Typography (Inter Tight, JetBrains Mono)
+   - Layout grid (4/12 column system)
+   - Spacing, sizing, and visual hierarchy
+   - Component styling patterns
+
+3. **Content Structure**
+   - Section order and organization
+   - Navigation structure
+   - Information architecture
+
+## Allowed Changes
+
+### Technical Improvements
+- Performance optimizations
+- Accessibility enhancements (ARIA, semantic HTML)
+- SEO improvements (metadata, structured data)
+- Build configuration refinements
+- Dependency updates (with testing)
+
+### Code Quality
+- Type safety improvements
+- Component refactoring (behavior-preserving)
+- Code organization and documentation
+- Test coverage additions
+- Build optimizations
+
+### Bug Fixes
+- Visual rendering issues
+- Responsive breakpoint problems
+- Browser compatibility fixes
+- Performance bottlenecks
+- Accessibility violations
+
+## Development Workflow
+
+### Before Making Changes
+
+1. Read `AGENTS.md` for context
+2. Run `npm run build` to ensure baseline
+3. Run `npm run lint` to check current state
+4. Review the build-verify skill if modifying build process
+
+### After Making Changes
+
+1. Run `npm install` if dependencies changed
+2. Run `npm run build` — must pass
+3. Run `npm run lint` — must pass
+4. Test responsive behavior (mobile, tablet, desktop)
+5. Verify static export works correctly
+
+### Commit Standards
+
+- Clear, descriptive commit messages
+- One logical change per commit
+- Reference issues/PRs where applicable
+- Test before pushing
+
+## Next.js Specifics
+
+### App Router Patterns
+- Use `app/` directory structure
+- Server Components by default
+- Client Components only when needed
+- Metadata in layout/page files
+
+### Static Export
+- Site is fully static (SSG)
+- No server-side runtime
+- No API routes or dynamic features
+- Image optimization via static assets
+
+### Styling
+- Tailwind CSS 4 (new syntax)
+- CSS variables for theming
+- Utility-first approach
+- Responsive-first design
+
+## Component Guidelines
+
+### Consistency
+- Match existing naming patterns
+- Follow established prop patterns
+- Maintain TypeScript interfaces
+- Preserve component composition
+
+### Accessibility
+- Semantic HTML elements
+- ARIA labels where appropriate
+- Keyboard navigation support
+- Screen reader compatibility
+
+### Performance
+- Minimize bundle size
+- Optimize images and assets
+- Use font subsetting
+- Lazy load when beneficial
+
+## Technology Constraints
+
+### Dependencies
+- Keep dependencies minimal
+- Avoid unnecessary runtime deps
+- Prefer native solutions
+- Document any additions
+
+### Browser Support
+- Modern browsers (last 2 versions)
+- Mobile Safari and Chrome
+- Desktop Safari, Chrome, Firefox, Edge
+- Graceful degradation for older browsers
+
+## Content Management
+
+If content updates are requested:
+
+1. **Stop and confirm**: Content is production-locked
+2. **Get explicit approval**: From project owner
+3. **Document the change**: Why it's needed
+4. **Preserve tone**: Match existing voice
+5. **Test thoroughly**: Ensure no layout breaks
+
+## Deployment
+
+### Vercel Configuration
+- Framework: Next.js
+- Build: `npm run build`
+- Output: Static export
+- No env vars required
+- Hobby plan compatible
+
+### Pre-Deployment Checklist
+- [ ] Build passes
+- [ ] Lint passes
+- [ ] No console errors
+- [ ] Responsive behavior verified
+- [ ] Metadata correct
+- [ ] Links work
+- [ ] Contact info correct
+
+## Emergency Contacts
+
+For production issues or content approval:
+- Email: hello@northernbytes.co
+- Founder: Connor Barrett
+
+## Skill References
+
+- Use `.cursor/skills/build-verify.mdc` for build validation
+- See `AGENTS.md` for project context
+- Check `.cursor/README.md` for Cursor integration notes

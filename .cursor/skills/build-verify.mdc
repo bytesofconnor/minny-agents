@@ -1,0 +1,280 @@
+# Build Verification Skill
+
+This skill provides a standardized workflow for verifying the Northern Bytes marketing site builds correctly before committing or deploying.
+
+## When to Use This Skill
+
+- Before committing any code changes
+- After updating dependencies
+- When modifying build configuration
+- Before creating a pull request
+- After merging changes locally
+
+## Verification Steps
+
+### 1. Clean Install (If Dependencies Changed)
+
+```bash
+# Remove node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### 2. Type Check
+
+TypeScript compilation happens during build, but you can check explicitly:
+
+```bash
+npx tsc --noEmit
+```
+
+### 3. Lint Check
+
+```bash
+npm run lint
+```
+
+**Expected**: No errors, exit code 0
+
+**Common Issues**:
+- Unused variables
+- Missing semicolons
+- Import order
+- React hooks rules
+
+### 4. Build
+
+```bash
+npm run build
+```
+
+**Expected**:
+- Successful compilation
+- No TypeScript errors
+- Static export completes
+- All pages generated
+- Exit code 0
+
+**Output Should Include**:
+- ✓ Compiled successfully
+- ✓ Linting and checking validity of types
+- ✓ Collecting page data
+- ✓ Generating static pages (N/N)
+- ✓ Finalizing page optimization
+- ✓ Exporting (N/N)
+- Route listing with sizes
+
+**Common Issues**:
+- TypeScript errors: Fix type issues in components
+- Import errors: Check file paths and exports
+- Build optimization failures: Check Image components
+- Export failures: Verify no dynamic features
+
+### 5. Verify Output
+
+```bash
+# Check that .next directory exists and has content
+ls -lh .next/
+
+# Verify static export
+ls -lh out/
+```
+
+**Expected**:
+- `.next/` directory with build artifacts
+- `out/` directory with static HTML (if using export)
+
+### 6. Test Locally (Optional but Recommended)
+
+```bash
+npm run start
+# Visit http://localhost:3000
+```
+
+**Verify**:
+- [ ] Page loads without errors
+- [ ] Styles render correctly
+- [ ] Navigation works
+- [ ] Responsive behavior is intact
+- [ ] No console errors
+
+### 7. Check Bundle Size
+
+Review the build output for bundle sizes:
+
+```bash
+npm run build | grep "First Load JS"
+```
+
+**Target**:
+- First Load JS < 150 kB (currently ~103 kB)
+- Individual routes < 10 kB (currently 123 B for /)
+
+**Red Flags**:
+- Sudden size increases (>10 kB)
+- Large chunks added
+- Unexpected dependencies bundled
+
+## Full Verification Script
+
+Run all checks in sequence:
+
+```bash
+#!/bin/bash
+set -e
+
+echo "🔍 Running full build verification..."
+
+echo "📦 Installing dependencies..."
+npm install
+
+echo "🔎 Checking types..."
+npx tsc --noEmit
+
+echo "🧹 Running lint..."
+npm run lint
+
+echo "🏗️  Building..."
+npm run build
+
+echo "✅ All checks passed!"
+```
+
+Save this as `verify.sh` and run with `bash verify.sh`
+
+## Error Resolution Guide
+
+### TypeScript Errors
+
+**Symptom**: Build fails with type errors
+
+**Fix**:
+1. Read the error message carefully
+2. Check the file and line number
+3. Fix type annotations or assertions
+4. Re-run `npx tsc --noEmit` to verify
+
+### Lint Errors
+
+**Symptom**: `npm run lint` reports violations
+
+**Fix**:
+1. Review each error
+2. Fix manually or use `eslint --fix` if available
+3. Ensure React hooks rules are followed
+4. Check import/export statements
+
+### Build Failures
+
+**Symptom**: `npm run build` fails
+
+**Common Causes**:
+- Missing dependencies: Run `npm install`
+- Port in use: Kill other Next.js processes
+- Disk space: Check with `df -h`
+- Memory: Build requires ~512MB RAM
+- Node version: Requires Node 18+
+
+### Static Export Issues
+
+**Symptom**: Pages don't export correctly
+
+**Fix**:
+- Ensure no dynamic API routes
+- Check no `getServerSideProps`
+- Verify no runtime-only features
+- Review `next.config.ts` for output settings
+
+## Pre-Commit Checklist
+
+Before committing, ensure:
+
+- [ ] `npm install` completed successfully
+- [ ] `npm run lint` passes (exit code 0)
+- [ ] `npm run build` passes (exit code 0)
+- [ ] No console errors in browser
+- [ ] Visual inspection confirms no regressions
+- [ ] Bundle size is reasonable (<150 kB First Load)
+
+## Pre-Deploy Checklist
+
+Before deploying to Vercel:
+
+- [ ] All pre-commit checks pass
+- [ ] Test build locally with `npm start`
+- [ ] Responsive design verified (mobile, tablet, desktop)
+- [ ] All links work
+- [ ] Contact information is correct
+- [ ] Metadata (title, description) is accurate
+- [ ] Favicon loads
+- [ ] No hardcoded localhost URLs
+
+## CI/CD Integration
+
+If using GitHub Actions or similar:
+
+```yaml
+name: Build Verification
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm run lint
+      - run: npm run build
+```
+
+## Troubleshooting
+
+### Build is Slow
+
+- Clear `.next/` cache: `rm -rf .next`
+- Check disk I/O: `iostat`
+- Verify Node version: `node -v` (use 18+)
+- Consider increasing memory: `NODE_OPTIONS=--max-old-space-size=4096 npm run build`
+
+### Random Build Failures
+
+- Clear all caches: `rm -rf .next node_modules`
+- Reinstall: `npm install`
+- Check for OS updates or Node version changes
+
+### Vercel Build Differs from Local
+
+- Ensure same Node version (check `engines` in package.json)
+- Verify environment variables (none required for this project)
+- Check Vercel build logs for differences
+- Test with `vercel build` locally if available
+
+## Success Criteria
+
+A successful verification means:
+
+1. ✅ Dependencies installed without errors
+2. ✅ TypeScript compilation succeeds
+3. ✅ Linter reports no violations
+4. ✅ Build completes with static export
+5. ✅ Bundle size is within limits
+6. ✅ Local preview works correctly
+7. ✅ No browser console errors
+
+## Next Steps
+
+After successful verification:
+
+1. Commit changes with descriptive message
+2. Push to remote repository
+3. Create pull request if using branching
+4. Deploy to Vercel (or wait for auto-deploy)
+5. Verify production deployment
+
+## References
+
+- [Next.js Build Output](https://nextjs.org/docs/app/building-your-application/deploying)
+- [Static Exports](https://nextjs.org/docs/app/building-your-application/deploying/static-exports)
+- [Vercel Deployment](https://vercel.com/docs/deployments/overview)

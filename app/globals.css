@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@theme inline {
+  --color-ink: #060a1a;
+  --color-ink2: #0a1024;
+  --color-paper: #eaf0f6;
+  --color-mute: #8b95ad;
+  --color-dim: #4a5470;
+  --color-line: #1a2340;
+  --color-teal: #3cdbc0;
+  --color-green: #7cf2a0;
+  --color-violet: #9b8cff;
+  --font-sans: var(--font-sans-x), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-x), ui-monospace, monospace;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smoothing: antialiased; font-feature-settings: "ss01","cv11"; }
+::selection { background: var(--color-teal); color: var(--color-ink); }
+.cols { background-image: linear-gradient(to right, var(--color-line) 1px, transparent 1px); background-size: calc(100% / 12) 100%; }
+@media (max-width: 767px) { .cols { background-size: calc(100% / 4) 100%; } }
+.draw path.r { stroke-dasharray: 2400; stroke-dashoffset: 2400; animation: draw 2.4s cubic-bezier(.3,.6,.2,1) forwards; }
+.draw path.f { opacity: 0; animation: fade 1.2s ease forwards; }
+.draw rect.k { transform-box: fill-box; transform-origin: bottom; transform: scaleY(0); animation: grow .7s cubic-bezier(.3,.6,.2,1) forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes fade { to { opacity: 1; } }
+@keyframes grow { to { transform: scaleY(1); } }
+@keyframes blink { 50% { opacity: .25; } }
+.blink { animation: blink 1.6s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .draw path.r { stroke-dashoffset: 0; animation: none; } .draw path.f { opacity: 1; animation: none; }
+  .draw rect.k { transform: none; animation: none; } .blink { animation: none; }
+}
