@@ -302,7 +302,28 @@ export default function Home() {
               <div className="md:col-span-2"><Mono className="text-teal">Shipped</Mono></div>
               <div className="md:col-span-7">
                 <p className="text-xl leading-snug tracking-tight md:text-2xl">Pinkys Up — a booking platform (<a href="https://www.pinkysup.social" className="underline decoration-line underline-offset-4 hover:decoration-teal">pinkysup.social</a>), designed and built end to end.</p>
-                <p className="mt-6 max-w-2xl text-[14px] leading-relaxed text-mute">Founder-led by Connor Barrett — previously Lead Software Engineer at DNV, BI Engineer at 3M, front-end lead at Livefront. Claude Certified Architect.</p>
+              </div>
+            </div>
+            <div className="mt-8 grid gap-6 border-t border-line pt-6 md:grid-cols-9">
+              <div className="md:col-span-2"><Mono className="text-mute">Background</Mono></div>
+              <div className="md:col-span-7">
+                <p className="mb-4 text-[13px] uppercase tracking-[0.08em] text-dim">Engineering experience from teams at</p>
+                <div className="mb-5 grid grid-cols-2 items-center gap-x-6 gap-y-4 md:flex md:gap-x-8">
+                  <svg className="h-[22px] opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 85 22" fill="white" aria-label="American Family Insurance">
+                    <text x="0" y="18" fontSize="16" fontWeight="500" fontFamily="-apple-system, system-ui, sans-serif" letterSpacing="-0.01em">AmFam</text>
+                  </svg>
+                  <svg className="h-[22px] opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 46 22" fill="white" aria-label="3M">
+                    <text x="0" y="18" fontSize="20" fontWeight="700" fontFamily="-apple-system, system-ui, sans-serif" letterSpacing="-0.02em">3M</text>
+                  </svg>
+                  <svg className="h-[22px] opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 58 22" fill="white" aria-label="DNV">
+                    <text x="0" y="18" fontSize="18" fontWeight="600" fontFamily="-apple-system, system-ui, sans-serif" letterSpacing="-0.01em">DNV</text>
+                  </svg>
+                  <svg className="h-[22px] opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 110 22" fill="white" aria-label="Livefront">
+                    <text x="0" y="18" fontSize="17" fontWeight="500" fontFamily="-apple-system, system-ui, sans-serif" letterSpacing="-0.01em">Livefront</text>
+                  </svg>
+                </div>
+                <p className="text-[14px] leading-relaxed text-mute">Built software across insurance, energy and utilities, manufacturing, and healthcare.</p>
+                <span className="mt-3 inline-block rounded border border-line px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-dim">Claude Certified Architect</span>
               </div>
             </div>
           </div>
