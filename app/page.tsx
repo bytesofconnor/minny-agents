@@ -326,6 +326,101 @@ export default function Home() {
                 <span className="mt-3 inline-block rounded border border-line px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-dim">Claude Certified Architect</span>
               </div>
             </div>
+            <div className="mt-8 grid gap-6 border-t border-line pt-6 md:grid-cols-9">
+              <div className="md:col-span-2"><Mono className="text-mute">Stack</Mono></div>
+              <div className="md:col-span-7">
+                <div className="space-y-6">
+                  <div>
+                    <p className="mb-3 font-mono text-[10px] uppercase tracking-wider text-dim">AI</p>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/claude.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Claude</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-3 font-mono text-[10px] uppercase tracking-wider text-dim">Front end</p>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/typescript.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">TypeScript</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/react.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">React</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/nextdotjs.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Next.js</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/reactnative.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">React Native</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/d3dotjs.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">D3</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-3 font-mono text-[10px] uppercase tracking-wider text-dim">Back end & data</p>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/nodedotjs.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Node.js</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/python.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Python</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <span className="flex h-[20px] w-[20px] items-center justify-center rounded border border-line bg-ink2 text-[9px] font-bold text-mute">SQL</span>
+                        <span className="text-[11px] text-mute">SQL</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/pyspark.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">PySpark</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/databricks.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Databricks</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/snowflake.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Snowflake</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/powerbi.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Power BI</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-3 font-mono text-[10px] uppercase tracking-wider text-dim">Cloud</p>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/microsoftazure.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Azure</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/amazonaws.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">AWS</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/docker.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Docker</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/vercel.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Vercel</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </Sec>
 
