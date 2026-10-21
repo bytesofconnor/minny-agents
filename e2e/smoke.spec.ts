@@ -184,4 +184,17 @@ test.describe('Smoke Tests', () => {
     const twitterCard = await page.locator('meta[name="twitter:card"]').getAttribute('content');
     expect(twitterCard).toBe('summary_large_image');
   });
+
+  test('visual regression - desktop', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await page.screenshot({ path: 'test-results/desktop-full-page.png', fullPage: true });
+  });
+
+  test('visual regression - mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await page.screenshot({ path: 'test-results/mobile-full-page.png', fullPage: true });
+  });
 });

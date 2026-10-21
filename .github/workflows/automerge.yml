@@ -1,0 +1,101 @@
+name: Auto-merge
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches-ignore: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    name: Auto-merge PR
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Get PR number
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER=$(gh pr list --head "${{ github.event.workflow_run.head_branch }}" --json number --jq '.[0].number')
+          echo "number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No PR found for branch ${{ github.event.workflow_run.head_branch }}"
+            exit 0
+          fi
+          
+          # Get PR details
+          PR_DATA=$(gh pr view "$PR_NUMBER" --json isDraft,labels,headRefName)
+          echo "data=$PR_DATA" >> $GITHUB_OUTPUT
+      
+      - name: Check merge eligibility
+        id: check
+        if: steps.pr.outputs.number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_DATA: ${{ steps.pr.outputs.data }}
+        run: |
+          # Check if PR is draft
+          IS_DRAFT=$(echo "$PR_DATA" | jq -r '.isDraft')
+          if [ "$IS_DRAFT" = "true" ]; then
+            echo "eligible=false" >> $GITHUB_OUTPUT
+            echo "reason=PR is draft" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Check if PR has 'hold' label
+          HAS_HOLD=$(echo "$PR_DATA" | jq -r '.labels[] | select(.name == "hold") | .name' | wc -l)
+          if [ "$HAS_HOLD" -gt 0 ]; then
+            echo "eligible=false" >> $GITHUB_OUTPUT
+            echo "reason=PR has 'hold' label" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Check if branch starts with cursor/
+          HEAD_REF=$(echo "$PR_DATA" | jq -r '.headRefName')
+          if [[ ! "$HEAD_REF" =~ ^cursor/ ]]; then
+            echo "eligible=false" >> $GITHUB_OUTPUT
+            echo "reason=Branch doesn't start with cursor/" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Check if all checks passed
+          gh pr checks "${{ steps.pr.outputs.number }}" --json statusCheckRollup --jq '.statusCheckRollup[]' > checks.json
+          FAILED_CHECKS=$(jq -r 'select(.conclusion == "failure" or .conclusion == "cancelled") | .name' checks.json | wc -l)
+          
+          if [ "$FAILED_CHECKS" -gt 0 ]; then
+            echo "eligible=false" >> $GITHUB_OUTPUT
+            echo "reason=Some checks failed" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "eligible=true" >> $GITHUB_OUTPUT
+      
+      - name: Merge PR
+        if: steps.check.outputs.eligible == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr merge "${{ steps.pr.outputs.number }}" \
+            --squash \
+            --auto \
+            --delete-branch \
+            --subject "$(gh pr view ${{ steps.pr.outputs.number }} --json title --jq '.title')" \
+            --body "Auto-merged after CI passed"
+          
+          echo "✅ PR #${{ steps.pr.outputs.number }} queued for merge"
+      
+      - name: Log skip reason
+        if: steps.check.outputs.eligible == 'false'
+        run: |
+          echo "⏭️ Skipping merge: ${{ steps.check.outputs.reason }}"
