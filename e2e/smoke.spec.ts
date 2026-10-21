@@ -115,16 +115,14 @@ test.describe('Smoke Tests', () => {
     await expect(page.getByText(/We work on-site or embedded/)).toBeVisible();
   });
 
-  test('STACK section renders with technologies', async ({ page }) => {
+  test('AI TOOLING section renders', async ({ page }) => {
     await page.goto('/');
 
-    // Check for technology names in the STACK section
-    await expect(page.getByText('Claude Code')).toBeVisible();
-    await expect(page.getByText('Slack', { exact: true })).toBeVisible();
-    await expect(page.getByText('iOS')).toBeVisible();
-    await expect(page.getByText('Android')).toBeVisible();
-    await expect(page.getByText('PostgreSQL')).toBeVisible();
-    await expect(page.getByText('Shopify')).toBeVisible();
+    // Check for AI tooling items
+    await expect(page.getByText('Claude', { exact: true })).toBeVisible();
+    await expect(page.getByText('Grok Bot')).toBeVisible();
+    await expect(page.getByText('Cursor', { exact: true })).toBeVisible();
+    await expect(page.getByText('Codex')).toBeVisible();
   });
 
   test('static SEO files return 200', async ({ page }) => {
