@@ -119,12 +119,12 @@ test.describe('Smoke Tests', () => {
     await page.goto('/');
 
     // Check for technology names in the STACK section
-    await expect(page.getByText('Claude', { exact: true })).toBeVisible();
-    await expect(page.getByText('TypeScript')).toBeVisible();
-    await expect(page.getByText('React', { exact: true })).toBeVisible();
-    await expect(page.getByText('SQL', { exact: true }).first()).toBeVisible();
-    await expect(page.getByText('AWS')).toBeVisible();
-    await expect(page.getByText('Vercel', { exact: true })).toBeVisible();
+    await expect(page.getByText('Claude Code')).toBeVisible();
+    await expect(page.getByText('Cursor', { exact: true })).toBeVisible();
+    await expect(page.getByText('Grok Bot')).toBeVisible();
+    await expect(page.getByText('PostgreSQL')).toBeVisible();
+    await expect(page.getByText('Stripe', { exact: true })).toBeVisible();
+    await expect(page.getByText('Shopify')).toBeVisible();
   });
 
   test('static SEO files return 200', async ({ page }) => {
