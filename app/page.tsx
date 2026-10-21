@@ -334,7 +334,7 @@ export default function Home() {
               <div className="md:col-span-7">
                 <div className="space-y-6">
                   <div>
-                    <p className="mb-3 font-mono text-[10px] uppercase tracking-wider text-dim">AI</p>
+                    <p className="mb-3 font-mono text-[10px] uppercase tracking-wider text-dim">AI & automation</p>
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
                       <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
                         <img src="/icons/claude.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
@@ -347,6 +347,10 @@ export default function Home() {
                       <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
                         <span className="flex h-[20px] w-[20px] items-center justify-center rounded border border-line bg-ink2 text-[8px] font-bold text-mute">GB</span>
                         <span className="text-[11px] text-mute">Grok Bot</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/slack.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Slack</span>
                       </div>
                     </div>
                   </div>
@@ -364,6 +368,19 @@ export default function Home() {
                       <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
                         <img src="/icons/python.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
                         <span className="text-[11px] text-mute">Python</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-3 font-mono text-[10px] uppercase tracking-wider text-dim">Mobile</p>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/apple.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">iOS</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-1.5 opacity-40 transition-opacity hover:opacity-70">
+                        <img src="/icons/android.svg" alt="" className="h-[20px] w-[20px] brightness-0 invert" />
+                        <span className="text-[11px] text-mute">Android</span>
                       </div>
                     </div>
                   </div>
