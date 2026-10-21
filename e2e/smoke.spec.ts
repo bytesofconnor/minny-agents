@@ -115,6 +115,17 @@ test.describe('Smoke Tests', () => {
     await expect(page.getByText(/We work on-site or embedded/)).toBeVisible();
   });
 
+  test('STACK section renders with technologies', async ({ page }) => {
+    await page.goto('/');
+
+    // Check for technology names in the STACK section
+    await expect(page.getByText('Claude', { exact: true })).toBeVisible();
+    await expect(page.getByText('TypeScript')).toBeVisible();
+    await expect(page.getByText('React', { exact: true })).toBeVisible();
+    await expect(page.getByText('SQL', { exact: true })).toBeVisible();
+    await expect(page.getByText('AWS')).toBeVisible();
+  });
+
   test('static SEO files return 200', async ({ page }) => {
     const seoFiles = [
       '/robots.txt',
