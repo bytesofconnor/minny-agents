@@ -117,6 +117,42 @@ When working on this codebase:
 5. **Static output**: Ensure no dynamic features break SSG
 6. **Performance**: Maintain lighthouse scores and bundle size
 
+## Principle Skills
+
+Use these skills to maintain code quality and shipping standards:
+
+### When to Use Each Skill
+
+- **principle-prove-it-works** (`.cursor/skills/principle-prove-it-works/SKILL.md`): Apply after completing any task, before declaring done. Verify against the real artifact — run the feature, read the actual value, inspect the diff. Never infer from proxies or "it compiles."
+
+- **blast-radius** (`.cursor/skills/blast-radius/SKILL.md`): Use before opening a PR to find what a change could break beyond the diff. Prove the one fact it's safe because of by running real code. Required for refactors and API changes.
+
+- **principle-fix-root-causes** (`.cursor/skills/principle-fix-root-causes/SKILL.md`): Apply when debugging. Trace each symptom back to the first place the system went wrong and fix it there. Don't add guards for states that should never exist.
+
+- **principle-experience-first** (`.cursor/skills/principle-experience-first/SKILL.md`): Use when product, UX, or feature-scope tradeoffs come up. Choose user delight over implementation convenience. Ship fewer polished features over more rough ones.
+
+- **principle-minimize-reader-load** (`.cursor/skills/principle-minimize-reader-load/SKILL.md`): Apply when reviewing or shaping code that's hard to trace. Count layers between question and answer. Collapse one-caller wrappers and shrink mutable scope.
+
+- **principle-laziness-protocol** (`.cursor/skills/principle-laziness-protocol/SKILL.md`): Use when refactoring or evaluating diff size. Bias toward deletion and the smallest change that solves the problem. Minimize the diff.
+
+## Pull Request Requirements
+
+Every PR must:
+
+1. **Pass CI**: All checks (lint, typecheck, build, content guard, E2E smoke tests) must pass before merge
+2. **Include verification** (prove-it-works): Show evidence the change works — CI logs, test output, screenshots, or script results
+3. **Include blast-radius note**: For non-trivial changes, document what could break and why it won't (or what testing proves it's safe)
+
+### Merge Policy
+
+**Autonomous merge is enabled**: PRs automatically merge to `main` when all CI checks pass. Connor Barrett has authorized this workflow, so checks must be genuinely sufficient.
+
+CI checks enforced:
+- **Lint and Type Check**: ESLint and TypeScript compilation
+- **Build**: Next.js production build must succeed
+- **Content Guard**: No banned claims (prices, fake metrics, invented clients)
+- **E2E Smoke Tests**: Home page, navigation, static files, JSON-LD, internal links
+
 ## Contact
 
 - Email: hello@northernbytes.co

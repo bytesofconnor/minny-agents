@@ -1,0 +1,59 @@
+# Northern Bytes
+
+> Forward-deployed engineers for the agent era
+
+## Overview
+
+Northern Bytes is an independent forward-deployed engineering practice based in Minneapolis, MN, founded by Connor Barrett. We embed with teams to ship production AI systems and agents inside their businesses.
+
+## Services
+
+We build:
+
+1. **Agents & automation** — Agents that take repetitive work off your team (triage, follow-up, reporting, operations)
+2. **AI-native internal tools** — Software designed around models from the start, wired into existing systems
+3. **Web platforms** — Fast, production-grade web products (booking flows, customer portals)
+4. **Data & analytics** — Pipelines and dashboards that turn scattered data into decisions
+
+## Engagement Model
+
+### Three-Phase Approach
+
+**Phase 1: Discovery (Week 1)**
+- Workflows, success metrics, architecture, and a working v0
+
+**Phase 2: Production (Weeks 2–6)**
+- The highest-leverage agent, shipped with evals, guardrails, and monitoring
+
+**Phase 3: Ongoing (Week 7+)**
+- We operate, extend, and add new agents as needs grow, or hand everything off to your team cleanly
+
+### Positioning
+
+Not a consultancy. No decks, no roadmaps, no staff augmentation. We scope outcomes, build in your environment, and stay accountable to what runs.
+
+## Example Applications
+
+- **Inbox & lead triage** — Reads each message, qualifies and routes it, drafts the reply, and logs to CRM
+- **Booking & scheduling** — Offers open slots, confirms, collects payment, sends reminders and follow-ups
+- **Reporting & dashboards** — Pulls from source systems, reconciles, refreshes the dashboard, writes the summary
+- **Customer support, tier 1** — Answers from knowledge base, resolves routine, escalates with context
+- **Back-office operations** — Extracts data, validates, enters where it belongs, flags exceptions
+
+## Area Served
+
+United States
+
+## Contact
+
+- Email: hello@northernbytes.co
+- Website: https://northern-bytes.vercel.app
+- Location: Minneapolis, MN (44.98°N 93.27°W)
+
+## Founder
+
+Connor Barrett — Previously Lead Software Engineer at DNV, BI Engineer at 3M, front-end lead at Livefront. Claude Certified Architect.
+
+## Practice
+
+Forward-deployed engineering: we scope outcomes, build in place, and own what runs.
