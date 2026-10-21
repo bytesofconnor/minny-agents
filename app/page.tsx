@@ -308,18 +308,18 @@ export default function Home() {
               <div className="md:col-span-2"><Mono className="text-mute">Background</Mono></div>
               <div className="md:col-span-7">
                 <p className="mb-4 text-[13px] uppercase tracking-[0.08em] text-dim">Engineering experience from teams at</p>
-                <div className="mb-5 grid grid-cols-2 items-center gap-x-6 gap-y-4 md:flex md:gap-x-8">
-                  <svg className="h-[22px] opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 85 22" fill="white" aria-label="American Family Insurance">
-                    <text x="0" y="18" fontSize="16" fontWeight="500" fontFamily="-apple-system, system-ui, sans-serif" letterSpacing="-0.01em">AmFam</text>
+                <div className="mb-5 grid grid-cols-2 items-center gap-x-6 gap-y-4 text-white md:flex md:gap-x-8">
+                  <svg className="h-[22px] w-auto opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 280 40" fill="currentColor" aria-label="American Family Insurance">
+                    <text x="140" y="28" fontFamily="Arial, Helvetica, sans-serif" fontSize="18" fontWeight="500" textAnchor="middle" letterSpacing="-0.01em">American Family Insurance</text>
                   </svg>
-                  <svg className="h-[22px] opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 46 22" fill="white" aria-label="3M">
-                    <text x="0" y="18" fontSize="20" fontWeight="700" fontFamily="-apple-system, system-ui, sans-serif" letterSpacing="-0.02em">3M</text>
+                  <svg className="h-[19px] w-auto opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 100 40" fill="currentColor" aria-label="3M">
+                    <text x="50" y="30" fontFamily="Arial, Helvetica, sans-serif" fontSize="32" fontWeight="700" textAnchor="middle" letterSpacing="-0.02em">3M</text>
                   </svg>
-                  <svg className="h-[22px] opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 58 22" fill="white" aria-label="DNV">
-                    <text x="0" y="18" fontSize="18" fontWeight="600" fontFamily="-apple-system, system-ui, sans-serif" letterSpacing="-0.01em">DNV</text>
+                  <svg className="h-[22px] w-auto opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 100 40" fill="currentColor" aria-label="DNV">
+                    <text x="50" y="28" fontFamily="Arial, Helvetica, sans-serif" fontSize="24" fontWeight="600" textAnchor="middle" letterSpacing="-0.01em">DNV</text>
                   </svg>
-                  <svg className="h-[22px] opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 110 22" fill="white" aria-label="Livefront">
-                    <text x="0" y="18" fontSize="17" fontWeight="500" fontFamily="-apple-system, system-ui, sans-serif" letterSpacing="-0.01em">Livefront</text>
+                  <svg className="h-[24px] w-auto opacity-50 transition-opacity hover:opacity-90" viewBox="0 0 160 40" fill="currentColor" aria-label="Livefront">
+                    <text x="80" y="27" fontFamily="Arial, Helvetica, sans-serif" fontSize="20" fontWeight="500" textAnchor="middle" letterSpacing="-0.01em">Livefront</text>
                   </svg>
                 </div>
                 <p className="text-[14px] leading-relaxed text-mute">Built software across insurance, energy and utilities, manufacturing, and healthcare.</p>
