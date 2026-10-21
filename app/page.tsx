@@ -17,11 +17,11 @@ const caps = [
   { t: "Data & analytics", d: "Pipelines and dashboards that turn scattered data into decisions.", k: "DAT" },
 ];
 const apps = [
-  { a: "Inbox & lead triage", t: "Leads and requests sit in a shared inbox until someone has time to sort them.", w: "Reads each message, qualifies and routes it, drafts the reply, and logs it to the CRM.", s: "Email · CRM", i: "INBOX", o: ["CRM", "REPLY"], c: "#7cf2a0" },
-  { a: "Booking & scheduling", t: "Back-and-forth over times, deposits chased by hand, no-shows handled ad hoc.", w: "Offers open slots, confirms, collects payment, and sends reminders and follow-ups.", s: "Calendar · Payments", i: "REQUEST", o: ["CALENDAR", "PAYMENT"], c: "#3cdbc0" },
-  { a: "Reporting & dashboards", t: "Someone exports spreadsheets every week and rebuilds the same report.", w: "Pulls from source systems, reconciles, refreshes the dashboard, and writes the summary.", s: "Spreadsheets · BI", i: "SOURCES", o: ["DASHBOARD", "SUMMARY"], c: "#52c9d6" },
-  { a: "Customer support, tier 1", t: "Repeat questions eat the queue; answers live in people’s heads.", w: "Answers from your knowledge base, resolves the routine, escalates the rest with context.", s: "Helpdesk · Knowledge base", i: "TICKET", o: ["ANSWER", "ESCALATE"], c: "#87a0f7" },
-  { a: "Back-office operations", t: "Invoices, receipts, and forms are re-keyed between systems by hand.", w: "Extracts the data, validates it, enters it where it belongs, and flags exceptions.", s: "Accounting · Forms · ERP", i: "DOCUMENT", o: ["ENTERED", "FLAGGED"], c: "#9b8cff" },
+  { a: "Missed calls & after-hours questions", t: "The phone rings during the dinner rush and nobody can pick up. Callers asking about hours, the menu, or parking just hang up.", w: "Texts back every missed call within a minute, answers common questions from your menu and hours, and hands anything else to staff in Slack.", s: "Phone · SMS · Slack", i: "MISSED CALL", o: ["TEXT REPLY", "STAFF"], c: "#7cf2a0" },
+  { a: "Catering & large-party inquiries", t: "Catering requests arrive by email, web form, and DM. Quotes get built by hand, and some slip for days.", w: "Collects the date, headcount, and dietary needs, drafts a quote from your catering menu for the owner to approve, and follows up if the customer goes quiet.", s: "Email · Forms · Quotes", i: "INQUIRY", o: ["QUOTE DRAFT", "FOLLOW-UP"], c: "#3cdbc0" },
+  { a: "Supplier invoices into the books", t: "Paper and emailed invoices from food and supply vendors get keyed into QuickBooks by hand every week.", w: "Reads each invoice, matches it to the vendor, checks prices against the last order, enters it in QuickBooks, and flags anything unusual for review.", s: "Email · OCR · QuickBooks", i: "INVOICE", o: ["QUICKBOOKS", "FLAGGED"], c: "#52c9d6" },
+  { a: "Reviews & reputation", t: "Google and Yelp reviews pile up unanswered, and complaints get noticed late.", w: "Drafts a reply to every new review in your voice for one-tap approval, and alerts the manager right away about any complaint about food safety or a staff issue.", s: "Google · Yelp · Slack", i: "NEW REVIEW", o: ["REPLY DRAFT", "MANAGER ALERT"], c: "#87a0f7" },
+  { a: "Shift swaps & the weekly schedule", t: "Shift swaps and call-outs happen in a group text, and the manager rebuilds the schedule by hand.", w: "Takes swap and time-off requests in Slack or text, finds someone eligible to cover, gets the manager's OK, and updates the schedule.", s: "Slack · SMS · Scheduling", i: "REQUEST", o: ["COVERAGE", "SCHEDULE"], c: "#9b8cff" },
 ];
 
 const faqs = [
@@ -281,6 +281,7 @@ export default function Home() {
               <h2 className="text-4xl font-medium tracking-[-0.03em] md:text-6xl">Where agents earn their keep.</h2>
               <Mono className="text-dim">Fig. 03 — Example engagements · illustrative</Mono>
             </div>
+            <p className="mt-4 text-[15px] text-mute">Examples from restaurants, shops, and service businesses.</p>
             <div className="mt-12 border-t border-paper/60">
               <div className="hidden grid-cols-[2.2rem_1.1fr_1.4fr_1.4fr_1.3fr] gap-6 py-2 lg:grid">
                 {["No.", "Area", "Today", "With an agent", "Flow · systems"].map(h => <Mono key={h} className="text-dim">{h}</Mono>)}
