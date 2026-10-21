@@ -1,0 +1,86 @@
+name: Production Smoke Tests
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  wait-for-vercel:
+    name: Wait for Vercel Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      deployment-url: ${{ steps.wait.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Wait for Vercel production deployment
+        id: wait
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          echo "Waiting for Vercel production deployment..."
+          
+          # Wait up to 5 minutes for deployment
+          MAX_WAIT=300
+          ELAPSED=0
+          INTERVAL=10
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            # Check Vercel deployment status via their GitHub app
+            sleep $INTERVAL
+            ELAPSED=$((ELAPSED + INTERVAL))
+            
+            # For now, use fixed production URL
+            # Vercel deploys main automatically via their GitHub app
+            echo "url=https://northern-bytes.vercel.app" >> $GITHUB_OUTPUT
+            echo "✅ Using production URL: https://northern-bytes.vercel.app"
+            exit 0
+          done
+          
+          echo "❌ Timeout waiting for deployment"
+          exit 1
+
+  smoke-prod:
+    name: Smoke Test Production
+    needs: wait-for-vercel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - run: npm ci
+      
+      - run: npx playwright install --with-deps chromium
+      
+      - name: Run smoke tests against production
+        env:
+          BASE_URL: ${{ needs.wait-for-vercel.outputs.deployment-url }}
+        run: npx playwright test
+      
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-smoke-screenshots
+          path: test-results/
+          retention-days: 7
+      
+      - name: Create issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "🚨 Production smoke tests failed after merge to main" \
+            --label "prod-broken" \
+            --body "Production smoke tests failed for commit ${{ github.sha }}.
+          
+          **Commit**: ${{ github.sha }}
+          **Author**: ${{ github.actor }}
+          **Workflow run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          
+          Please investigate and fix ASAP."

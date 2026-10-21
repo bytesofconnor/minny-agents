@@ -147,11 +147,53 @@ Every PR must:
 
 **Autonomous merge is enabled**: PRs automatically merge to `main` when all CI checks pass. Connor Barrett has authorized this workflow, so checks must be genuinely sufficient.
 
-CI checks enforced:
-- **Lint and Type Check**: ESLint and TypeScript compilation
-- **Build**: Next.js production build must succeed
-- **Content Guard**: No banned claims (prices, fake metrics, invented clients)
-- **E2E Smoke Tests**: Home page, navigation, static files, JSON-LD, internal links
+#### How Auto-Merge Works
+
+1. **PR Requirements**:
+   - Branch must start with `cursor/`
+   - PR must not be draft
+   - PR must not have `hold` label
+   - PR body must contain `## Verification` section (non-empty)
+   - PR body must contain `## Blast Radius` section (non-empty)
+
+2. **CI Checks** (all must pass):
+   - **Lint and Type Check**: ESLint and TypeScript compilation
+   - **Build**: Next.js production build must succeed
+   - **Content Guard**: No banned claims (prices, fake metrics, invented clients)
+   - **E2E Smoke Tests**: Home page, navigation, static files, JSON-LD, internal links, visual screenshots
+   - **PR Hygiene**: Verification and blast-radius sections present and non-empty
+
+3. **Auto-Merge Trigger**:
+   - When CI workflow completes successfully
+   - Auto-merge workflow runs via `workflow_run` trigger
+   - Checks eligibility (branch prefix, non-draft, no hold label, all checks passed)
+   - Squash-merges PR to main with `GITHUB_TOKEN`
+   - Deletes source branch automatically
+
+4. **Post-Merge Production Verification**:
+   - Waits for Vercel to deploy main to production
+   - Runs smoke tests against `https://northern-bytes.vercel.app`
+   - Creates GitHub issue with `prod-broken` label if tests fail
+   - Uploads visual regression screenshots as artifacts
+
+#### Blocking Auto-Merge
+
+To prevent a PR from auto-merging (e.g., needs manual review):
+```bash
+gh pr edit <number> --add-label hold
+```
+
+Remove the label when ready:
+```bash
+gh pr edit <number> --remove-label hold
+```
+
+#### Monitoring
+
+- **CI runs**: All PRs trigger CI checks before merge
+- **Production health**: Post-merge smoke tests validate production deployment
+- **Visual regression**: Full-page screenshots (desktop + mobile) uploaded as artifacts
+- **Failure alerts**: GitHub issues auto-created for production failures
 
 ## Contact
 

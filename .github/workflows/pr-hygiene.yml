@@ -1,0 +1,45 @@
+name: PR Hygiene
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  check-pr-body:
+    name: Check PR Body
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for required sections
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo "Checking PR body for required sections..."
+          
+          # Check for Verification section
+          if ! echo "$PR_BODY" | grep -q "## Verification"; then
+            echo "❌ PR body must contain '## Verification' section"
+            echo "This section should prove the changes work (test output, CI logs, screenshots, etc.)"
+            exit 1
+          fi
+          
+          # Check for Blast radius section
+          if ! echo "$PR_BODY" | grep -q "## Blast [Rr]adius"; then
+            echo "❌ PR body must contain '## Blast Radius' or '## Blast radius' section"
+            echo "This section should explain what could break and why it won't"
+            exit 1
+          fi
+          
+          # Check sections are not empty (have content after the header)
+          VERIFICATION_CONTENT=$(echo "$PR_BODY" | sed -n '/## Verification/,/##/p' | tail -n +2 | head -n -1 | tr -d '[:space:]')
+          if [ -z "$VERIFICATION_CONTENT" ]; then
+            echo "❌ '## Verification' section is empty"
+            exit 1
+          fi
+          
+          BLAST_CONTENT=$(echo "$PR_BODY" | sed -n '/## Blast [Rr]adius/,/##/p' | tail -n +2 | head -n -1 | tr -d '[:space:]')
+          if [ -z "$BLAST_CONTENT" ]; then
+            echo "❌ '## Blast Radius' section is empty"
+            exit 1
+          fi
+          
+          echo "✅ PR body has required sections with content"
