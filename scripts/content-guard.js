@@ -33,6 +33,13 @@ const BANNED_PATTERNS = [
   // Testimonial markers without attribution
   { pattern: /[""].*reduced.*time.*by.*\d+.*[""]/gi, reason: 'Unattributed testimonial' },
   { pattern: /[""].*saved.*\$.*[""]/gi, reason: 'Unattributed savings claim' },
+  
+  // Misleading endorsement language (these are past employers, not clients)
+  { pattern: /trusted by.*(AmFam|American Family|3M|DNV|Livefront)/gi, reason: 'Past employers, not endorsing clients' },
+  { pattern: /(AmFam|American Family|3M|DNV|Livefront).*trusted/gi, reason: 'Past employers, not endorsing clients' },
+  
+  // Employers' clients that must never appear as studio clients
+  { pattern: /\b(PECO|PSEG|DTE|PNM|Consumers Energy|UnitedHealth|RVO Health|Alight|UW-Madison|University of Wisconsin)\b/gi, reason: 'Past employers\' clients, not studio clients' },
 ];
 
 // Files to check (app source and public content)
