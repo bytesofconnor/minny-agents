@@ -70,8 +70,8 @@ jobs:
           fi
           
           # Check if all checks passed
-          gh pr checks "${{ steps.pr.outputs.number }}" --json statusCheckRollup --jq '.statusCheckRollup[]' > checks.json
-          FAILED_CHECKS=$(jq -r 'select(.conclusion == "failure" or .conclusion == "cancelled") | .name' checks.json | wc -l)
+          gh pr checks "${{ steps.pr.outputs.number }}" > checks.txt
+          FAILED_CHECKS=$(grep -E '(fail|pending)' checks.txt | wc -l)
           
           if [ "$FAILED_CHECKS" -gt 0 ]; then
             echo "eligible=false" >> $GITHUB_OUTPUT
