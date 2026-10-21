@@ -120,10 +120,10 @@ test.describe('Smoke Tests', () => {
 
     // Check for technology names in the STACK section
     await expect(page.getByText('Claude Code')).toBeVisible();
-    await expect(page.getByText('Cursor', { exact: true })).toBeVisible();
-    await expect(page.getByText('Grok Bot')).toBeVisible();
+    await expect(page.getByText('Slack', { exact: true })).toBeVisible();
+    await expect(page.getByText('iOS')).toBeVisible();
+    await expect(page.getByText('Android')).toBeVisible();
     await expect(page.getByText('PostgreSQL')).toBeVisible();
-    await expect(page.getByText('Stripe', { exact: true })).toBeVisible();
     await expect(page.getByText('Shopify')).toBeVisible();
   });
 
