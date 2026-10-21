@@ -120,7 +120,7 @@ test.describe('Smoke Tests', () => {
 
     // Check for AI tooling items
     await expect(page.getByText('Claude', { exact: true })).toBeVisible();
-    await expect(page.getByText('Grok Bot')).toBeVisible();
+    await expect(page.getByText('Grok Bot').first()).toBeVisible();
     await expect(page.getByText('Cursor', { exact: true })).toBeVisible();
     await expect(page.getByText('Codex')).toBeVisible();
   });
