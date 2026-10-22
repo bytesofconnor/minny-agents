@@ -4,12 +4,18 @@ import Flow from "./Flow";
 const MAIL = "mailto:hello@northernbytes.co";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://northern-bytes.vercel.app";
 
-const apps = [
+const quickWins = [
   { a: "Missed calls & after-hours questions", p: "The phone rings during the dinner rush and nobody can answer.", w: "We build an AI that texts back every missed call, answers menu and hours questions, and hands anything else to your team in Slack.", s: "Phone · SMS · Slack", i: "MISSED CALL", o: ["TEXT REPLY", "STAFF"], c: "#7cf2a0" },
   { a: "Catering & large-party inquiries", p: "Catering requests come in everywhere and quotes take forever.", w: "We build an AI that collects what you need, drafts quotes from your menu for you to approve, and follows up when customers go quiet.", s: "Email · Forms · Quotes", i: "INQUIRY", o: ["QUOTE DRAFT", "FOLLOW-UP"], c: "#3cdbc0" },
   { a: "Supplier invoices into the books", p: "Invoices from vendors get keyed into QuickBooks by hand every week.", w: "We build an AI that reads each invoice, matches the vendor, checks prices, enters it in QuickBooks, and flags anything unusual.", s: "Email · OCR · QuickBooks", i: "INVOICE", o: ["QUICKBOOKS", "FLAGGED"], c: "#52c9d6" },
   { a: "Reviews & reputation", p: "Google and Yelp reviews pile up and you see complaints too late.", w: "We build an AI that drafts a reply to every review for you to approve with one tap, and alerts you immediately about food safety or staff complaints.", s: "Google · Yelp · Slack", i: "NEW REVIEW", o: ["REPLY DRAFT", "MANAGER ALERT"], c: "#87a0f7" },
   { a: "Shift swaps & the weekly schedule", p: "Shift swaps happen in group texts and you rebuild the schedule by hand.", w: "We build an AI that takes requests in Slack or text, finds someone to cover, gets your OK, and updates the schedule.", s: "Slack · SMS · Scheduling", i: "REQUEST", o: ["COVERAGE", "SCHEDULE"], c: "#9b8cff" },
+];
+
+const biggerProjects = [
+  { a: "Weekly owner briefing", p: "Sales, labor, invoices, and reviews live in five different apps.", w: "We build a weekly plain-English summary pulling from your POS, scheduling, invoices, and reviews, flagging what changed and what needs attention.", s: "POS · Scheduling · Reports", i: "SOURCES", o: ["SUMMARY", "FLAGS"], c: "#7cf2a0" },
+  { a: "Menu profit check", p: "Supplier prices go up and you don't know which dishes stopped making money.", w: "We connect invoice prices to your recipes and sales and flag dishes whose margins slipped.", s: "Invoices · Recipes · POS", i: "PRICES", o: ["MARGINS", "ALERTS"], c: "#3cdbc0" },
+  { a: "Prep and ordering forecasts", p: "Over-prep means waste; under-prep means 86ing your best sellers.", w: "We use your sales history, weather, local events, and reservations to suggest prep and order amounts your kitchen manager approves.", s: "Sales · Weather · Events", i: "DATA", o: ["FORECAST", "APPROVAL"], c: "#52c9d6" },
 ];
 
 const faqs = [
@@ -167,22 +173,48 @@ export default function Home() {
 
         <Sec id="what-we-build" n="01" label="What we build">
           <div className="px-5 pb-20 pt-10 md:px-6 md:pb-32 md:pt-8">
-            <h2 className="text-4xl font-medium tracking-[-0.03em] md:text-6xl">AI that runs your operations.</h2>
-            <p className="mt-4 text-[15px] text-mute">Examples from restaurants, shops, and service businesses.</p>
-            <div className="mt-12 space-y-12 border-t border-paper/60 pt-12">
-              {apps.map((x, k) => (
-                <div key={x.a} className="grid grid-cols-1 gap-6 md:grid-cols-[2.5rem_1fr]">
-                  <Mono className="text-teal">{String(k + 1).padStart(2, "0")}</Mono>
-                  <div>
-                    <h3 className="text-2xl font-medium tracking-tight">{x.a}</h3>
-                    <p className="mt-3 text-[15px] leading-relaxed text-mute">{x.p}</p>
-                    <p className="mt-3 text-[15px] leading-relaxed text-paper">{x.w}</p>
-                    <Flow i={x.i} o={x.o} c={x.c} />
-                    <Mono className="mt-2 block text-mute">{x.s}</Mono>
+            <h2 className="text-4xl font-medium tracking-[-0.03em] md:text-6xl">What I can take off your plate.</h2>
+            
+            {/* Quick wins */}
+            <div className="mt-12 border-t border-paper/60 pt-8">
+              <h3 className="text-2xl font-medium tracking-tight">Quick wins</h3>
+              <p className="mt-2 text-[15px] text-mute">Pick one thing eating your time. Typically a week or two.</p>
+              <div className="mt-8 space-y-10">
+                {quickWins.map((x, k) => (
+                  <div key={x.a} className="grid grid-cols-1 gap-6 md:grid-cols-[2.5rem_1fr]">
+                    <Mono className="text-teal">{String(k + 1).padStart(2, "0")}</Mono>
+                    <div>
+                      <h4 className="text-xl font-medium tracking-tight">{x.a}</h4>
+                      <p className="mt-2 text-[15px] leading-relaxed text-mute">{x.p}</p>
+                      <p className="mt-2 text-[15px] leading-relaxed text-paper">{x.w}</p>
+                      <Flow i={x.i} o={x.o} c={x.c} />
+                      <Mono className="mt-2 block text-mute">{x.s}</Mono>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
+
+            {/* Bigger projects */}
+            <div className="mt-16 rounded-sm border border-teal/20 bg-gradient-to-br from-teal/5 to-violet/5 p-6 md:p-8">
+              <h3 className="text-2xl font-medium tracking-tight">Bigger projects</h3>
+              <p className="mt-2 text-[15px] text-mute">Connect your systems so you can see where the money goes. Multi-week.</p>
+              <div className="mt-8 space-y-10">
+                {biggerProjects.map((x, k) => (
+                  <div key={x.a} className="grid grid-cols-1 gap-6 md:grid-cols-[2.5rem_1fr]">
+                    <Mono className="text-teal">{String(k + 1).padStart(2, "0")}</Mono>
+                    <div>
+                      <h4 className="text-xl font-medium tracking-tight">{x.a}</h4>
+                      <p className="mt-2 text-[15px] leading-relaxed text-mute">{x.p}</p>
+                      <p className="mt-2 text-[15px] leading-relaxed text-paper">{x.w}</p>
+                      <Flow i={x.i} o={x.o} c={x.c} />
+                      <Mono className="mt-2 block text-mute">{x.s}</Mono>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="mt-12 border-t border-paper/60 pt-6">
               <p className="text-[13px] text-dim">We build one custom system at a time. You approve anything that talks to customers or touches money.</p>
             </div>
