@@ -22,7 +22,7 @@ const steps = [
 
 export default function ExampleCard() {
   return (
-    <aside className="col-span-4 border-t border-line px-5 py-8 md:col-span-5 md:border-l md:border-t-0 md:px-6 md:pb-12 md:pt-16 lg:col-span-4 lg:px-7">
+    <aside className="relative z-10 col-span-4 border-t border-line px-5 py-8 md:col-span-5 md:border-l md:border-t-0 md:px-6 md:pb-12 md:pt-16 lg:col-span-4 lg:px-7">
       <div className="example-card border border-teal/25 bg-ink2 px-6 py-7 md:px-7 md:py-8">
         <Mono className="example-kicker block whitespace-nowrap text-teal">
           Example
