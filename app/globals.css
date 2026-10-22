@@ -15,8 +15,44 @@
 html { scroll-behavior: smooth; }
 body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smoothing: antialiased; font-feature-settings: "ss01","cv11"; }
 ::selection { background: var(--color-teal); color: var(--color-ink); }
-.cols { background-image: linear-gradient(to right, var(--color-line) 1px, transparent 1px); background-size: calc(100% / 12) 100%; }
-@media (max-width: 767px) { .cols { background-size: calc(100% / 4) 100%; } }
+
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.aurora {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -14%;
+  height: 54vh;
+  background:
+    radial-gradient(ellipse 80% 85% at 30% 18%, rgba(60, 219, 192, 0.22), transparent 70%),
+    radial-gradient(ellipse 55% 75% at 74% 6%, rgba(155, 140, 255, 0.16), transparent 70%),
+    radial-gradient(ellipse 46% 60% at 52% 0%, rgba(124, 242, 160, 0.12), transparent 66%);
+  transform-origin: 50% 0%;
+  animation: aurora-drift 36s ease-in-out infinite alternate;
+}
+.contours {
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  background: url("/lake-contours.svg") center / cover no-repeat;
+  opacity: 1;
+  animation: contour-drift 90s linear infinite alternate;
+}
+@keyframes aurora-drift {
+  from { transform: translate3d(-2.5%, 0, 0) scale(1.02); opacity: 0.82; }
+  to { transform: translate3d(3%, 1.5%, 0) scale(1.08); opacity: 1; }
+}
+@keyframes contour-drift {
+  from { transform: translate3d(-1.5%, 0.8%, 0); }
+  to { transform: translate3d(1.8%, -0.8%, 0); }
+}
 .draw path.r { stroke-dasharray: 2400; stroke-dashoffset: 2400; animation: draw 2.4s cubic-bezier(.3,.6,.2,1) forwards; }
 .draw path.f { opacity: 0; animation: fade 1.2s ease forwards; }
 .draw rect.k { transform-box: fill-box; transform-origin: bottom; transform: scaleY(0); animation: grow .7s cubic-bezier(.3,.6,.2,1) forwards; }
@@ -28,4 +64,5 @@ body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smo
 @media (prefers-reduced-motion: reduce) {
   .draw path.r { stroke-dashoffset: 0; animation: none; } .draw path.f { opacity: 1; animation: none; }
   .draw rect.k { transform: none; animation: none; } .blink { animation: none; }
+  .aurora, .contours { animation: none; }
 }

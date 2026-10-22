@@ -113,17 +113,14 @@ export default function Home() {
   };
 
   return (
-    <div className="cols min-h-screen">
+    <div className="relative min-h-screen">
+      <div className="scene" aria-hidden="true">
+        <div className="aurora" />
+        <div className="contours" />
+      </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <div className="mx-auto max-w-[1440px] border-x border-line bg-ink/0">
-        {/* column markers */}
-        <div className="grid grid-cols-4 border-b border-line md:grid-cols-12">
-          {Array.from({ length: 12 }, (_, i) => (
-            <div key={i} className={`px-2 py-1 ${i > 3 ? "hidden md:block" : ""}`}><Mono className="text-[9px] text-dim">C{String(i + 1).padStart(2, "0")}</Mono></div>
-          ))}
-        </div>
-
-        <header className="sticky top-0 z-50 border-b border-line bg-ink/90 backdrop-blur">
+      <div className="relative z-10 mx-auto max-w-[1440px] border-x border-line">
+        <header className="sticky top-0 z-50 border-b border-line bg-ink/80 backdrop-blur">
           <nav className="grid h-14 grid-cols-4 items-center md:grid-cols-12">
             <a href="#" className="col-span-2 flex items-baseline gap-3 px-5 md:col-span-3 md:px-6">
               <span className="inline-flex items-center gap-2">

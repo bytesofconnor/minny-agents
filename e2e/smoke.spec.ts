@@ -38,14 +38,23 @@ test.describe('Smoke Tests', () => {
     await expect(page.getByText(/© 2026 Minny Agents/)).toBeVisible();
     await expect(page.getByText('Minny Agents').first()).toBeVisible();
     await expect(page.locator('body')).not.toContainText('Northern Bytes');
+    await expect(page.getByText('C01')).toHaveCount(0);
+    await expect(page.locator('.scene .aurora')).toHaveCount(1);
+    await expect(page.locator('.scene .contours')).toHaveCount(1);
 
     // No critical console errors (404s are ignored)
     expect(consoleErrors).toEqual([]);
   });
 
   test('favicon exists', async ({ page }) => {
-    const response = await page.goto('/favicon.ico');
-    expect(response?.status()).toBe(200);
+    const ico = await page.goto('/favicon.ico');
+    expect(ico?.status()).toBe(200);
+    const svg = await page.goto('/favicon.svg');
+    expect(svg?.status()).toBe(200);
+    const apple = await page.goto('/apple-touch-icon.png');
+    expect(apple?.status()).toBe(200);
+    const manifest = await page.goto('/site.webmanifest');
+    expect(manifest?.status()).toBe(200);
   });
 
   test('all internal anchor links resolve', async ({ page }) => {
@@ -151,7 +160,9 @@ test.describe('Smoke Tests', () => {
   test('generated images return 200', async ({ page }) => {
     const images = [
       '/opengraph-image',
+      '/twitter-image',
       '/icon',
+      '/apple-icon',
     ];
 
     for (const image of images) {
