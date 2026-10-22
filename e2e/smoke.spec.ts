@@ -1,6 +1,26 @@
+import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 
 test.describe('Smoke Tests', () => {
+  test('vercel.json redirects old hosts to minnyagents.com', () => {
+    const cfg = JSON.parse(readFileSync('vercel.json', 'utf8'));
+    const redirects = cfg.redirects as { source: string; destination: string; permanent: boolean; has?: { type: string; value: string }[] }[];
+    expect(redirects).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        source: '/:path*',
+        destination: 'https://minnyagents.com/:path*',
+        permanent: true,
+        has: [{ type: 'host', value: 'northern-bytes.vercel.app' }],
+      }),
+      expect.objectContaining({
+        source: '/:path*',
+        destination: 'https://minnyagents.com/:path*',
+        permanent: true,
+        has: [{ type: 'host', value: 'www.minnyagents.com' }],
+      }),
+    ]));
+  });
+
   test('home page loads and renders key content', async ({ page }) => {
     // Capture console errors (excluding resource load failures)
     const consoleErrors: string[] = [];
@@ -164,6 +184,9 @@ test.describe('Smoke Tests', () => {
     for (const file of seoFiles) {
       const response = await page.goto(file);
       expect(response?.status(), `${file} should return 200`).toBe(200);
+      const body = await response!.text();
+      expect(body, `${file} should name the production host`).toContain('https://minnyagents.com');
+      expect(body, `${file} must not name the old Vercel alias`).not.toContain('northern-bytes.vercel.app');
     }
   });
 
@@ -202,8 +225,10 @@ test.describe('Smoke Tests', () => {
     // Validate Organization has required fields
     const org = jsonLd['@graph'].find((item: { '@type': string }) => item['@type'] === 'Organization');
     expect(org.name).toBe('Minny Agents');
+    expect(org.url).toBe('https://minnyagents.com');
     expect(org.founder).toBeDefined();
     expect(org.founder.name).toBe('Connor Barrett');
+    expect(JSON.stringify(jsonLd)).not.toContain('northern-bytes.vercel.app');
   });
 
   test('Open Graph metadata is complete', async ({ page }) => {
@@ -218,9 +243,17 @@ test.describe('Smoke Tests', () => {
     const ogDescription = await page.locator('meta[property="og:description"]').getAttribute('content');
     expect(ogDescription).toBeTruthy();
 
+    const ogUrl = await page.locator('meta[property="og:url"]').getAttribute('content');
+    expect(ogUrl).toMatch(/^https:\/\/minnyagents\.com\/?$/);
+
+    const canonical = await page.locator('link[rel="canonical"]').getAttribute('href');
+    expect(canonical).toMatch(/^https:\/\/minnyagents\.com\/?$/);
+
     const ogImage = await page.locator('meta[property="og:image"]').getAttribute('content');
     expect(ogImage).toBeTruthy();
+    expect(ogImage).toContain('minnyagents.com');
     expect(ogImage).toContain('/opengraph-image');
+    expect(ogImage).not.toContain('northern-bytes.vercel.app');
 
     // Check Twitter card
     const twitterCard = await page.locator('meta[name="twitter:card"]').getAttribute('content');

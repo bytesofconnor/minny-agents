@@ -3,8 +3,7 @@ import ExampleCard from "./ExampleCard";
 import Fig from "./Fig";
 import Flow from "./Flow";
 import Mark from "./Mark";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://northern-bytes.vercel.app";
+import { SITE_URL } from "./site";
 
 const quickWins = [
   { a: "Missed calls & after-hours questions", p: "The phone rings during the dinner rush and nobody can answer.", w: "We build an AI that texts back every missed call, answers menu and hours questions, and hands anything else to your team in Slack.", s: "Phone · SMS · Slack", i: "MISSED CALL", o: ["TEXT REPLY", "STAFF"], c: "#7cf2a0" },
