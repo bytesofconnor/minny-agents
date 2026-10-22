@@ -56,8 +56,15 @@ const RENDERED_BANNED_PATTERNS = [
 const FILES_TO_CHECK = [
   'app/page.tsx',
   'app/layout.tsx',
+  'app/seo.ts',
+  'app/Chrome.tsx',
+  'app/IndustryPage.tsx',
+  'app/restaurants/page.tsx',
+  'app/home-services/page.tsx',
+  'app/clinics/page.tsx',
   'app/opengraph-image.tsx',
   'public/llms.txt',
+  'public/llms-full.txt',
   'README.md',
   'AGENTS.md',
 ];
@@ -65,8 +72,15 @@ const FILES_TO_CHECK = [
 const RENDERED_FILES = [
   'app/page.tsx',
   'app/layout.tsx',
+  'app/seo.ts',
+  'app/Chrome.tsx',
+  'app/IndustryPage.tsx',
+  'app/restaurants/page.tsx',
+  'app/home-services/page.tsx',
+  'app/clinics/page.tsx',
   'app/opengraph-image.tsx',
   'public/llms.txt',
+  'public/llms-full.txt',
 ];
 
 let violations = [];

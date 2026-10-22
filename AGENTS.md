@@ -20,11 +20,15 @@ This is the production marketing site for Minny Agents, an independent engineeri
 ├── app/
 │   ├── layout.tsx          # Root layout with fonts and metadata
 │   ├── page.tsx            # Main landing page component
+│   ├── seo.ts              # Titles, FAQ, JSON-LD, industry copy
+│   ├── restaurants/        # Local-intent page
+│   ├── home-services/      # Local-intent page
+│   ├── clinics/            # Local-intent page
 │   ├── globals.css         # Global styles and Tailwind config
 │   ├── Fig.tsx             # Aurora visualization component
 │   ├── Flow.tsx            # Agent workflow diagram component
 │   └── favicon.ico         # Site favicon
-├── public/                 # Static assets
+├── public/                 # Static assets (llms.txt, llms-full.txt)
 ├── .cursor/
 │   ├── rules/              # Agent-specific rules
 │   ├── skills/             # Custom agent skills
@@ -105,12 +109,19 @@ Designed for Vercel deployment:
 
 **In the repo:**
 - `app/site.ts` — `SITE_URL` default `https://minnyagents.com` (metadataBase, canonical, OG/Twitter, JSON-LD, sitemap, robots)
-- `vercel.json` — host-based 308s:
-  - `northern-bytes.vercel.app/:path*` → `https://minnyagents.com/:path*` (`has: host` so preview `*.vercel.app` URLs are not redirected)
-  - `www.minnyagents.com/:path*` → `https://minnyagents.com/:path*`
+- `vercel.json` — host-based 308s (`/` and `/:path*`; `has: host` so preview `*.vercel.app` URLs are not redirected):
+  - `northern-bytes.vercel.app` → `https://minnyagents.com`
+  - `www.minnyagents.com` → `https://minnyagents.com`
 - `.github/workflows/prod-smoke.yml` and Playwright `BASE_URL` — production checks hit `https://minnyagents.com`
 
 The GitHub repo name remains `northern-bytes`. Do not publish `northern-bytes.vercel.app` in visitor-facing copy.
+
+### SEO / AEO (in the repo)
+
+- Titles, descriptions, FAQ answers, and JSON-LD live in `app/seo.ts`
+- `robots.ts` allows GPTBot, PerplexityBot, ClaudeBot, Google-Extended, and related crawlers
+- `public/llms.txt` is the short map; `public/llms-full.txt` is the long form for answer engines
+- Industry pages (`/restaurants`, `/home-services`, `/clinics`) reuse the same chrome; no invented clients, metrics, phones, or emails
 
 ## Content Guidelines
 

@@ -7,10 +7,22 @@ test.describe('Smoke Tests', () => {
     const redirects = cfg.redirects as { source: string; destination: string; permanent: boolean; has?: { type: string; value: string }[] }[];
     expect(redirects).toEqual(expect.arrayContaining([
       expect.objectContaining({
+        source: '/',
+        destination: 'https://minnyagents.com/',
+        permanent: true,
+        has: [{ type: 'host', value: 'northern-bytes.vercel.app' }],
+      }),
+      expect.objectContaining({
         source: '/:path*',
         destination: 'https://minnyagents.com/:path*',
         permanent: true,
         has: [{ type: 'host', value: 'northern-bytes.vercel.app' }],
+      }),
+      expect.objectContaining({
+        source: '/',
+        destination: 'https://minnyagents.com/',
+        permanent: true,
+        has: [{ type: 'host', value: 'www.minnyagents.com' }],
       }),
       expect.objectContaining({
         source: '/:path*',
@@ -112,7 +124,7 @@ test.describe('Smoke Tests', () => {
     const emailLinks = await page.locator('a[href^="mailto:"]').all();
     expect(emailLinks.length).toBe(0);
 
-    const contactCtas = await page.locator('a[href="#contact"]').all();
+    const contactCtas = await page.locator('a[href="#contact"], a[href="/#contact"]').all();
     expect(contactCtas.length).toBeGreaterThan(0);
     await expect(page.getByText('Contact details coming soon.')).toBeVisible();
   });
@@ -144,11 +156,13 @@ test.describe('Smoke Tests', () => {
     // Check title and description
     const title = await page.title();
     expect(title).toContain('Minny Agents');
+    expect(title).toMatch(/Minneapolis/i);
     expect(title).not.toContain('Northern Bytes');
 
     const description = await page.locator('meta[name="description"]').getAttribute('content');
     expect(description).toBeTruthy();
     expect(description).toContain('AI agents');
+    expect(description).toMatch(/Twin Cities|Minneapolis/i);
   });
 
   test('FAQ section renders', async ({ page }) => {
@@ -157,11 +171,10 @@ test.describe('Smoke Tests', () => {
     // Check FAQ section exists
     await expect(page.getByText('Frequently asked questions')).toBeVisible();
 
-    // Check at least one FAQ question
-    await expect(page.getByText('How does an engagement work?')).toBeVisible();
-
-    // Check FAQ answers are present
-    await expect(page.getByText(/Week 1: We spend time/)).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: 'How does an engagement work?' })).toBeVisible();
+    await expect(page.getByText(/We start with a one-week working first version/)).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: 'Where are you based?' })).toBeVisible();
+    await expect(page.getByText(/Minneapolis, MN\. We work with businesses across the Twin Cities/)).toBeVisible();
   });
 
   test('AI TOOLING section renders', async ({ page }) => {
@@ -179,6 +192,7 @@ test.describe('Smoke Tests', () => {
       '/robots.txt',
       '/sitemap.xml',
       '/llms.txt',
+      '/llms-full.txt',
     ];
 
     for (const file of seoFiles) {
@@ -216,18 +230,39 @@ test.describe('Smoke Tests', () => {
     expect(jsonLd['@graph']).toBeDefined();
     expect(Array.isArray(jsonLd['@graph'])).toBe(true);
     
-    // Check for required schemas
-    const types = jsonLd['@graph'].map((item: { '@type': string }) => item['@type']);
+    const typesOf = (item: { '@type': string | string[] }) =>
+      Array.isArray(item['@type']) ? item['@type'] : [item['@type']];
+    const types = jsonLd['@graph'].flatMap(typesOf);
     expect(types).toContain('Organization');
     expect(types).toContain('ProfessionalService');
+    expect(types).toContain('LocalBusiness');
     expect(types).toContain('FAQPage');
+    expect(types).toContain('WebSite');
 
-    // Validate Organization has required fields
-    const org = jsonLd['@graph'].find((item: { '@type': string }) => item['@type'] === 'Organization');
+    const org = jsonLd['@graph'].find((item: { '@type': string | string[] }) => typesOf(item).includes('Organization'));
     expect(org.name).toBe('Minny Agents');
     expect(org.url).toBe('https://minnyagents.com');
     expect(org.founder).toBeDefined();
     expect(org.founder.name).toBe('Connor Barrett');
+    expect(org.telephone).toBeUndefined();
+    expect(org.email).toBeUndefined();
+
+    const biz = jsonLd['@graph'].find((item: { '@type': string | string[] }) => typesOf(item).includes('LocalBusiness'));
+    const served = JSON.stringify(biz.areaServed);
+    expect(served).toContain('Minneapolis');
+    expect(served).toContain('Saint Paul');
+    expect(served).toContain('United States');
+    expect(biz.telephone).toBeUndefined();
+    expect(biz.aggregateRating).toBeUndefined();
+
+    const faq = jsonLd['@graph'].find((item: { '@type': string | string[] }) => typesOf(item).includes('FAQPage'));
+    expect(faq.mainEntity.length).toBeGreaterThanOrEqual(5);
+    for (const q of faq.mainEntity) {
+      expect(q['@type']).toBe('Question');
+      expect(q.acceptedAnswer.text.length).toBeGreaterThan(0);
+      await expect(page.getByRole('heading', { level: 3, name: q.name })).toBeVisible();
+    }
+
     expect(JSON.stringify(jsonLd)).not.toContain('northern-bytes.vercel.app');
   });
 
@@ -383,6 +418,41 @@ test.describe('Smoke Tests', () => {
       await page.locator('section.hero').screenshot({ path: `test-results/hero-${size.width}.png` });
       await page.locator('#contact').scrollIntoViewIfNeeded();
       await page.locator('#contact').screenshot({ path: `test-results/contact-${size.width}.png` });
+    }
+  });
+
+  test('robots.txt allows AI crawlers and sitemap lists industry pages', async ({ page }) => {
+    const robots = await (await page.goto('/robots.txt'))!.text();
+    for (const bot of ['GPTBot', 'PerplexityBot', 'ClaudeBot', 'Google-Extended']) {
+      expect(robots, `robots.txt should allow ${bot}`).toContain(bot);
+    }
+    expect(robots).toContain('https://minnyagents.com/sitemap.xml');
+
+    const sitemap = await (await page.goto('/sitemap.xml'))!.text();
+    for (const path of ['https://minnyagents.com', 'https://minnyagents.com/restaurants', 'https://minnyagents.com/home-services', 'https://minnyagents.com/clinics']) {
+      expect(sitemap).toContain(`<loc>${path}</loc>`);
+    }
+    expect(sitemap).toContain('<lastmod>');
+  });
+
+  test('industry pages are honest local-intent landings', async ({ page }) => {
+    const pages = [
+      { path: '/restaurants', heading: /AI agents for Minneapolis restaurants/i, title: /Restaurants/i },
+      { path: '/home-services', heading: /AI agents for Twin Cities home-service/i, title: /Home Services/i },
+      { path: '/clinics', heading: /AI agents for Twin Cities clinics/i, title: /Clinics/i },
+    ];
+    for (const item of pages) {
+      const response = await page.goto(item.path);
+      expect(response?.status(), item.path).toBe(200);
+      await expect(page.locator('h1')).toHaveText(item.heading);
+      expect(await page.title()).toMatch(item.title);
+      expect(await page.title()).toContain('Minny Agents');
+      const canonical = await page.locator('link[rel="canonical"]').getAttribute('href');
+      expect(canonical).toBe(`https://minnyagents.com${item.path}`);
+      await expect(page.locator('body')).not.toContainText('Northern Bytes');
+      await expect(page.locator('body')).not.toContainText(/trusted by/i);
+      expect(await page.locator('a[href^="mailto:"]').count()).toBe(0);
+      expect(await page.locator('a[href^="tel:"]').count()).toBe(0);
     }
   });
 
