@@ -31,6 +31,8 @@ test.describe('Smoke Tests', () => {
     await expect(page.getByText('Quick wins')).toBeVisible();
     await expect(page.getByText('Bigger projects')).toBeVisible();
     await expect(page.getByText('Frequently asked questions')).toBeVisible();
+    await expect(page.getByText(/A restaurant/)).toBeVisible();
+    await expect(page.getByText('Illustrative example. Not real data.')).toBeVisible();
 
     // Check footer
     await expect(page.getByText(/© 2026 Northern Bytes/)).toBeVisible();
