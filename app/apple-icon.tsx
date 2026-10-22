@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { INK, STAR_D, TEAL, WAVE_D } from "./mark";
+import { FAVICON_MARK_STAR_D, FAVICON_MARK_WAVE_D, INK, TEAL } from "./mark";
 
 export const dynamic = "force-static";
 export const size = { width: 180, height: 180 };
@@ -18,9 +18,9 @@ export default function AppleIcon() {
           backgroundColor: INK,
         }}
       >
-        <svg width="132" height="132" viewBox="0 0 32 32">
-          <path fill={TEAL} d={STAR_D} />
-          <path fill={TEAL} d={WAVE_D} />
+        <svg width="180" height="180" viewBox="0 0 32 32">
+          <path fill={TEAL} d={FAVICON_MARK_STAR_D} />
+          <path fill={TEAL} d={FAVICON_MARK_WAVE_D} />
         </svg>
       </div>
     ),
