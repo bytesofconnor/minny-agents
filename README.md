@@ -1,5 +1,9 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Auto-merge
+
+Non-draft PRs without the `hold` label squash-merge to `main` when required checks are green. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the workflow, the `hold` label, and required check names.
+
 ## Getting Started
 
 First, run the development server:

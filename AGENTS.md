@@ -145,13 +145,12 @@ Every PR must:
 
 ### Merge Policy
 
-**Autonomous merge is enabled**: PRs automatically merge to `main` when all CI checks pass. Connor Barrett has authorized this workflow, so checks must be genuinely sufficient.
+**Autonomous merge is enabled**: PRs automatically merge to `main` when required checks pass. See [CONTRIBUTING.md](./CONTRIBUTING.md). Connor Barrett has authorized this workflow, so checks must be genuinely sufficient.
 
 #### How Auto-Merge Works
 
 1. **PR Requirements**:
-   - Branch must start with `cursor/`
-   - PR must not be draft
+   - PR must not be draft (open as non-draft)
    - PR must not have `hold` label
    - PR body must contain `## Verification` section (non-empty)
    - PR body must contain `## Blast Radius` section (non-empty)
@@ -164,10 +163,10 @@ Every PR must:
    - **PR Hygiene**: Verification and blast-radius sections present and non-empty
 
 3. **Auto-Merge Trigger**:
-   - When CI workflow completes successfully
-   - Auto-merge workflow runs via `workflow_run` trigger
-   - Checks eligibility (branch prefix, non-draft, no hold label, all checks passed)
-   - Squash-merges PR to main with `GITHUB_TOKEN`
+   - On PR open/reopen/ready/synchronize/label changes: enable GitHub squash auto-merge (`--auto`)
+   - Safety net (schedule + after CI completes): squash-merge any open non-draft, non-hold PR with `mergeStateStatus=CLEAN`
+   - Does not require a `cursor/` branch prefix
+   - Native `--auto` needs repo `allow_auto_merge` (admin setting; this token cannot enable it)
    - Deletes source branch automatically
 
 4. **Post-Merge Production Verification**:

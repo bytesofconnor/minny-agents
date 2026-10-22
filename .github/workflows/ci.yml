@@ -62,3 +62,35 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  # Runs from the PR branch so a green PR can merge even before
+  # automerge.yml on main is updated. Skips drafts and 'hold'.
+  maybe-merge:
+    name: Queue squash merge
+    needs: [lint-and-typecheck, build, content-guard, e2e-smoke]
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Squash-merge when CLEAN and not on hold
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          HOLD=$(gh pr view "$PR" --json labels --jq '[.labels[].name] | index("hold") != null')
+          if [ "$HOLD" = "true" ]; then
+            echo "Skip: hold label"
+            exit 0
+          fi
+          TITLE=$(gh pr view "$PR" --json title --jq '.title')
+          if gh pr merge "$PR" --squash --delete-branch --subject "$TITLE" \
+            --body "Auto-merged after required checks passed"; then
+            echo "Merged #$PR"
+          else
+            echo "Direct squash merge not ready or not permitted for #$PR. Safety-net will retry when CLEAN."
+          fi
+          exit 0
