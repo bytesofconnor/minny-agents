@@ -34,6 +34,7 @@ jobs:
       - name: Enable squash auto-merge (skip draft / hold)
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
@@ -69,6 +70,7 @@ jobs:
       - name: Merge open non-draft, non-hold PRs that are CLEAN
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           gh pr list --state open --json number,isDraft,labels,mergeStateStatus,title \
