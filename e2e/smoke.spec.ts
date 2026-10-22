@@ -27,7 +27,9 @@ test.describe('Smoke Tests', () => {
     await expect(page.getByRole('link', { name: /Contact/i })).toBeVisible();
 
     // Check main sections exist
-    await expect(page.getByText('AI that runs your operations')).toBeVisible();
+    await expect(page.getByText('What I can take off your plate')).toBeVisible();
+    await expect(page.getByText('Quick wins')).toBeVisible();
+    await expect(page.getByText('Bigger projects')).toBeVisible();
     await expect(page.getByText('Frequently asked questions')).toBeVisible();
 
     // Check footer
