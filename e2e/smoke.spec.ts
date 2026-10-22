@@ -248,7 +248,7 @@ test.describe('Smoke Tests', () => {
       return !(a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y);
     }
 
-    for (const size of [{ width: 1280, height: 800 }, { width: 375, height: 812 }]) {
+    for (const size of [{ width: 1280, height: 800 }, { width: 1024, height: 800 }, { width: 375, height: 812 }]) {
       await page.setViewportSize(size);
       await page.goto('/');
       await page.waitForLoadState('networkidle');
@@ -260,5 +260,74 @@ test.describe('Smoke Tests', () => {
       expect(overlaps(headline, card), `h1 vs example card at ${size.width}`).toBe(false);
       expect(overlaps(cta, card), `CTA vs example card at ${size.width}`).toBe(false);
     }
+  });
+
+  test('example kicker stays on one line at 1280 and 1024', async ({ page }) => {
+    for (const width of [1280, 1024]) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto('/');
+      await page.waitForLoadState('networkidle');
+      const kicker = page.locator('.example-kicker');
+      await expect(kicker).toHaveText(/Example\s*·\s*Not a real business/i);
+      const kickerBox = await kicker.boundingBox();
+      const cardBox = await page.locator('.example-card').boundingBox();
+      expect(kickerBox, `kicker box at ${width}`).toBeTruthy();
+      expect(cardBox, `card box at ${width}`).toBeTruthy();
+      expect(kickerBox!.height, `kicker wrapped at ${width}`).toBeLessThan(22);
+      expect(kickerBox!.x + kickerBox!.width).toBeLessThanOrEqual(cardBox!.x + cardBox!.width + 1);
+      await page.locator('section').first().screenshot({ path: `test-results/hero-${width}.png` });
+    }
+  });
+
+  test('lake contours are quiet texture', async ({ request }) => {
+    const res = await request.get('/lake-contours.svg');
+    expect(res.status()).toBe(200);
+    const svg = await res.text();
+    expect(svg).not.toMatch(/#9B8CFF|#9b8cff/);
+    const opacities = [...svg.matchAll(/opacity="([0-9.]+)"/g)].map((m) => Number(m[1]));
+    expect(opacities.length).toBeGreaterThan(0);
+    expect(Math.max(...opacities)).toBeLessThanOrEqual(0.06);
+    expect(Math.min(...opacities)).toBeGreaterThanOrEqual(0.04);
+    const widths = [...svg.matchAll(/stroke-width="([0-9.]+)"/g)].map((m) => Number(m[1]));
+    expect(widths.length).toBeGreaterThan(0);
+    expect(Math.max(...widths)).toBe(1);
+    expect((svg.match(/<path/g) || []).length).toBeLessThanOrEqual(6);
+  });
+
+  test('32px favicon has inset padding', async ({ page }) => {
+    await page.goto('/');
+    const samples = await page.evaluate(async () => {
+      const res = await fetch('/favicon.svg');
+      const text = await res.text();
+      const blob = new Blob([text], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.src = url;
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      const c = document.createElement('canvas');
+      c.width = 32;
+      c.height = 32;
+      const ctx = c.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, 32, 32);
+      // Mid-edge samples sit inside the rounded rect but outside the star (~19% inset).
+      const pad = [
+        [4, 16], [27, 16], [16, 4], [16, 27],
+        [5, 5], [26, 5], [5, 26], [26, 26],
+      ];
+      const center = Array.from(ctx.getImageData(16, 16, 1, 1).data);
+      URL.revokeObjectURL(url);
+      return {
+        pad: pad.map(([x, y]) => Array.from(ctx.getImageData(x, y, 1, 1).data)),
+        center,
+      };
+    });
+    for (const [r, g, b] of samples.pad) {
+      const dist = Math.abs(r - 6) + Math.abs(g - 10) + Math.abs(b - 26);
+      expect(dist, 'padding-band pixel should stay dark ink').toBeLessThan(24);
+    }
+    expect(samples.center[1], 'center should be teal, not empty').toBeGreaterThan(150);
   });
 });

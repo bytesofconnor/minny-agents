@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { INK, STAR_D, TEAL, WAVE_D } from "./mark";
+import { FAVICON_STAR_D, INK, TEAL } from "./mark";
 
 export const dynamic = "force-static";
 export const size = { width: 32, height: 32 };
@@ -19,9 +19,8 @@ export default function Icon() {
           borderRadius: 6,
         }}
       >
-        <svg width="28" height="28" viewBox="0 0 32 32">
-          <path fill={TEAL} d={STAR_D} />
-          <path fill={TEAL} d={WAVE_D} />
+        <svg width="32" height="32" viewBox="0 0 32 32">
+          <path fill={TEAL} d={FAVICON_STAR_D} />
         </svg>
       </div>
     ),

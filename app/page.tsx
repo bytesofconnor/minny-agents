@@ -151,7 +151,7 @@ export default function Home() {
 
         {/* hero */}
         <section className="grid grid-cols-4 md:grid-cols-12">
-          <div className="col-span-4 px-5 pb-12 pt-16 md:col-span-9 md:px-6 md:pb-16 md:pt-24">
+          <div className="col-span-4 px-5 pb-12 pt-16 md:col-span-7 md:px-6 md:pb-16 md:pt-24 lg:col-span-8">
             <Mono className="text-mute">Minneapolis, MN</Mono>
             <h1 className="mt-8 max-w-[18ch] text-[44px] font-medium leading-[0.95] tracking-[-0.035em] sm:text-[68px] lg:text-[88px]">
               Missed calls, piled-up reviews, invoices in your inbox.

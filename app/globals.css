@@ -45,11 +45,14 @@ body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smo
 }
 .contours {
   position: absolute;
-  inset: -8%;
+  inset: -10% -8% -2% -8%;
   width: 116%;
-  height: 116%;
-  background: url("/lake-contours.svg") 50% 28% / cover no-repeat;
+  height: 112%;
+  background: url("/lake-contours.svg") 82% 108% / 78% auto no-repeat;
   opacity: 1;
+  /* Fade the rings out of the headline zone; keep grain at the edges. */
+  -webkit-mask-image: radial-gradient(ellipse 58% 52% at 26% 24%, transparent 0 42%, #000 86%);
+  mask-image: radial-gradient(ellipse 58% 52% at 26% 24%, transparent 0 42%, #000 86%);
   animation: contour-drift 80s linear infinite alternate;
 }
 @keyframes aurora-drift {
