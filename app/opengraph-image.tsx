@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { INK, STAR_D, TEAL, WAVE_D } from "./mark";
 
 export const dynamic = "force-static";
 export const alt = "Minny Agents — Missed calls, piled-up reviews, invoices in your inbox.";
@@ -16,20 +17,22 @@ export default async function Image() {
           flexDirection: "column",
           alignItems: "flex-start",
           justifyContent: "center",
-          backgroundColor: "#060A1A",
+          backgroundColor: INK,
           backgroundImage:
-            "radial-gradient(ellipse 90% 55% at 50% -10%, rgba(60,219,192,0.20), transparent 58%), radial-gradient(ellipse 50% 40% at 12% 0%, rgba(155,140,255,0.12), transparent 55%), radial-gradient(ellipse 45% 35% at 88% 8%, rgba(124,242,160,0.10), transparent 50%)",
+            "linear-gradient(100deg, transparent 8%, rgba(60,219,192,0.22) 38%, rgba(124,242,160,0.16) 52%, transparent 82%), radial-gradient(ellipse 70% 50% at 50% -8%, rgba(60,219,192,0.18), transparent 60%)",
           padding: "80px",
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "36px" }}>
-          <svg width="28" height="28" viewBox="0 0 16 16">
-            <path fill="#3CDBC0" d="M8 0l1.15 6.85L16 8l-6.85 1.15L8 16l-1.15-6.85L0 8l6.85-1.15L8 0z" />
+        <div style={{ display: "flex", alignItems: "center", gap: "18px", marginBottom: "36px" }}>
+          <svg width="48" height="48" viewBox="0 0 32 32">
+            <path fill={TEAL} d={STAR_D} />
+            <path fill={TEAL} d={WAVE_D} />
           </svg>
-          <span style={{ color: "#F5F5F5", fontSize: "44px", fontWeight: 600, letterSpacing: "-0.02em" }}>
-            Minny Agents
-          </span>
+          <div style={{ display: "flex", alignItems: "baseline", fontSize: "44px", letterSpacing: "-0.02em" }}>
+            <span style={{ color: "#F5F5F5", fontWeight: 700 }}>Minny</span>
+            <span style={{ color: "rgba(234,240,246,0.72)", fontWeight: 500, marginLeft: "12px" }}>Agents</span>
+          </div>
         </div>
         <div
           style={{

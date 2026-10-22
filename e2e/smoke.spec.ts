@@ -36,7 +36,15 @@ test.describe('Smoke Tests', () => {
 
     // Check footer and brand
     await expect(page.getByText(/© 2026 Minny Agents/)).toBeVisible();
-    await expect(page.getByText('Minny Agents').first()).toBeVisible();
+    await expect(page.getByText('Minny').first()).toBeVisible();
+    await expect(page.getByText('Agents').first()).toBeVisible();
+    await expect(page.getByText('An agent handling a missed restaurant call.')).toBeVisible();
+    await expect(page.getByText('Call missed').first()).toBeVisible();
+    await expect(page.getByText('Reply texted').first()).toBeVisible();
+    await expect(page.getByText('Table booked').first()).toBeVisible();
+    await expect(page.getByText(/Connor Barrett/)).toBeVisible();
+    await expect(page.getByText('Example').first()).toBeVisible();
+    await expect(page.getByText('Not a real business')).toBeVisible();
     await expect(page.locator('body')).not.toContainText('Northern Bytes');
     await expect(page.getByText('C01')).toHaveCount(0);
     await expect(page.locator('.scene .aurora')).toHaveCount(1);
@@ -228,5 +236,29 @@ test.describe('Smoke Tests', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.screenshot({ path: 'test-results/mobile-full-page.png', fullPage: true });
+  });
+
+  test('hero example card does not overlap headline or nav', async ({ page }) => {
+    async function box(locator: ReturnType<typeof page.locator>) {
+      const b = await locator.boundingBox();
+      expect(b, 'expected a bounding box').toBeTruthy();
+      return b!;
+    }
+    function overlaps(a: { x: number; y: number; width: number; height: number }, b: { x: number; y: number; width: number; height: number }) {
+      return !(a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y);
+    }
+
+    for (const size of [{ width: 1280, height: 800 }, { width: 375, height: 812 }]) {
+      await page.setViewportSize(size);
+      await page.goto('/');
+      await page.waitForLoadState('networkidle');
+      const header = await box(page.locator('header'));
+      const headline = await box(page.locator('h1'));
+      const card = await box(page.locator('.example-card'));
+      const cta = await box(page.getByRole("link", { name: /Get in touch/i }).last());
+      expect(overlaps(header, headline), `header vs h1 at ${size.width}`).toBe(false);
+      expect(overlaps(headline, card), `h1 vs example card at ${size.width}`).toBe(false);
+      expect(overlaps(cta, card), `CTA vs example card at ${size.width}`).toBe(false);
+    }
   });
 });
