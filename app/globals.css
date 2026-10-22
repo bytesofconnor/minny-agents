@@ -48,21 +48,30 @@ body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smo
   inset: -10% -8% -2% -8%;
   width: 116%;
   height: 112%;
-  background: url("/lake-contours.svg") 58% 46% / cover no-repeat;
+  overflow: hidden;
   /*
-   * --contour-opacity is the single visibility knob.
-   * SVG paths are authored at the #21 (loud) opacities, so:
-   *   0.16 = #23 quiet (path-equivalent 0.09, 0.083, 0.075, 0.068, 0.06)
-   *   1.00 = #21 loud
-   *   0.47 = this PR (~37% of the way from #23 toward #21; slightly under halfway)
-   * Restore #23: set --contour-opacity to 0.16
+   * --contour-opacity is the stroke contrast. Paths are authored at 1
+   * so this variable is the actual alpha — no nested multiply.
+   * The lake is inline SVG: CSS background and <img> both collapsed to
+   * a 0-height paint in Chromium (no intrinsic size on this file).
+   *   0.16 = #23 faint slivers
+   *   0.65 = this PR (quiet, plainly visible on ink)
+   *   1.00 = full-strength teal
    */
-  --contour-opacity: 0.47;
+  --contour-opacity: 0.65;
   opacity: var(--contour-opacity);
-  /* Headline-block punch-out — rings read around the type, not through the letters. */
-  -webkit-mask-image: radial-gradient(ellipse 50% 44% at 28% 38%, transparent 0 34%, #000 62%);
-  mask-image: radial-gradient(ellipse 50% 44% at 28% 38%, transparent 0 34%, #000 62%);
+  /* Headline punch — covers the h1 block; lower-right and card side stay unmasked. */
+  -webkit-mask-image: radial-gradient(ellipse 54% 52% at 24% 40%, transparent 0 68%, #000 94%);
+  mask-image: radial-gradient(ellipse 54% 52% at 24% 40%, transparent 0 68%, #000 94%);
   animation: contour-drift 80s linear infinite alternate;
+}
+.contours svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
 }
 @keyframes aurora-drift {
   from { transform: translate3d(-4%, 0, 0) scaleX(1.02); opacity: 0.78; }
