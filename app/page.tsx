@@ -1,5 +1,7 @@
+import ExampleCard from "./ExampleCard";
 import Fig from "./Fig";
 import Flow from "./Flow";
+import Mark from "./Mark";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://northern-bytes.vercel.app";
 
@@ -122,12 +124,13 @@ export default function Home() {
       <div className="relative z-10 mx-auto max-w-[1440px] border-x border-line">
         <header className="sticky top-0 z-50 border-b border-line bg-ink/80 backdrop-blur">
           <nav className="grid h-14 grid-cols-4 items-center md:grid-cols-12">
-            <a href="#" className="col-span-2 flex items-baseline gap-3 px-5 md:col-span-3 md:px-6">
-              <span className="inline-flex items-center gap-2">
-                <svg className="h-2.5 w-2.5 text-teal" viewBox="0 0 16 16" aria-hidden="true">
-                  <path fill="currentColor" d="M8 0l1.15 6.85L16 8l-6.85 1.15L8 16l-1.15-6.85L0 8l6.85-1.15L8 0z" />
-                </svg>
-                <span className="text-[15px] font-semibold tracking-[-0.01em]">Minny Agents</span>
+            <a href="#" className="col-span-2 flex items-center gap-3 px-5 md:col-span-3 md:px-6">
+              <span className="inline-flex items-center gap-2.5">
+                <Mark className="h-5 w-5 shrink-0 text-teal" />
+                <span className="text-[15px] tracking-[-0.015em]">
+                  <span className="font-bold">Minny</span>
+                  <span className="font-normal text-mute"> Agents</span>
+                </span>
               </span>
               <Mono className="hidden text-dim lg:inline">MA/26</Mono>
             </a>
@@ -158,17 +161,7 @@ export default function Home() {
             </p>
             <div className="mt-10"><Btn /></div>
           </div>
-          <aside className="col-span-4 border-t border-line px-5 py-6 md:col-span-3 md:border-l md:border-t-0 md:px-6 md:pt-24">
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-5 md:grid-cols-1">
-              {[
-                ["Founder", "Connor Barrett"],
-                ["Industries", "Restaurants, shops, services"],
-                ["Location", "Minneapolis, MN"],
-              ].map(([k, v]) => (
-                <div key={k as string}><dt><Mono className="text-dim">{k}</Mono></dt><dd className="mt-1 font-mono text-[13px] text-paper">{v}</dd></div>
-              ))}
-            </dl>
-          </aside>
+          <ExampleCard />
         </section>
 
         <Sec id="what-we-build" n="01" label="What we build">

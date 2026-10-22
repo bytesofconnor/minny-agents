@@ -25,33 +25,51 @@ body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smo
 }
 .aurora {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: -14%;
-  height: 54vh;
+  left: -20%;
+  width: 140%;
+  top: -6%;
+  height: 38vh;
   background:
-    radial-gradient(ellipse 80% 85% at 30% 18%, rgba(60, 219, 192, 0.22), transparent 70%),
-    radial-gradient(ellipse 55% 75% at 74% 6%, rgba(155, 140, 255, 0.16), transparent 70%),
-    radial-gradient(ellipse 46% 60% at 52% 0%, rgba(124, 242, 160, 0.12), transparent 66%);
+    linear-gradient(100deg,
+      transparent 6%,
+      rgba(60, 219, 192, 0.05) 18%,
+      rgba(60, 219, 192, 0.32) 36%,
+      rgba(124, 242, 160, 0.28) 50%,
+      rgba(60, 219, 192, 0.18) 64%,
+      rgba(155, 140, 255, 0.12) 78%,
+      transparent 92%),
+    radial-gradient(ellipse 80% 90% at 42% -10%, rgba(60, 219, 192, 0.20), transparent 68%);
+  filter: blur(32px);
   transform-origin: 50% 0%;
-  animation: aurora-drift 36s ease-in-out infinite alternate;
+  animation: aurora-drift 32s ease-in-out infinite alternate;
 }
 .contours {
   position: absolute;
-  inset: -10%;
-  width: 120%;
-  height: 120%;
-  background: url("/lake-contours.svg") center / cover no-repeat;
+  inset: -8%;
+  width: 116%;
+  height: 116%;
+  background: url("/lake-contours.svg") 50% 28% / cover no-repeat;
   opacity: 1;
-  animation: contour-drift 90s linear infinite alternate;
+  animation: contour-drift 80s linear infinite alternate;
 }
 @keyframes aurora-drift {
-  from { transform: translate3d(-2.5%, 0, 0) scale(1.02); opacity: 0.82; }
-  to { transform: translate3d(3%, 1.5%, 0) scale(1.08); opacity: 1; }
+  from { transform: translate3d(-4%, 0, 0) scaleX(1.02); opacity: 0.78; }
+  to { transform: translate3d(5%, 2%, 0) scaleX(1.08); opacity: 1; }
 }
 @keyframes contour-drift {
-  from { transform: translate3d(-1.5%, 0.8%, 0); }
-  to { transform: translate3d(1.8%, -0.8%, 0); }
+  from { transform: translate3d(-1.2%, 0.6%, 0); }
+  to { transform: translate3d(1.4%, -0.6%, 0); }
+}
+.example-step {
+  opacity: 0.42;
+  animation: example-step 9s ease-in-out infinite;
+}
+.example-step:nth-child(1) { animation-delay: 0s; }
+.example-step:nth-child(2) { animation-delay: 3s; }
+.example-step:nth-child(3) { animation-delay: 6s; }
+@keyframes example-step {
+  0%, 28% { opacity: 1; border-left-color: var(--color-teal); }
+  33%, 100% { opacity: 0.42; border-left-color: var(--color-line); }
 }
 .draw path.r { stroke-dasharray: 2400; stroke-dashoffset: 2400; animation: draw 2.4s cubic-bezier(.3,.6,.2,1) forwards; }
 .draw path.f { opacity: 0; animation: fade 1.2s ease forwards; }
@@ -64,5 +82,6 @@ body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smo
 @media (prefers-reduced-motion: reduce) {
   .draw path.r { stroke-dashoffset: 0; animation: none; } .draw path.f { opacity: 1; animation: none; }
   .draw rect.k { transform: none; animation: none; } .blink { animation: none; }
-  .aurora, .contours { animation: none; }
+  .aurora, .contours { animation: none; filter: none; }
+  .example-step { opacity: 1; animation: none; border-left-color: var(--color-line); }
 }
