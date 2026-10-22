@@ -62,3 +62,43 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  # Runs from the PR branch so a green PR can merge even before
+  # automerge.yml on main is updated. Skips drafts and 'hold'.
+  maybe-merge:
+    name: Queue squash merge
+    needs: [lint-and-typecheck, build, content-guard, e2e-smoke]
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Squash-merge when CLEAN and not on hold
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          HOLD=$(gh pr view "$PR" --json labels --jq '[.labels[].name] | index("hold") != null')
+          if [ "$HOLD" = "true" ]; then
+            echo "Skip: hold label"
+            exit 0
+          fi
+          for i in 1 2 3 4 5 6 7 8; do
+            STATUS=$(gh pr view "$PR" --json mergeStateStatus --jq '.mergeStateStatus')
+            echo "mergeStateStatus=$STATUS (attempt $i)"
+            if [ "$STATUS" = "CLEAN" ]; then
+              TITLE=$(gh pr view "$PR" --json title --jq '.title')
+              if gh pr merge "$PR" --squash --delete-branch --subject "$TITLE" \
+                --body "Auto-merged after required checks passed"; then
+                echo "Merged #$PR"
+              else
+                echo "Direct squash merge failed for #$PR (token or allow_auto_merge). Safety-net will retry."
+              fi
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Not CLEAN after waiting; safety-net workflow will retry"
+          exit 0

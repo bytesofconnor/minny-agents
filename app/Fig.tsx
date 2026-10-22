@@ -43,7 +43,7 @@ function ridge(i: number) {
     return [L + x * PW, y0 - sig(i, x) * AMP] as const;
   });
   const line = "M" + pts.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" L");
-  return { line, fill: `${line} L${L + PW},${y0} L${L},${y0} Z`, y0 };
+  return { line, fill: `${line} L${L + PW},${y0} L${L},${y0} Z`, y0, startY: pts[0][1] };
 }
 
 const ridges = Array.from({ length: N }, (_, i) => ridge(i));
@@ -99,7 +99,7 @@ export default function Fig() {
         <g key={CHANNELS[i]}>
           <path className="f" d={r.fill} fill="#060a1a" style={{ animationDelay: `${0.2 + i * 0.08}s` }} />
           <path className="r" d={r.line} fill="none" stroke={colors[i]} strokeWidth={i === 0 || i === 3 ? 1.6 : 1} strokeOpacity={i === 0 || i === 3 ? 1 : 0.85} style={{ animationDelay: `${i * 0.12}s` }} />
-          <text x={L - 10} y={r.y0 + 3} fill="#4a5470" fontSize="10" style={{fontFamily:"var(--font-mono-x)"}} textAnchor="end">{CHANNELS[i]}</text>
+          <text x={L - 10} y={r.startY} fill="#4a5470" fontSize="10" style={{fontFamily:"var(--font-mono-x)"}} textAnchor="end" dominantBaseline="central" alignmentBaseline="central">{CHANNELS[i]}</text>
         </g>
       ))}
       <g style={{fontFamily:"var(--font-mono-x)"}} fontSize="11">
