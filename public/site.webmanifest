@@ -1,0 +1,16 @@
+{
+  "name": "Minny Agents",
+  "short_name": "Minny Agents",
+  "description": "AI agents that answer, follow up, and keep the books moving for Twin Cities businesses.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#060A1A",
+  "theme_color": "#060A1A",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/favicon.ico", "sizes": "32x32", "type": "image/x-icon" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

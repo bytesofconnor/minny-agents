@@ -40,6 +40,14 @@ export const metadata: Metadata = {
     description: "We build AI agents that answer, follow up, and keep the books moving for restaurants, shops, and service businesses.",
     images: ["/opengraph-image"],
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/site.webmanifest",
   robots: {
     index: true,
     follow: true,
