@@ -46,13 +46,26 @@ const BANNED_PATTERNS = [
   { pattern: /mailto:[^\s"'<>]*northernbytes\.co/gi, reason: 'Unowned northernbytes.co mailto' },
 ];
 
+// Retired brand name — must not appear in anything visitors see
+const RENDERED_BANNED_PATTERNS = [
+  { pattern: /Northern Bytes/g, reason: 'Old brand name must not appear in rendered output' },
+];
+
 // Files to check (app source and public content)
 const FILES_TO_CHECK = [
   'app/page.tsx',
   'app/layout.tsx',
+  'app/opengraph-image.tsx',
   'public/llms.txt',
   'README.md',
   'AGENTS.md',
+];
+
+const RENDERED_FILES = [
+  'app/page.tsx',
+  'app/layout.tsx',
+  'app/opengraph-image.tsx',
+  'public/llms.txt',
 ];
 
 let violations = [];
@@ -76,6 +89,20 @@ function checkFile(filePath) {
         reason: reason,
         pattern: pattern.toString(),
       });
+    }
+  }
+
+  if (RENDERED_FILES.includes(filePath)) {
+    for (const { pattern, reason } of RENDERED_BANNED_PATTERNS) {
+      const matches = content.match(pattern);
+      if (matches) {
+        violations.push({
+          file: filePath,
+          matches: matches,
+          reason: reason,
+          pattern: pattern.toString(),
+        });
+      }
     }
   }
 }
