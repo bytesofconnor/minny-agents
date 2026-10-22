@@ -27,7 +27,7 @@ test.describe('Smoke Tests', () => {
     await expect(page.getByRole('link', { name: /Contact/i })).toBeVisible();
 
     // Check main sections exist
-    await expect(page.getByText('What I can take off your plate')).toBeVisible();
+    await expect(page.getByText('What we can take off your plate')).toBeVisible();
     await expect(page.getByText('Quick wins')).toBeVisible();
     await expect(page.getByText('Bigger projects')).toBeVisible();
     await expect(page.getByText('Frequently asked questions')).toBeVisible();
@@ -65,9 +65,13 @@ test.describe('Smoke Tests', () => {
   test('contact links are correct', async ({ page }) => {
     await page.goto('/');
 
-    // Check email links
-    const emailLinks = await page.locator('a[href^="mailto:hello@northernbytes.co"]').all();
-    expect(emailLinks.length).toBeGreaterThan(0);
+    // Unowned address must not appear
+    const emailLinks = await page.locator('a[href^="mailto:"]').all();
+    expect(emailLinks.length).toBe(0);
+
+    const contactCtas = await page.locator('a[href="#contact"]').all();
+    expect(contactCtas.length).toBeGreaterThan(0);
+    await expect(page.getByText('Contact details coming soon.')).toBeVisible();
   });
 
   test('no broken internal links', async ({ page }) => {

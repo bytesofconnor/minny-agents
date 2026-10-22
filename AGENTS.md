@@ -104,7 +104,7 @@ Designed for Vercel deployment:
 - Typography scale
 - Layout grid
 - Component structure
-- Contact information (hello@northernbytes.co)
+- Contact information (unpublished; do not invent an email)
 
 ## Agent Instructions
 
@@ -197,6 +197,6 @@ gh pr edit <number> --remove-label hold
 
 ## Contact
 
-- Email: hello@northernbytes.co
+- Contact details coming soon
 - Founder: Connor Barrett
 - Location: Minneapolis, MN

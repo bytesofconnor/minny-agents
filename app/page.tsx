@@ -1,7 +1,6 @@
 import Fig from "./Fig";
 import Flow from "./Flow";
 
-const MAIL = "mailto:hello@northernbytes.co";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://northern-bytes.vercel.app";
 
 const quickWins = [
@@ -31,7 +30,7 @@ function Mono({ children, className = "" }: { children: React.ReactNode; classNa
 }
 function Btn({ children = "Get in touch", solid = true }: { children?: React.ReactNode; solid?: boolean }) {
   return (
-    <a href={MAIL} className={`inline-flex items-center gap-6 border px-4 py-3 font-mono text-[12px] uppercase tracking-[0.08em] transition-colors ${solid ? "border-paper bg-paper text-ink hover:border-teal hover:bg-teal" : "border-line text-paper hover:border-paper"}`}>
+    <a href="#contact" className={`inline-flex items-center gap-6 border px-4 py-3 font-mono text-[12px] uppercase tracking-[0.08em] transition-colors ${solid ? "border-paper bg-paper text-ink hover:border-teal hover:bg-teal" : "border-line text-paper hover:border-paper"}`}>
       {children}<span aria-hidden>↗</span>
     </a>
   );
@@ -77,7 +76,6 @@ export default function Home() {
         },
         contactPoint: {
           "@type": "ContactPoint",
-          email: "hello@northernbytes.co",
           contactType: "Business Inquiries",
         },
         areaServed: {
@@ -139,7 +137,7 @@ export default function Home() {
               ))}
             </div>
             <div className="col-span-2 flex justify-end md:col-span-4">
-              <a href={MAIL} className="flex h-14 items-center gap-3 border-l border-line px-5 font-mono text-[11px] uppercase tracking-[0.08em] transition-colors hover:bg-paper hover:text-ink md:px-6">
+              <a href="#contact" className="flex h-14 items-center gap-3 border-l border-line px-5 font-mono text-[11px] uppercase tracking-[0.08em] transition-colors hover:bg-paper hover:text-ink md:px-6">
                 <span className="hidden sm:inline">Get in touch</span><span className="sm:hidden">Contact</span><span aria-hidden>↗</span>
               </a>
             </div>
@@ -173,7 +171,7 @@ export default function Home() {
 
         <Sec id="what-we-build" n="01" label="What we build">
           <div className="px-5 pb-20 pt-10 md:px-6 md:pb-32 md:pt-8">
-            <h2 className="text-4xl font-medium tracking-[-0.03em] md:text-6xl">What I can take off your plate.</h2>
+            <h2 className="text-4xl font-medium tracking-[-0.03em] md:text-6xl">What we can take off your plate.</h2>
             
             {/* Quick wins */}
             <div className="mt-12 border-t border-paper/60 pt-8">
@@ -322,7 +320,7 @@ export default function Home() {
             <div className="mt-12 grid gap-8 border-t border-line pt-8 md:grid-cols-9">
               <p className="text-lg leading-relaxed text-mute md:col-span-4 md:text-xl">We&apos;ll let you know if we can help.</p>
               <div className="flex flex-wrap items-center gap-4 md:col-span-5 md:justify-end">
-                <Btn /><Btn solid={false}>hello@northernbytes.co</Btn>
+                <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-mute">Contact details coming soon.</p>
               </div>
             </div>
           </div>
