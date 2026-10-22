@@ -118,19 +118,6 @@ export default function Home() {
     <div className="relative min-h-screen">
       <div className="scene" aria-hidden="true">
         <div className="aurora" />
-        <div className="contours">
-          <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">
-            <g fill="none" stroke="#3CDBC0" strokeWidth="4" strokeLinejoin="round" strokeLinecap="round">
-              <path d="M210 430C250 300 390 210 560 200C760 188 980 250 1120 360C1260 470 1320 620 1240 740C1160 860 940 910 740 880C520 846 300 740 230 600C190 520 180 480 210 430Z" />
-              <path d="M350 450C390 355 500 300 630 294C780 286 940 340 1040 420C1140 500 1170 600 1110 685C1050 768 900 805 750 780C580 752 410 675 360 565C340 520 330 485 350 450Z" />
-              <path d="M490 470C520 400 600 365 690 362C800 358 905 400 970 460C1035 520 1050 590 1005 648C960 706 855 732 750 714C630 694 515 645 492 560C482 528 478 498 490 470Z" />
-              <path d="M630 500C650 455 700 438 755 438C820 438 875 462 910 502C945 542 950 588 918 625C886 662 820 678 755 666C680 652 620 622 612 568C608 545 618 518 630 500Z" />
-            </g>
-            <g fill="none" stroke="#7CF2A0" strokeWidth="4" strokeLinejoin="round" strokeLinecap="round">
-              <path d="M1220 195C1265 165 1355 175 1415 220C1475 265 1485 330 1440 372C1395 414 1310 420 1255 385C1200 350 1185 250 1220 195Z" />
-            </g>
-          </svg>
-        </div>
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="relative z-10 mx-auto max-w-[1440px] border-x border-line">
@@ -162,8 +149,19 @@ export default function Home() {
         </header>
 
         {/* hero */}
-        <section className="grid grid-cols-4 md:grid-cols-12">
-          <div className="col-span-4 px-5 pb-12 pt-16 md:col-span-7 md:px-6 md:pb-16 md:pt-24 lg:col-span-8">
+        <section className="hero grid grid-cols-4 md:grid-cols-12">
+          <div className="contours" aria-hidden="true">
+            <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+              <g fill="none" stroke="#3CDBC0" strokeWidth="1" strokeLinejoin="round" strokeLinecap="round">
+                <ellipse cx="1080" cy="700" rx="200" ry="146" transform="rotate(-14 1080 700)" />
+                <ellipse cx="1080" cy="700" rx="320" ry="234" transform="rotate(-14 1080 700)" />
+                <ellipse cx="1080" cy="700" rx="440" ry="322" transform="rotate(-14 1080 700)" />
+                <ellipse cx="1080" cy="700" rx="560" ry="410" transform="rotate(-14 1080 700)" />
+                <ellipse cx="1080" cy="700" rx="680" ry="498" transform="rotate(-14 1080 700)" />
+              </g>
+            </svg>
+          </div>
+          <div className="relative z-10 col-span-4 px-5 pb-12 pt-16 md:col-span-7 md:px-6 md:pb-16 md:pt-24 lg:col-span-8">
             <Mono className="text-mute">Minneapolis, MN</Mono>
             <h1 className="mt-8 max-w-[18ch] text-[44px] font-medium leading-[0.95] tracking-[-0.035em] sm:text-[68px] lg:text-[88px]">
               Missed calls, piled-up reviews, invoices in your inbox.

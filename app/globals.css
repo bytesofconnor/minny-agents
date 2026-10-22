@@ -43,26 +43,28 @@ body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smo
   transform-origin: 50% 0%;
   animation: aurora-drift 32s ease-in-out infinite alternate;
 }
+.hero {
+  position: relative;
+  overflow: hidden;
+}
 .contours {
   position: absolute;
-  inset: -10% -8% -2% -8%;
-  width: 116%;
-  height: 112%;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   overflow: hidden;
   /*
-   * --contour-opacity is the stroke contrast. Paths are authored at 1
+   * --contour-opacity is the stroke contrast. Rings are authored at 1
    * so this variable is the actual alpha — no nested multiply.
-   * The lake is inline SVG: CSS background and <img> both collapsed to
-   * a 0-height paint in Chromium (no intrinsic size on this file).
-   *   0.16 = #23 faint slivers
-   *   0.65 = this PR (quiet, plainly visible on ink)
-   *   1.00 = full-strength teal
+   *   0.12 = this PR (quiet, at or under the grid-line weight)
+   *   0.65 = #25 too loud
    */
-  --contour-opacity: 0.65;
+  --contour-opacity: 0.12;
   opacity: var(--contour-opacity);
-  /* Headline punch — covers the h1 block; lower-right and card side stay unmasked. */
-  -webkit-mask-image: radial-gradient(ellipse 54% 52% at 24% 40%, transparent 0 68%, #000 94%);
-  mask-image: radial-gradient(ellipse 54% 52% at 24% 40%, transparent 0 68%, #000 94%);
+  /* Reveal only the lower-right (behind the card). Headline and the
+   * hero/section seam stay clear so rings never read as body texture. */
+  -webkit-mask-image: radial-gradient(ellipse 58% 54% at 78% 80%, #000 0 46%, transparent 76%);
+  mask-image: radial-gradient(ellipse 58% 54% at 78% 80%, #000 0 46%, transparent 76%);
   animation: contour-drift 80s linear infinite alternate;
 }
 .contours svg {
