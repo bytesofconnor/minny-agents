@@ -43,7 +43,8 @@ body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smo
   transform-origin: 50% 0%;
   animation: aurora-drift 32s ease-in-out infinite alternate;
 }
-.hero {
+.hero,
+.contact {
   position: relative;
   overflow: hidden;
 }
@@ -56,16 +57,22 @@ body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smo
   /*
    * --contour-opacity is the stroke contrast. Rings are authored at 1
    * so this variable is the actual alpha — no nested multiply.
-   *   0.12 = this PR (quiet, at or under the grid-line weight)
+   *   0.12 = quiet, at or under the grid-line weight
    *   0.65 = #25 too loud
    */
   --contour-opacity: 0.12;
   opacity: var(--contour-opacity);
-  /* Reveal only the lower-right (behind the card). Headline and the
-   * hero/section seam stay clear so rings never read as body texture. */
+  animation: contour-drift 80s linear infinite alternate;
+}
+.hero .contours {
+  /* Reveal only the lower-right (behind the card). Headline stays clear. */
   -webkit-mask-image: radial-gradient(ellipse 58% 54% at 78% 80%, #000 0 46%, transparent 76%);
   mask-image: radial-gradient(ellipse 58% 54% at 78% 80%, #000 0 46%, transparent 76%);
-  animation: contour-drift 80s linear infinite alternate;
+}
+.contact .contours {
+  /* Empty lower-right around “coming soon”; off the contact headline. */
+  -webkit-mask-image: radial-gradient(ellipse 52% 50% at 86% 78%, #000 0 48%, transparent 76%);
+  mask-image: radial-gradient(ellipse 52% 50% at 86% 78%, #000 0 48%, transparent 76%);
 }
 .contours svg {
   position: absolute;

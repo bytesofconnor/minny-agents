@@ -1,3 +1,4 @@
+import Contours from "./Contours";
 import ExampleCard from "./ExampleCard";
 import Fig from "./Fig";
 import Flow from "./Flow";
@@ -37,9 +38,9 @@ function Btn({ children = "Get in touch", solid = true }: { children?: React.Rea
     </a>
   );
 }
-function Sec({ id, n, label, children }: { id?: string; n: string; label: string; children: React.ReactNode }) {
+function Sec({ id, n, label, children, className = "" }: { id?: string; n: string; label: string; children: React.ReactNode; className?: string }) {
   return (
-    <section id={id} className="scroll-mt-14 border-t border-line">
+    <section id={id} className={`scroll-mt-14 border-t border-line ${className}`}>
       <div className="grid grid-cols-4 md:grid-cols-12">
         <div className="col-span-4 border-r border-line px-5 py-3 md:col-span-2 md:px-6">
           <Mono className="text-mute"><span className="text-teal">§ {n}</span>&nbsp;&nbsp;{label}</Mono>
@@ -150,17 +151,7 @@ export default function Home() {
 
         {/* hero */}
         <section className="hero grid grid-cols-4 md:grid-cols-12">
-          <div className="contours" aria-hidden="true">
-            <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
-              <g fill="none" stroke="#3CDBC0" strokeWidth="1" strokeLinejoin="round" strokeLinecap="round">
-                <ellipse cx="1080" cy="700" rx="200" ry="146" transform="rotate(-14 1080 700)" />
-                <ellipse cx="1080" cy="700" rx="320" ry="234" transform="rotate(-14 1080 700)" />
-                <ellipse cx="1080" cy="700" rx="440" ry="322" transform="rotate(-14 1080 700)" />
-                <ellipse cx="1080" cy="700" rx="560" ry="410" transform="rotate(-14 1080 700)" />
-                <ellipse cx="1080" cy="700" rx="680" ry="498" transform="rotate(-14 1080 700)" />
-              </g>
-            </svg>
-          </div>
+          <Contours lake="hero" />
           <div className="relative z-10 col-span-4 px-5 pb-12 pt-16 md:col-span-7 md:px-6 md:pb-16 md:pt-24 lg:col-span-8">
             <Mono className="text-mute">Minneapolis, MN</Mono>
             <h1 className="mt-8 max-w-[18ch] text-[44px] font-medium leading-[0.95] tracking-[-0.035em] sm:text-[68px] lg:text-[88px]">
@@ -319,10 +310,11 @@ export default function Home() {
           </div>
         </Sec>
 
-        <Sec id="contact" n="03" label="Contact">
-          <div className="px-5 pb-20 pt-10 md:px-6 md:pb-28 md:pt-8">
-            <h2 className="max-w-[12ch] text-5xl font-medium leading-[0.95] tracking-[-0.035em] md:text-[96px]">Tell us what problem you need to solve.</h2>
-            <div className="mt-12 grid gap-8 border-t border-line pt-8 md:grid-cols-9">
+        <Sec id="contact" n="03" label="Contact" className="contact">
+          <div className="relative overflow-hidden px-5 pb-20 pt-10 md:px-6 md:pb-28 md:pt-8">
+            <Contours lake="contact" />
+            <h2 className="relative z-10 max-w-[12ch] text-5xl font-medium leading-[0.95] tracking-[-0.035em] md:text-[96px]">Tell us what problem you need to solve.</h2>
+            <div className="relative z-10 mt-12 grid gap-8 border-t border-line pt-8 md:grid-cols-9">
               <p className="text-lg leading-relaxed text-mute md:col-span-4 md:text-xl">We&apos;ll let you know if we can help.</p>
               <div className="flex flex-wrap items-center gap-4 md:col-span-5 md:justify-end">
                 <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-mute">Contact details coming soon.</p>
