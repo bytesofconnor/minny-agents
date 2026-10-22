@@ -49,6 +49,7 @@ const BANNED_PATTERNS = [
 // Retired brand name — must not appear in anything visitors see
 const RENDERED_BANNED_PATTERNS = [
   { pattern: /Northern Bytes/g, reason: 'Old brand name must not appear in rendered output' },
+  { pattern: /northern-bytes\.vercel\.app/g, reason: 'Production URL is https://minnyagents.com; do not publish the old Vercel alias' },
 ];
 
 // Files to check (app source and public content)

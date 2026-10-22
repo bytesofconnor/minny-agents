@@ -32,8 +32,8 @@ jobs:
             
             # For now, use fixed production URL
             # Vercel deploys main automatically via their GitHub app
-            echo "url=https://northern-bytes.vercel.app" >> $GITHUB_OUTPUT
-            echo "✅ Using production URL: https://northern-bytes.vercel.app"
+            echo "url=https://minnyagents.com" >> $GITHUB_OUTPUT
+            echo "✅ Using production URL: https://minnyagents.com"
             exit 0
           done
           

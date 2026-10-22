@@ -95,6 +95,22 @@ Designed for Vercel deployment:
 - Build command: `npm run build`
 - Output: Static export
 - No environment variables required
+- Production URL: `https://minnyagents.com`
+
+### Domain setup
+
+**In Vercel (project domains — not in git):**
+- `minnyagents.com` attached as the apex primary domain
+- `www.minnyagents.com` attached and verified on Vercel DNS
+
+**In the repo:**
+- `app/site.ts` — `SITE_URL` default `https://minnyagents.com` (metadataBase, canonical, OG/Twitter, JSON-LD, sitemap, robots)
+- `vercel.json` — host-based 308s:
+  - `northern-bytes.vercel.app/:path*` → `https://minnyagents.com/:path*` (`has: host` so preview `*.vercel.app` URLs are not redirected)
+  - `www.minnyagents.com/:path*` → `https://minnyagents.com/:path*`
+- `.github/workflows/prod-smoke.yml` and Playwright `BASE_URL` — production checks hit `https://minnyagents.com`
+
+The GitHub repo name remains `northern-bytes`. Do not publish `northern-bytes.vercel.app` in visitor-facing copy.
 
 ## Content Guidelines
 
@@ -171,7 +187,7 @@ Every PR must:
 
 4. **Post-Merge Production Verification**:
    - Waits for Vercel to deploy main to production
-   - Runs smoke tests against `https://northern-bytes.vercel.app`
+   - Runs smoke tests against `https://minnyagents.com`
    - Creates GitHub issue with `prod-broken` label if tests fail
    - Uploads visual regression screenshots as artifacts
 

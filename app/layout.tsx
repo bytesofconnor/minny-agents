@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { SITE_URL } from "./site";
 import "./globals.css";
 
 const sans = Inter_Tight({ subsets: ["latin"], variable: "--font-sans-x" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono-x" });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://northern-bytes.vercel.app";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Minny Agents — AI agents for Twin Cities businesses",
     template: "%s | Minny Agents",
@@ -18,10 +17,13 @@ export const metadata: Metadata = {
   keywords: ["AI agents", "automation", "AI systems", "restaurants", "small business", "Twin Cities", "Minneapolis", "bookkeeping", "reviews"],
   authors: [{ name: "Connor Barrett" }],
   creator: "Connor Barrett",
+  alternates: {
+    canonical: SITE_URL,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteUrl,
+    url: SITE_URL,
     siteName: "Minny Agents",
     title: "Minny Agents — AI agents for Twin Cities businesses",
     description: "We build AI agents that answer, follow up, and keep the books moving for restaurants, shops, and service businesses.",
