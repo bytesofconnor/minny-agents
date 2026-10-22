@@ -44,7 +44,7 @@ test.describe('Smoke Tests', () => {
     await expect(page.getByText('Table booked').first()).toBeVisible();
     await expect(page.getByText(/Connor Barrett/)).toBeVisible();
     await expect(page.getByText('Example').first()).toBeVisible();
-    await expect(page.getByText('Not a real business')).toBeVisible();
+    await expect(page.locator('body')).not.toContainText('Not a real business');
     await expect(page.locator('body')).not.toContainText('Northern Bytes');
     await expect(page.getByText('C01')).toHaveCount(0);
     await expect(page.locator('.scene .aurora')).toHaveCount(1);
@@ -268,7 +268,7 @@ test.describe('Smoke Tests', () => {
       await page.goto('/');
       await page.waitForLoadState('networkidle');
       const kicker = page.locator('.example-kicker');
-      await expect(kicker).toHaveText(/Example\s*·\s*Not a real business/i);
+      await expect(kicker).toHaveText(/^Example$/i);
       const kickerBox = await kicker.boundingBox();
       const cardBox = await page.locator('.example-card').boundingBox();
       expect(kickerBox, `kicker box at ${width}`).toBeTruthy();
@@ -285,22 +285,35 @@ test.describe('Smoke Tests', () => {
     const svg = await res.text();
     expect(svg).not.toMatch(/#9B8CFF|#9b8cff/);
     const opacities = [...svg.matchAll(/opacity="([0-9.]+)"/g)].map((m) => Number(m[1]));
-    expect(opacities).toEqual([0.55, 0.4, 0.28, 0.2, 0.24]);
+    expect(opacities).toEqual([1, 1, 1, 1, 1]);
     const widths = [...svg.matchAll(/stroke-width="([0-9.]+)"/g)].map((m) => Number(m[1]));
     expect(widths.length).toBeGreaterThan(0);
-    expect(Math.max(...widths)).toBe(1);
+    expect(Math.max(...widths)).toBe(4);
     expect((svg.match(/<path/g) || []).length).toBeLessThanOrEqual(6);
 
     await page.goto('/');
     const knob = await page.locator('.contours').evaluate((el) => {
+      el.style.animation = 'none';
       const style = getComputedStyle(el);
       return {
         var: style.getPropertyValue('--contour-opacity').trim(),
         opacity: Number(style.opacity),
       };
     });
-    expect(Number(knob.var)).toBeCloseTo(0.47, 2);
-    expect(knob.opacity).toBeCloseTo(0.47, 2);
+    expect(Number(knob.var)).toBeCloseTo(0.65, 2);
+    expect(knob.opacity).toBeCloseTo(0.65, 2);
+    await expect(page.locator('.contours svg path')).toHaveCount(5);
+    const inlineStroke = await page.locator('.contours svg g').first().getAttribute('stroke-width');
+    expect(inlineStroke).toBe('4');
+    const svgBox = await page.locator('.contours svg').boundingBox();
+    expect(svgBox?.height, 'inline lake svg must have a real paint box').toBeGreaterThan(200);
+
+    for (const size of [{ width: 1280, height: 800 }, { width: 1440, height: 900 }]) {
+      await page.setViewportSize(size);
+      await page.goto('/');
+      await page.locator('.contours').evaluate((el) => { el.style.animation = 'none'; });
+      await page.screenshot({ path: `test-results/hero-contours-${size.width}x${size.height}.png` });
+    }
   });
 
   test('32px favicon has inset padding', async ({ page }) => {
