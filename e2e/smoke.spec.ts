@@ -286,8 +286,8 @@ test.describe('Smoke Tests', () => {
     expect(svg).not.toMatch(/#9B8CFF|#9b8cff/);
     const opacities = [...svg.matchAll(/opacity="([0-9.]+)"/g)].map((m) => Number(m[1]));
     expect(opacities.length).toBeGreaterThan(0);
-    expect(Math.max(...opacities)).toBeLessThanOrEqual(0.06);
-    expect(Math.min(...opacities)).toBeGreaterThanOrEqual(0.04);
+    expect(Math.max(...opacities)).toBeLessThanOrEqual(0.09);
+    expect(Math.min(...opacities)).toBeGreaterThanOrEqual(0.06);
     const widths = [...svg.matchAll(/stroke-width="([0-9.]+)"/g)].map((m) => Number(m[1]));
     expect(widths.length).toBeGreaterThan(0);
     expect(Math.max(...widths)).toBe(1);
