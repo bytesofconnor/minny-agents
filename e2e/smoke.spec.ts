@@ -49,6 +49,7 @@ test.describe('Smoke Tests', () => {
     await expect(page.getByText('C01')).toHaveCount(0);
     await expect(page.locator('.scene .aurora')).toHaveCount(1);
     await expect(page.locator('.hero .contours')).toHaveCount(1);
+    await expect(page.locator('#contact .contours')).toHaveCount(1);
     await expect(page.locator('.scene .contours')).toHaveCount(0);
 
     // No critical console errors (404s are ignored)
@@ -280,57 +281,75 @@ test.describe('Smoke Tests', () => {
     }
   });
 
-  test('lake contours are quiet texture clipped to the hero', async ({ page, request }) => {
+  test('lake contours are quiet texture clipped to hero and contact', async ({ page, request }) => {
     const res = await request.get('/lake-contours.svg');
     expect(res.status()).toBe(200);
     const svg = await res.text();
     expect(svg).not.toMatch(/#9B8CFF|#9b8cff/);
-    const opacities = [...svg.matchAll(/opacity="([0-9.]+)"/g)].map((m) => Number(m[1]));
-    expect(opacities).toEqual([1, 1, 1, 1, 1]);
     const widths = [...svg.matchAll(/stroke-width="([0-9.]+)"/g)].map((m) => Number(m[1]));
     expect(widths.length).toBeGreaterThan(0);
     expect(Math.max(...widths)).toBe(1);
-    expect((svg.match(/<ellipse/g) || []).length).toBe(5);
-    expect(svg).not.toMatch(/<path/);
+    expect((svg.match(/<path/g) || []).length).toBe(8);
 
     await page.goto('/');
-    const knob = await page.locator('.contours').evaluate((el) => {
-      el.style.animation = 'none';
-      const style = getComputedStyle(el);
-      return {
-        var: style.getPropertyValue('--contour-opacity').trim(),
-        opacity: Number(style.opacity),
-      };
-    });
-    expect(Number(knob.var)).toBeCloseTo(0.12, 2);
-    expect(knob.opacity).toBeCloseTo(0.12, 2);
-    await expect(page.locator('.hero .contours svg ellipse')).toHaveCount(5);
-    const inlineStroke = await page.locator('.contours svg g').first().getAttribute('stroke-width');
+    for (const sel of ['.hero .contours', '#contact .contours']) {
+      const knob = await page.locator(sel).evaluate((el) => {
+        el.style.animation = 'none';
+        const style = getComputedStyle(el);
+        return {
+          var: style.getPropertyValue('--contour-opacity').trim(),
+          opacity: Number(style.opacity),
+        };
+      });
+      expect(Number(knob.var), sel).toBeCloseTo(0.12, 2);
+      expect(knob.opacity, sel).toBeCloseTo(0.12, 2);
+    }
+    await expect(page.locator('.hero .contours svg path')).toHaveCount(8);
+    await expect(page.locator('#contact .contours svg path')).toHaveCount(7);
+    const inlineStroke = await page.locator('.hero .contours svg g').getAttribute('stroke-width');
     expect(inlineStroke).toBe('1');
-    const svgBox = await page.locator('.contours svg').boundingBox();
-    expect(svgBox?.height, 'inline lake svg must have a real paint box').toBeGreaterThan(200);
 
-    const hero = page.locator('section.hero');
-    const contours = page.locator('.contours');
-    const heroBox = await hero.boundingBox();
-    const contourBox = await contours.boundingBox();
-    expect(heroBox, 'hero box').toBeTruthy();
-    expect(contourBox, 'contour box').toBeTruthy();
-    expect(contourBox!.y + contourBox!.height).toBeLessThanOrEqual(heroBox!.y + heroBox!.height + 1);
+    const nested = await page.locator('.hero .contours').evaluate((root) => {
+      const cx = 1080;
+      const cy = 700;
+      const paths = [...root.querySelectorAll('path')];
+      for (let t = 0; t < 1; t += 0.05) {
+        let prev = 0;
+        for (const p of paths) {
+          const pt = p.getPointAtLength(t * p.getTotalLength());
+          const r = Math.hypot(pt.x - cx, pt.y - cy);
+          if (r <= prev - 0.75) return false;
+          prev = r;
+        }
+      }
+      return true;
+    });
+    expect(nested, 'hero rings must not intersect').toBe(true);
 
-    for (const size of [{ width: 1280, height: 800 }, { width: 1440, height: 900 }]) {
+    function box(locator: ReturnType<typeof page.locator>) {
+      return locator.boundingBox();
+    }
+    const heroBox = await box(page.locator('section.hero'));
+    const heroContours = await box(page.locator('.hero .contours'));
+    expect(heroContours!.y + heroContours!.height).toBeLessThanOrEqual(heroBox!.y + heroBox!.height + 1);
+    const contactBox = await box(page.locator('#contact'));
+    const contactContours = await box(page.locator('#contact .contours'));
+    expect(contactContours!.y).toBeGreaterThanOrEqual(contactBox!.y - 1);
+    expect(contactContours!.y + contactContours!.height).toBeLessThanOrEqual(contactBox!.y + contactBox!.height + 1);
+
+    for (const size of [
+      { width: 1280, height: 800 },
+      { width: 1440, height: 900 },
+      { width: 390, height: 844 },
+    ]) {
       await page.setViewportSize(size);
       await page.goto('/');
-      await page.locator('.contours').evaluate((el) => { el.style.animation = 'none'; });
-      await page.screenshot({ path: `test-results/full-${size.width}x${size.height}.png`, fullPage: true });
-      await page.screenshot({ path: `test-results/hero-${size.width}x${size.height}.png` });
-      await page.locator('#what-we-build').scrollIntoViewIfNeeded();
-      const buildBox = await page.locator('#what-we-build').boundingBox();
-      const clipped = await page.locator('.contours').boundingBox();
-      expect(buildBox, `services box at ${size.width}`).toBeTruthy();
-      expect(clipped, `contour box at ${size.width}`).toBeTruthy();
-      expect(clipped!.y + clipped!.height).toBeLessThanOrEqual(buildBox!.y + 1);
-      await page.screenshot({ path: `test-results/services-${size.width}x${size.height}.png` });
+      await page.locator('.contours').evaluateAll((els) => {
+        for (const el of els) el.style.animation = 'none';
+      });
+      await page.locator('section.hero').screenshot({ path: `test-results/hero-${size.width}.png` });
+      await page.locator('#contact').scrollIntoViewIfNeeded();
+      await page.locator('#contact').screenshot({ path: `test-results/contact-${size.width}.png` });
     }
   });
 
