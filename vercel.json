@@ -4,9 +4,21 @@
   "installCommand": "npm install",
   "redirects": [
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "northern-bytes.vercel.app" }],
+      "destination": "https://minnyagents.com/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "northern-bytes.vercel.app" }],
       "destination": "https://minnyagents.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "www.minnyagents.com" }],
+      "destination": "https://minnyagents.com/",
       "permanent": true
     },
     {

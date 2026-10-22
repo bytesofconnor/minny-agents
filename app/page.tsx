@@ -1,9 +1,9 @@
+import { Btn, Mono } from "./Chrome";
 import Contours from "./Contours";
 import ExampleCard from "./ExampleCard";
 import Fig from "./Fig";
 import Flow from "./Flow";
-import Mark from "./Mark";
-import { SITE_URL } from "./site";
+import { faqs, homeJsonLd } from "./seo";
 
 const quickWins = [
   { a: "Missed calls & after-hours questions", p: "The phone rings during the dinner rush and nobody can answer.", w: "We build an AI that texts back every missed call, answers menu and hours questions, and hands anything else to your team in Slack.", s: "Phone · SMS · Slack", i: "MISSED CALL", o: ["TEXT REPLY", "STAFF"], c: "#7cf2a0" },
@@ -19,24 +19,6 @@ const biggerProjects = [
   { a: "Prep and ordering forecasts", p: "Over-prep means waste; under-prep means 86ing your best sellers.", w: "We use your sales history, weather, local events, and reservations to suggest prep and order amounts your kitchen manager approves.", s: "Sales · Weather · Events", i: "DATA", o: ["FORECAST", "APPROVAL"], c: "#52c9d6" },
 ];
 
-const faqs = [
-  { q: "How does an engagement work?", a: "Week 1: We spend time with you, understand the problem, and build a working first version. Weeks 2–6: We finish the system and put it in production with tests and monitoring. Week 7+: Optional ongoing support or a clean handoff." },
-  { q: "What do you charge?", a: "We don't publish rates. Each engagement is scoped individually based on the work. Get in touch to discuss your situation." },
-  { q: "Do you work with small businesses?", a: "Yes. We work with restaurants, shops, and service businesses where an AI system can save real time or prevent real problems." },
-  { q: "Where are you based?", a: "Minneapolis, MN. We work with businesses across the United States." },
-  { q: "What if it doesn't work?", a: "Week 1 delivers a working first version. If it's not a fit, we stop there. No long contracts." },
-];
-
-function Mono({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <span className={`font-mono text-[11px] uppercase tracking-[0.08em] ${className}`}>{children}</span>;
-}
-function Btn({ children = "Get in touch", solid = true }: { children?: React.ReactNode; solid?: boolean }) {
-  return (
-    <a href="#contact" className={`inline-flex items-center gap-6 border px-4 py-3 font-mono text-[12px] uppercase tracking-[0.08em] transition-colors ${solid ? "border-paper bg-paper text-ink hover:border-teal hover:bg-teal" : "border-line text-paper hover:border-paper"}`}>
-      {children}<span aria-hidden>↗</span>
-    </a>
-  );
-}
 function Sec({ id, n, label, children, className = "" }: { id?: string; n: string; label: string; children: React.ReactNode; className?: string }) {
   return (
     <section id={id} className={`scroll-mt-14 border-t border-line ${className}`}>
@@ -51,103 +33,9 @@ function Sec({ id, n, label, children, className = "" }: { id?: string; n: strin
 }
 
 export default function Home() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": `${SITE_URL}/#organization`,
-        name: "Minny Agents",
-        url: SITE_URL,
-        logo: `${SITE_URL}/icon`,
-        foundingDate: "2026",
-        founder: {
-          "@type": "Person",
-          name: "Connor Barrett",
-        },
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: "Minneapolis",
-          addressRegion: "MN",
-          addressCountry: "US",
-        },
-        geo: {
-          "@type": "GeoCoordinates",
-          latitude: "44.98",
-          longitude: "-93.27",
-        },
-        contactPoint: {
-          "@type": "ContactPoint",
-          contactType: "Business Inquiries",
-        },
-        areaServed: {
-          "@type": "Country",
-          name: "United States",
-        },
-      },
-      {
-        "@type": "ProfessionalService",
-        "@id": `${SITE_URL}/#service`,
-        name: "Minny Agents",
-        provider: { "@id": `${SITE_URL}/#organization` },
-        serviceType: "AI systems for small businesses",
-        areaServed: { "@type": "Country", name: "United States" },
-        hasOfferCatalog: {
-          "@type": "OfferCatalog",
-          name: "Engineering Services",
-          itemListElement: [
-            { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI systems for restaurants and shops", description: "Custom AI tools that handle calls, reviews, invoices, scheduling, and operations." } },
-          ],
-        },
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: faqs.map((faq) => ({
-          "@type": "Question",
-          name: faq.q,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.a,
-          },
-        })),
-      },
-    ],
-  };
-
   return (
-    <div className="relative min-h-screen">
-      <div className="scene" aria-hidden="true">
-        <div className="aurora" />
-      </div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <div className="relative z-10 mx-auto max-w-[1440px] border-x border-line">
-        <header className="sticky top-0 z-50 border-b border-line bg-ink/80 backdrop-blur">
-          <nav className="grid h-14 grid-cols-4 items-center md:grid-cols-12">
-            <a href="#" className="col-span-2 flex items-center gap-3 px-5 md:col-span-3 md:px-6">
-              <span className="inline-flex items-center gap-2.5">
-                <Mark className="h-5 w-5 shrink-0 text-teal" />
-                <span className="text-[15px] tracking-[-0.015em]">
-                  <span className="font-bold">Minny</span>
-                  <span className="font-normal text-mute"> Agents</span>
-                </span>
-              </span>
-              <Mono className="hidden text-dim lg:inline">MA/26</Mono>
-            </a>
-            <div className="col-span-5 hidden gap-8 md:flex">
-              {[["What we build", "01"], ["FAQ", "02"], ["Contact", "03"]].map(([l, n]) => (
-                <a key={l} href={`#${l.toLowerCase().replace(/ /g, "-")}`} className="group flex items-baseline gap-2 text-sm text-mute hover:text-paper">
-                  <Mono className="text-dim group-hover:text-teal">{n}</Mono>{l}
-                </a>
-              ))}
-            </div>
-            <div className="col-span-2 flex justify-end md:col-span-4">
-              <a href="#contact" className="flex h-14 items-center gap-3 border-l border-line px-5 font-mono text-[11px] uppercase tracking-[0.08em] transition-colors hover:bg-paper hover:text-ink md:px-6">
-                <span className="hidden sm:inline">Get in touch</span><span className="sm:hidden">Contact</span><span aria-hidden>↗</span>
-              </a>
-            </div>
-          </nav>
-        </header>
-
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd()) }} />
         {/* hero */}
         <section className="hero grid grid-cols-4 md:grid-cols-12">
           <Contours lake="hero" />
@@ -298,14 +186,14 @@ export default function Home() {
         <Sec id="faq" n="02" label="FAQ">
           <div className="px-5 pb-20 pt-10 md:px-6 md:pb-32 md:pt-8">
             <h2 className="text-4xl font-medium tracking-[-0.03em] md:text-6xl">Frequently asked questions.</h2>
-            <dl className="mt-12 border-t border-line">
-              {faqs.map((faq, i) => (
-                <div key={i} className="border-b border-line py-8">
-                  <dt className="text-xl font-medium tracking-tight md:text-2xl">{faq.q}</dt>
-                  <dd className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mute">{faq.a}</dd>
+            <div className="mt-12 border-t border-line">
+              {faqs.map((faq) => (
+                <div key={faq.q} className="border-b border-line py-8">
+                  <h3 className="text-xl font-medium tracking-tight md:text-2xl">{faq.q}</h3>
+                  <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-mute">{faq.a}</p>
                 </div>
               ))}
-            </dl>
+            </div>
           </div>
         </Sec>
 
@@ -321,13 +209,6 @@ export default function Home() {
             </div>
           </div>
         </Sec>
-
-        <footer className="grid grid-cols-4 gap-y-2 border-t border-line px-5 py-5 md:grid-cols-12 md:px-6">
-          <span className="col-span-4 font-mono text-[12px] text-mute md:col-span-6">© 2026 Minny Agents, Minneapolis.</span>
-          <Mono className="col-span-2 text-dim md:col-span-3">44.98°N 93.27°W</Mono>
-          <Mono className="col-span-2 text-right text-dim md:col-span-3">Rev. 2026.10</Mono>
-        </footer>
-      </div>
-    </div>
+    </>
   );
 }
