@@ -279,19 +279,28 @@ test.describe('Smoke Tests', () => {
     }
   });
 
-  test('lake contours are quiet texture', async ({ request }) => {
+  test('lake contours are quiet texture', async ({ page, request }) => {
     const res = await request.get('/lake-contours.svg');
     expect(res.status()).toBe(200);
     const svg = await res.text();
     expect(svg).not.toMatch(/#9B8CFF|#9b8cff/);
     const opacities = [...svg.matchAll(/opacity="([0-9.]+)"/g)].map((m) => Number(m[1]));
-    expect(opacities.length).toBeGreaterThan(0);
-    expect(Math.max(...opacities)).toBeLessThanOrEqual(0.09);
-    expect(Math.min(...opacities)).toBeGreaterThanOrEqual(0.06);
+    expect(opacities).toEqual([0.55, 0.4, 0.28, 0.2, 0.24]);
     const widths = [...svg.matchAll(/stroke-width="([0-9.]+)"/g)].map((m) => Number(m[1]));
     expect(widths.length).toBeGreaterThan(0);
     expect(Math.max(...widths)).toBe(1);
     expect((svg.match(/<path/g) || []).length).toBeLessThanOrEqual(6);
+
+    await page.goto('/');
+    const knob = await page.locator('.contours').evaluate((el) => {
+      const style = getComputedStyle(el);
+      return {
+        var: style.getPropertyValue('--contour-opacity').trim(),
+        opacity: Number(style.opacity),
+      };
+    });
+    expect(Number(knob.var)).toBeCloseTo(0.47, 2);
+    expect(knob.opacity).toBeCloseTo(0.47, 2);
   });
 
   test('32px favicon has inset padding', async ({ page }) => {
