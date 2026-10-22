@@ -11,33 +11,33 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://northern-bytes.verc
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Northern Bytes — Forward-deployed engineers for the agent era",
-    template: "%s | Northern Bytes",
+    default: "Minny Agents — AI agents for Twin Cities businesses",
+    template: "%s | Minny Agents",
   },
-  description: "We embed with your team and ship production AI systems inside your business. Working software, in weeks.",
-  keywords: ["AI agents", "forward-deployed engineering", "automation", "AI systems", "production AI", "agent development", "business automation", "Minneapolis engineering"],
+  description: "We build AI agents that answer, follow up, and keep the books moving for restaurants, shops, and service businesses.",
+  keywords: ["AI agents", "automation", "AI systems", "restaurants", "small business", "Twin Cities", "Minneapolis", "bookkeeping", "reviews"],
   authors: [{ name: "Connor Barrett" }],
   creator: "Connor Barrett",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "Northern Bytes",
-    title: "Northern Bytes — Forward-deployed engineers for the agent era",
-    description: "We embed with your team and ship production AI systems inside your business. Working software, in weeks.",
+    siteName: "Minny Agents",
+    title: "Minny Agents — AI agents for Twin Cities businesses",
+    description: "We build AI agents that answer, follow up, and keep the books moving for restaurants, shops, and service businesses.",
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Northern Bytes — Forward-deployed engineers for the agent era",
+        alt: "Minny Agents — AI agents for Twin Cities businesses",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Northern Bytes — Forward-deployed engineers for the agent era",
-    description: "We embed with your team and ship production AI systems inside your business. Working software, in weeks.",
+    title: "Minny Agents — AI agents for Twin Cities businesses",
+    description: "We build AI agents that answer, follow up, and keep the books moving for restaurants, shops, and service businesses.",
     images: ["/opengraph-image"],
   },
   robots: {

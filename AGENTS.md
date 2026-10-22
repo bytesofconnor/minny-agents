@@ -1,8 +1,8 @@
-# Northern Bytes Marketing Site — Agent Context
+# Minny Agents Marketing Site — Agent Context
 
 ## Project Overview
 
-This is the production marketing site for Northern Bytes, a forward-deployed engineering consultancy specializing in AI agents and automation. Built with Next.js 15 App Router, TypeScript, and Tailwind CSS 4.
+This is the production marketing site for Minny Agents, an independent engineering practice that builds AI agents for Twin Cities businesses. Built with Next.js 15 App Router, TypeScript, and Tailwind CSS 4. The GitHub repo remains `northern-bytes`.
 
 ## Technology Stack
 

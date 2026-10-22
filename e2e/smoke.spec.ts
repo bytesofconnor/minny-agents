@@ -34,8 +34,10 @@ test.describe('Smoke Tests', () => {
     await expect(page.getByText(/A restaurant/)).toBeVisible();
     await expect(page.getByText('Illustrative example. Not real data.')).toBeVisible();
 
-    // Check footer
-    await expect(page.getByText(/© 2026 Northern Bytes/)).toBeVisible();
+    // Check footer and brand
+    await expect(page.getByText(/© 2026 Minny Agents/)).toBeVisible();
+    await expect(page.getByText('Minny Agents').first()).toBeVisible();
+    await expect(page.locator('body')).not.toContainText('Northern Bytes');
 
     // No critical console errors (404s are ignored)
     expect(consoleErrors).toEqual([]);
@@ -102,11 +104,12 @@ test.describe('Smoke Tests', () => {
 
     // Check title and description
     const title = await page.title();
-    expect(title).toContain('Northern Bytes');
+    expect(title).toContain('Minny Agents');
+    expect(title).not.toContain('Northern Bytes');
 
     const description = await page.locator('meta[name="description"]').getAttribute('content');
     expect(description).toBeTruthy();
-    expect(description).toContain('production AI systems');
+    expect(description).toContain('AI agents');
   });
 
   test('FAQ section renders', async ({ page }) => {
@@ -177,7 +180,7 @@ test.describe('Smoke Tests', () => {
 
     // Validate Organization has required fields
     const org = jsonLd['@graph'].find((item: { '@type': string }) => item['@type'] === 'Organization');
-    expect(org.name).toBe('Northern Bytes');
+    expect(org.name).toBe('Minny Agents');
     expect(org.founder).toBeDefined();
     expect(org.founder.name).toBe('Connor Barrett');
   });
@@ -188,7 +191,8 @@ test.describe('Smoke Tests', () => {
     // Check OG tags
     const ogTitle = await page.locator('meta[property="og:title"]').getAttribute('content');
     expect(ogTitle).toBeTruthy();
-    expect(ogTitle).toContain('Northern Bytes');
+    expect(ogTitle).toContain('Minny Agents');
+    expect(ogTitle).not.toContain('Northern Bytes');
 
     const ogDescription = await page.locator('meta[property="og:description"]').getAttribute('content');
     expect(ogDescription).toBeTruthy();

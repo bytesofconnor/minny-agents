@@ -19,7 +19,7 @@ const biggerProjects = [
 
 const faqs = [
   { q: "How does an engagement work?", a: "Week 1: We spend time with you, understand the problem, and build a working first version. Weeks 2–6: We finish the system and put it in production with tests and monitoring. Week 7+: Optional ongoing support or a clean handoff." },
-  { q: "What do you charge?", a: "We don't publish rates. Each engagement is scoped individually based on the work. Email us to discuss your situation." },
+  { q: "What do you charge?", a: "We don't publish rates. Each engagement is scoped individually based on the work. Get in touch to discuss your situation." },
   { q: "Do you work with small businesses?", a: "Yes. We work with restaurants, shops, and service businesses where an AI system can save real time or prevent real problems." },
   { q: "Where are you based?", a: "Minneapolis, MN. We work with businesses across the United States." },
   { q: "What if it doesn't work?", a: "Week 1 delivers a working first version. If it's not a fit, we stop there. No long contracts." },
@@ -55,7 +55,7 @@ export default function Home() {
       {
         "@type": "Organization",
         "@id": `${SITE_URL}/#organization`,
-        name: "Northern Bytes",
+        name: "Minny Agents",
         url: SITE_URL,
         logo: `${SITE_URL}/icon`,
         foundingDate: "2026",
@@ -86,7 +86,7 @@ export default function Home() {
       {
         "@type": "ProfessionalService",
         "@id": `${SITE_URL}/#service`,
-        name: "Northern Bytes",
+        name: "Minny Agents",
         provider: { "@id": `${SITE_URL}/#organization` },
         serviceType: "AI systems for small businesses",
         areaServed: { "@type": "Country", name: "United States" },
@@ -126,8 +126,13 @@ export default function Home() {
         <header className="sticky top-0 z-50 border-b border-line bg-ink/90 backdrop-blur">
           <nav className="grid h-14 grid-cols-4 items-center md:grid-cols-12">
             <a href="#" className="col-span-2 flex items-baseline gap-3 px-5 md:col-span-3 md:px-6">
-              <span className="text-[15px] font-semibold tracking-[-0.01em]">Northern Bytes</span>
-              <Mono className="hidden text-dim lg:inline">NB/26</Mono>
+              <span className="inline-flex items-center gap-2">
+                <svg className="h-2.5 w-2.5 text-teal" viewBox="0 0 16 16" aria-hidden="true">
+                  <path fill="currentColor" d="M8 0l1.15 6.85L16 8l-6.85 1.15L8 16l-1.15-6.85L0 8l6.85-1.15L8 0z" />
+                </svg>
+                <span className="text-[15px] font-semibold tracking-[-0.01em]">Minny Agents</span>
+              </span>
+              <Mono className="hidden text-dim lg:inline">MA/26</Mono>
             </a>
             <div className="col-span-5 hidden gap-8 md:flex">
               {[["What we build", "01"], ["FAQ", "02"], ["Contact", "03"]].map(([l, n]) => (
@@ -152,7 +157,7 @@ export default function Home() {
               Missed calls, piled-up reviews, invoices in your inbox.
             </h1>
             <p className="mt-8 max-w-[50ch] text-xl leading-relaxed text-mute md:text-2xl">
-              One engineer builds AI tools that plug into the systems you already use and get this work off your plate.
+              We build AI agents that answer, follow up, and keep the books moving for Twin Cities businesses.
             </p>
             <div className="mt-10"><Btn /></div>
           </div>
@@ -327,7 +332,7 @@ export default function Home() {
         </Sec>
 
         <footer className="grid grid-cols-4 gap-y-2 border-t border-line px-5 py-5 md:grid-cols-12 md:px-6">
-          <span className="col-span-4 font-mono text-[12px] text-mute md:col-span-6">© 2026 Northern Bytes, Minneapolis.</span>
+          <span className="col-span-4 font-mono text-[12px] text-mute md:col-span-6">© 2026 Minny Agents, Minneapolis.</span>
           <Mono className="col-span-2 text-dim md:col-span-3">44.98°N 93.27°W</Mono>
           <Mono className="col-span-2 text-right text-dim md:col-span-3">Rev. 2026.10</Mono>
         </footer>
