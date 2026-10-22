@@ -19,17 +19,16 @@ test.describe('Smoke Tests', () => {
     expect(response?.status()).toBe(200);
 
     // Check hero text
-    await expect(page.locator('h1')).toContainText('Forward-deployed engineers for the agent era');
+    await expect(page.locator('h1')).toContainText('Missed calls, piled-up reviews, invoices in your inbox');
 
     // Check navigation sections render
-    await expect(page.getByRole('link', { name: /Approach/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Capabilities/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /What we build/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /FAQ/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /Contact/i })).toBeVisible();
 
     // Check main sections exist
-    await expect(page.getByText('Not a consultancy')).toBeVisible();
-    await expect(page.getByText('How we engage')).toBeVisible();
-    await expect(page.getByText('What we build')).toBeVisible();
+    await expect(page.getByText('AI that runs your operations')).toBeVisible();
+    await expect(page.getByText('Frequently asked questions')).toBeVisible();
 
     // Check footer
     await expect(page.getByText(/© 2026 Northern Bytes/)).toBeVisible();
@@ -109,10 +108,10 @@ test.describe('Smoke Tests', () => {
     await expect(page.getByText('Frequently asked questions')).toBeVisible();
 
     // Check at least one FAQ question
-    await expect(page.getByText('What is a forward-deployed engineer?')).toBeVisible();
+    await expect(page.getByText('How does an engagement work?')).toBeVisible();
 
     // Check FAQ answers are present
-    await expect(page.getByText(/We work on-site or embedded/)).toBeVisible();
+    await expect(page.getByText(/Week 1: We spend time/)).toBeVisible();
   });
 
   test('AI TOOLING section renders', async ({ page }) => {
