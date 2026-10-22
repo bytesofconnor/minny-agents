@@ -12,7 +12,14 @@ A PR is eligible when all of the following are true:
 
 - It is **not a draft**
 - It does **not** have the `hold` label
-- GitHub reports `mergeStateStatus=CLEAN` (required checks passed, no conflicts)
+- These check runs have `status=completed` and `conclusion=success` on the **current head SHA**:
+  - `Lint and Type Check`
+  - `Build`
+  - `Content Guard`
+  - `E2E Smoke Tests`
+  - `Check PR Body`
+
+`mergeStateStatus=CLEAN` is **not** enough. On an unprotected `main`, GitHub reports CLEAN as soon as the PR opens.
 
 Add `hold` to keep a PR open after CI is green:
 
@@ -23,17 +30,17 @@ gh pr edit <number> --remove-label hold
 
 ### How it is wired
 
-1. **Enable auto-merge** (`.github/workflows/automerge.yml`) runs on `pull_request` `opened` / `reopened` / `ready_for_review` / `synchronize` / `labeled` / `unlabeled`. It turns on GitHub squash auto-merge (`gh pr merge --squash --auto`). That path needs the repo setting `allow_auto_merge`. This integration cannot flip that setting (403); an admin must enable it in repo Settings → General → Pull Requests → Allow auto-merge.
+1. **Enable auto-merge** (`.github/workflows/automerge.yml`) runs on `pull_request` `opened` / `reopened` / `ready_for_review` / `synchronize` / `labeled` / `unlabeled`. If `main` has required status checks configured, it turns on GitHub squash auto-merge (`gh pr merge --squash --auto`). If `main` is unprotected, it does **not** enable auto-merge — that would merge immediately. Native `--auto` also needs repo `allow_auto_merge`. This integration cannot flip either admin setting.
 
-2. **Safety net** runs on a 10-minute schedule, after the `CI` workflow succeeds, and on `workflow_dispatch`. It squash-merges every open, non-draft, non-hold PR whose merge state is `CLEAN`. This does **not** depend on `allow_auto_merge`.
+2. **Safety net** runs on a 10-minute schedule, after the `CI` workflow succeeds, and on `workflow_dispatch`. It lists open non-draft, non-hold PRs and squash-enables auto-merge (direct squash as fallback) only after `scripts/required-checks.js` confirms the five required check-run conclusions on the head SHA.
 
-3. **CI job `Queue squash merge`** runs after Lint, Build, Content Guard, and E2E pass on a non-draft PR. If the PR is `CLEAN` and not on `hold`, it squash-merges immediately. This runs from the PR branch, so it works even before `automerge.yml` on `main` is updated.
+3. **CI job `Queue squash merge`** runs after Lint, Build, Content Guard, and E2E. It still requires Check PR Body via the same head-SHA check-run gate, then prefers native auto-merge.
 
-Use `AUTOMERGE_TOKEN` (a PAT with `repo` / PR write) if `GITHUB_TOKEN` is blocked by branch protection; otherwise the workflow uses `GITHUB_TOKEN`.
+Use `AUTOMERGE_TOKEN` (a PAT with `repo` / PR write) if `GITHUB_TOKEN` is blocked by branch protection; otherwise the workflow uses `GITHUB_TOKEN`. Merges performed with `GITHUB_TOKEN` do **not** trigger new workflows on `main` (GitHub suppresses `push` events from that token), so post-merge CI and production smoke may not run unless a PAT is set.
 
 ### Required checks
 
-CI job names that should match branch-protection required checks:
+These job names should also be listed as required status checks on `main` (Settings → Branches). Until they are, native auto-merge cannot wait for CI:
 
 - `Lint and Type Check`
 - `Build`
@@ -41,6 +48,6 @@ CI job names that should match branch-protection required checks:
 - `E2E Smoke Tests`
 - `Check PR Body` (PR Hygiene)
 
-If a required-check name in branch protection does not match one of these job names, GitHub will never report `CLEAN` and auto-merge will not fire. This token cannot read branch protection (403); confirm the names in Settings → Branches.
+If a required-check name in branch protection does not match one of these job names, GitHub native auto-merge will never become satisfied. This token cannot write branch protection (403); an admin must set the rule.
 
 Vercel commit statuses (`Vercel`) are separate from the CI workflow. They only block merge if they are listed as required.

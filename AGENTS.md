@@ -163,8 +163,8 @@ Every PR must:
    - **PR Hygiene**: Verification and blast-radius sections present and non-empty
 
 3. **Auto-Merge Trigger**:
-   - On PR open/reopen/ready/synchronize/label changes: enable GitHub squash auto-merge (`--auto`)
-   - Safety net (schedule + after CI completes): squash-merge any open non-draft, non-hold PR with `mergeStateStatus=CLEAN`
+   - On PR open: enable GitHub squash auto-merge (`--auto`) only if `main` has required status checks. Unprotected `main` skips enable so GitHub cannot merge before CI.
+   - Safety net (schedule + after CI completes) and CI `Queue squash merge`: enable auto-merge (direct squash as fallback) only after `scripts/required-checks.js` sees success conclusions for Lint, Build, Content Guard, E2E, and Check PR Body on the current head SHA. `mergeStateStatus=CLEAN` is not a gate.
    - Does not require a `cursor/` branch prefix
    - Native `--auto` needs repo `allow_auto_merge` (admin setting; this token cannot enable it)
    - Deletes source branch automatically
