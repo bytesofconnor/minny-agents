@@ -220,17 +220,17 @@ export default function Home() {
         </Sec>
 
         {/* figure */}
-        <figure className="border-t border-line" aria-label="Aurora visualization showing signal intensity across 9 bands over 24 hours">
+        <figure className="border-t border-line" aria-label="Illustrative restaurant day across seven incoming channels from open to close">
           <div className="flex items-baseline justify-between border-b border-line px-5 py-3 md:px-6">
-            <Mono className="text-paper">Fig. 01 — Aurora, as signal</Mono>
-            <Mono className="hidden text-dim sm:inline">9 bands · 24h window · synthetic</Mono>
+            <Mono className="text-paper">Fig. 01 — A restaurant&apos;s day</Mono>
+            <Mono className="hidden text-dim sm:inline">7 channels · open to close · example</Mono>
           </div>
           <div className="overflow-x-auto px-2 pb-2 pt-4 md:overflow-hidden md:px-6"><div className="min-w-[760px] md:min-w-0"><Fig /></div></div>
           <Mono className="block px-5 pb-2 text-dim md:hidden">← scroll figure →</Mono>
           <figcaption className="grid grid-cols-4 gap-4 border-t border-line px-5 py-3 md:grid-cols-12 md:px-6">
-            <span className="col-span-4 font-mono text-[11px] text-dim md:col-span-6">Illustrative. Generated, not measured.</span>
+            <span className="col-span-4 font-mono text-[11px] text-dim md:col-span-6">Illustrative example. Not real data.</span>
             <div className="col-span-4 flex flex-wrap gap-5 md:col-span-6 md:justify-end">
-              {[["bg-green", "Low"], ["bg-teal", "Moderate"], ["bg-violet", "High"]].map(([c, l]) => (
+              {[["bg-green", "Quiet"], ["bg-teal", "Busy"], ["bg-violet", "Rush"]].map(([c, l]) => (
                 <span key={l} className="flex items-center gap-2"><span className={`h-2 w-4 ${c}`} aria-hidden="true" /><Mono className="text-mute">{l}</Mono></span>
               ))}
             </div>
