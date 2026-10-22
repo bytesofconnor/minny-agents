@@ -40,6 +40,10 @@ const BANNED_PATTERNS = [
   
   // Employers' clients that must never appear as studio clients
   { pattern: /\b(PECO|PSEG|DTE|PNM|Consumers Energy|UnitedHealth|RVO Health|Alight|UW-Madison|University of Wisconsin)\b/gi, reason: 'Past employers\' clients, not studio clients' },
+
+  // Unowned / not-final brand contact (do not publish)
+  { pattern: /hello@northernbytes\.co/gi, reason: 'Unowned email; brand name not final' },
+  { pattern: /mailto:[^\s"'<>]*northernbytes\.co/gi, reason: 'Unowned northernbytes.co mailto' },
 ];
 
 // Files to check (app source and public content)
