@@ -18,6 +18,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npx tsc --noEmit
+      - run: node scripts/required-checks.js --self-test
 
   build:
     name: Build
@@ -63,8 +64,8 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # Runs from the PR branch so a green PR can merge even before
-  # automerge.yml on main is updated. Skips drafts and 'hold'.
+  # Enable native auto-merge only after required check-run conclusions
+  # succeed on this head SHA (includes Check PR Body from PR Hygiene).
   maybe-merge:
     name: Queue squash merge
     needs: [lint-and-typecheck, build, content-guard, e2e-smoke]
@@ -73,8 +74,11 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      checks: read
+      statuses: read
     steps:
-      - name: Squash-merge when CLEAN and not on hold
+      - uses: actions/checkout@v4
+      - name: Enable auto-merge after required checks on the head SHA
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
@@ -86,11 +90,29 @@ jobs:
             echo "Skip: hold label"
             exit 0
           fi
-          TITLE=$(gh pr view "$PR" --json title --jq '.title')
-          if gh pr merge "$PR" --squash --delete-branch --subject "$TITLE" \
-            --body "Auto-merged after required checks passed"; then
-            echo "Merged #$PR"
-          else
-            echo "Direct squash merge not ready or not permitted for #$PR. Safety-net will retry when CLEAN."
+
+          ready=0
+          for i in 1 2 3 4 5 6; do
+            if node scripts/required-checks.js --pr "$PR"; then
+              ready=1
+              break
+            fi
+            echo "Required checks not all green yet (attempt $i); retrying in 10s"
+            sleep 10
+          done
+          if [ "$ready" != "1" ]; then
+            echo "Required checks still incomplete on the head SHA; not merging"
+            exit 0
           fi
+
+          if gh pr merge "$PR" --squash --auto --delete-branch; then
+            echo "Native auto-merge enabled (or completed) on #$PR"
+            exit 0
+          fi
+
+          TITLE=$(gh pr view "$PR" --json title --jq '.title')
+          echo "Native auto-merge unavailable; squash-merging after verified checks"
+          gh pr merge "$PR" --squash --delete-branch --subject "$TITLE" \
+            --body "Auto-merged after required check-run conclusions succeeded on the head SHA" \
+            || echo "Could not merge #$PR"
           exit 0
