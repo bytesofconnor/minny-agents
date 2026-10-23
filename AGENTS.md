@@ -140,7 +140,7 @@ When working on this codebase:
 
 Work under /poteto-mode for all non-trivial tasks. pstack model choices live in .cursor/rules/pstack-models.mdc (Cursor models first; non-Cursor models are opt-in only).
 
-Do not merge pull requests yourself. Open the PR and let `.github/workflows/automerge.yml` squash-merge it when the policy allows. A PR that changes `.github/**`, `.cursor/rules/**`, or this file waits for Connor.
+Do not merge pull requests yourself. Open the PR and let `.github/workflows/automerge.yml` squash-merge it once required checks pass. Only a fork or an outside contributor waits for Connor.
 
 1. **Preserve design**: Do not alter visual design, copy, or branding
 2. **Maintain structure**: Keep component organization intact
@@ -177,22 +177,17 @@ Every PR must:
 
 ### Merge Policy
 
-Open the PR. Do not squash-merge it yourself. `.github/workflows/automerge.yml` runs on `pull_request` (never `pull_request_target`) and calls `gh pr merge --auto --squash` only when every condition below holds. `allow_auto_merge` is on. `--auto` waits only when `main` has required status checks. This token cannot write branch protection. If those checks are missing, the workflow does not enable auto-merge, because GitHub would merge immediately.
+Open the PR. Do not squash-merge it yourself. `.github/workflows/automerge.yml` runs on `pull_request` (never `pull_request_target`) and calls `gh pr merge --auto --squash` once the required checks are green.
 
-Auto-merge applies only to:
+Every same-repo pull request squash auto-merges, including:
 
-- Same-repo branches named `cursor/*`
-- Dependabot patch and minor updates (`dependabot/fetch-metadata` `update-type` is `version-update:semver-patch` or `version-update:semver-minor`)
+- Cloud-agent branches named `cursor/*`
+- Every Dependabot update, including major bumps and GitHub Actions
+- Pull requests that change `.github/**`, `.cursor/rules/**`, or `AGENTS.md`
 
-Connor merges these. The workflow skips them:
+Connor reviews only a fork, or an outside contributor (author association other than `OWNER`, `MEMBER`, or `COLLABORATOR`, and not `dependabot[bot]`). Paths and Dependabot update types are not a reason to wait. Drafts stay drafts until marked ready.
 
-- Dependabot major bumps
-- Any PR that changes `.github/**`, `.cursor/rules/**`, or `AGENTS.md`
-- Forks and outside contributors (author association other than `OWNER`, `MEMBER`, or `COLLABORATOR`, except Dependabot patch/minor)
-
-This file is `AGENTS.md`. A PR that edits it, a workflow, or `.cursor/rules/**` stays open for Connor.
-
-Required CI before GitHub completes the squash: Lint and Type Check, Build, Content Guard, E2E Smoke Tests, and Check PR Body. The PR body still needs non-empty `## Verification` and `## Blast Radius` sections.
+`allow_auto_merge` is on. `--auto` waits for CI when `main` has required status checks. This token cannot write branch protection. Until an admin adds those checks, the workflow waits until Lint and Type Check, Build, Content Guard, E2E Smoke Tests, and Check PR Body have succeeded, then enables `--auto`. The PR body still needs non-empty `## Verification` and `## Blast Radius` sections.
 
 #### Post-merge
 

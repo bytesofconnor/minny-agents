@@ -1,7 +1,6 @@
 name: Auto-merge
 
-# pull_request only. Never pull_request_target: that checks out the base
-# branch and would run this policy with the wrong file list.
+# pull_request only. Never pull_request_target.
 
 on:
   pull_request:
@@ -23,14 +22,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dependabot/fetch-metadata@v2
-        if: github.actor == 'dependabot[bot]'
-        id: dependabot
-
       - name: Decide
         id: policy
-        env:
-          UPDATE_TYPE: ${{ steps.dependabot.outputs.update-type }}
         run: node scripts/automerge-policy.js
 
       - name: Enable squash auto-merge
