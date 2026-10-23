@@ -68,24 +68,58 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
+  check-pr-body:
+    name: Check PR Body
+    if: github.event.pull_request.user.login != 'dependabot[bot]' && (github.event.action != 'closed' || github.event.pull_request.merged == true)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for required sections
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo "Checking PR body for required sections..."
+          if ! echo "$PR_BODY" | grep -q "## Verification"; then
+            echo "PR body must contain a Verification section"
+            exit 1
+          fi
+          if ! echo "$PR_BODY" | grep -q "## Blast [Rr]adius"; then
+            echo "PR body must contain a Blast Radius section"
+            exit 1
+          fi
+          VERIFICATION_CONTENT=$(echo "$PR_BODY" | sed -n '/## Verification/,/##/p' | tail -n +2 | head -n -1 | tr -d '[:space:]')
+          if [ -z "$VERIFICATION_CONTENT" ]; then
+            echo "Verification section is empty"
+            exit 1
+          fi
+          BLAST_CONTENT=$(echo "$PR_BODY" | sed -n '/## Blast [Rr]adius/,/##/p' | tail -n +2 | head -n -1 | tr -d '[:space:]')
+          if [ -z "$BLAST_CONTENT" ]; then
+            echo "Blast Radius section is empty"
+            exit 1
+          fi
+          echo "PR body has required sections with content"
+
   checks:
     name: checks
-    needs: [lint-and-typecheck, build, content-guard, e2e-smoke]
+    needs: [lint-and-typecheck, build, content-guard, e2e-smoke, check-pr-body]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Fail unless every needed job succeeded
         run: |
           fail=0
-          for result in \
-            "${{ needs.lint-and-typecheck.result }}" \
-            "${{ needs.build.result }}" \
-            "${{ needs.content-guard.result }}" \
-            "${{ needs.e2e-smoke.result }}"
-          do
-            echo "result $result"
-            if [ "$result" != "success" ]; then
+          require_success() {
+            echo "$1 $2"
+            if [ "$2" != "success" ]; then
               fail=1
             fi
-          done
+          }
+          require_success "Lint and Type Check" "${{ needs.lint-and-typecheck.result }}"
+          require_success "Build" "${{ needs.build.result }}"
+          require_success "Content Guard" "${{ needs.content-guard.result }}"
+          require_success "E2E Smoke Tests" "${{ needs.e2e-smoke.result }}"
+          echo "Check PR Body ${{ needs.check-pr-body.result }}"
+          body="${{ needs.check-pr-body.result }}"
+          if [ "$body" != "success" ] && [ "$body" != "skipped" ]; then
+            fail=1
+          fi
           exit "$fail"
