@@ -336,6 +336,25 @@ test.describe('Smoke Tests', () => {
     await page.screenshot({ path: 'test-results/mobile-full-page.png', fullPage: true });
   });
 
+  test('restaurant-day figure annotations stay in the svg', async ({ page }) => {
+    await page.goto('/');
+    const fig = page.getByRole('img', { name: /restaurant day/i });
+    await expect(fig).toBeVisible();
+    await expect(fig.getByText('A — Lunch rush')).toBeVisible();
+    await expect(fig.getByText('B — Dinner rush')).toBeVisible();
+    await expect(fig.getByText('calls go unanswered')).toBeVisible();
+    await expect(fig.getByText('reviews and messages pile up')).toBeVisible();
+    await fig.screenshot({ path: 'test-results/figure-desktop.png', animations: 'disabled' });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    const figMobile = page.getByRole('img', { name: /restaurant day/i });
+    await expect(figMobile).toBeVisible();
+    await figMobile.screenshot({ path: 'test-results/figure-mobile.png', animations: 'disabled' });
+    await page.locator('figure .overflow-x-auto').evaluate((el) => { el.scrollLeft = el.scrollWidth; });
+    await figMobile.screenshot({ path: 'test-results/figure-mobile-dinner.png', animations: 'disabled' });
+  });
+
   test('hero example card does not overlap headline or nav', async ({ page }) => {
     async function box(locator: ReturnType<typeof page.locator>) {
       const b = await locator.boundingBox();
