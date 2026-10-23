@@ -1,36 +1,25 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: "/"
+    directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
     groups:
-      # First match wins. react and react-dom always share one PR.
-      react:
-        patterns:
-          - "react"
-          - "react-dom"
-      npm-minor-and-patch:
-        patterns:
-          - "*"
-        exclude-patterns:
-          - "react"
-          - "react-dom"
-        update-types:
-          - "minor"
-          - "patch"
+      npm:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: [major, minor, patch]
     ignore:
       # CI runs Node 20 (actions/setup-node node-version). No .nvmrc or engines field.
       - dependency-name: "@types/node"
         versions:
           - ">=21"
   - package-ecosystem: github-actions
-    directory: "/"
+    directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
     groups:
       github-actions:
-        patterns:
-          - "*"
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: [major, minor, patch]
