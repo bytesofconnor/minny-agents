@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is the production marketing site for Minny Agents, an independent engineering practice that builds AI agents for Twin Cities businesses. Built with Next.js 15 App Router, TypeScript, and Tailwind CSS 4. The GitHub repo remains `northern-bytes`.
+This is the production marketing site for Minny Agents, an independent engineering practice that builds AI agents for Twin Cities businesses. Built with Next.js 15 App Router, TypeScript, and Tailwind CSS 4. The GitHub repo is `bytesofconnor/minny-agents`.
 
 ## Technology Stack
 
@@ -114,7 +114,7 @@ Designed for Vercel deployment:
   - `www.minnyagents.com` → `https://minnyagents.com`
 - `.github/workflows/prod-smoke.yml` and Playwright `BASE_URL` — production checks hit `https://minnyagents.com`
 
-The GitHub repo name remains `northern-bytes`. Do not publish `northern-bytes.vercel.app` in visitor-facing copy.
+The GitHub repo is `bytesofconnor/minny-agents`. The Vercel project is still `northern-bytes`. Do not publish `northern-bytes.vercel.app` in visitor-facing copy.
 
 ### SEO / AEO (in the repo)
 
@@ -139,6 +139,8 @@ The GitHub repo name remains `northern-bytes`. Do not publish `northern-bytes.ve
 When working on this codebase:
 
 Work under /poteto-mode for all non-trivial tasks. pstack model choices live in .cursor/rules/pstack-models.mdc (Cursor models first; non-Cursor models are opt-in only).
+
+Do not merge pull requests yourself. Open the PR and let `.github/workflows/automerge.yml` squash-merge it once required checks pass. Only a fork or an outside contributor waits for Connor.
 
 1. **Preserve design**: Do not alter visual design, copy, or branding
 2. **Maintain structure**: Keep component organization intact
@@ -175,47 +177,21 @@ Every PR must:
 
 ### Merge Policy
 
-**Autonomous merge is enabled**: PRs automatically merge to `main` when required checks pass. See [CONTRIBUTING.md](./CONTRIBUTING.md). Connor Barrett has authorized this workflow, so checks must be genuinely sufficient.
+Open the PR. Do not squash-merge it yourself. `.github/workflows/automerge.yml` runs on `pull_request` (never `pull_request_target`) and calls `gh pr merge --auto --squash` once the required checks are green.
 
-#### How Auto-Merge Works
+Every same-repo pull request squash auto-merges, including:
 
-1. **PR Requirements**:
-   - PR must not be draft (open as non-draft)
-   - PR must not have `hold` label
-   - PR body must contain `## Verification` section (non-empty)
-   - PR body must contain `## Blast Radius` section (non-empty)
+- Cloud-agent branches named `cursor/*`
+- Every Dependabot update, including major bumps and GitHub Actions
+- Pull requests that change `.github/**`, `.cursor/rules/**`, or `AGENTS.md`
 
-2. **CI Checks** (all must pass):
-   - **Lint and Type Check**: ESLint and TypeScript compilation
-   - **Build**: Next.js production build must succeed
-   - **Content Guard**: No banned claims (prices, fake metrics, invented clients)
-   - **E2E Smoke Tests**: Home page, navigation, static files, JSON-LD, internal links, visual screenshots
-   - **PR Hygiene**: Verification and blast-radius sections present and non-empty
+Connor reviews only a fork, or an outside contributor (author association other than `OWNER`, `MEMBER`, or `COLLABORATOR`, and not `dependabot[bot]`). Paths and Dependabot update types are not a reason to wait. Drafts stay drafts until marked ready.
 
-3. **Auto-Merge Trigger**:
-   - On PR open: enable GitHub squash auto-merge (`--auto`) only if `main` has required status checks. Unprotected `main` skips enable so GitHub cannot merge before CI.
-   - Safety net (schedule + after CI completes) and CI `Queue squash merge`: enable auto-merge (direct squash as fallback) only after `scripts/required-checks.js` sees success conclusions for Lint, Build, Content Guard, E2E, and Check PR Body on the current head SHA. `mergeStateStatus=CLEAN` is not a gate.
-   - Does not require a `cursor/` branch prefix
-   - Native `--auto` needs repo `allow_auto_merge` (admin setting; this token cannot enable it)
-   - Deletes source branch automatically
+`allow_auto_merge` is on. The workflow's only merge command is `gh pr merge --auto --squash`. GitHub waits on the required status check. That check is the CI job named `checks`. Do not rename `checks` without telling Connor first. The job `needs` Lint and Type Check, Build, Content Guard, and E2E Smoke Tests, uses `if: always()`, and fails unless every one of those results is `success`. There is no schedule, no `workflow_run` merge, and no direct squash fallback. The PR body still needs non-empty `## Verification` and `## Blast Radius` sections.
 
-4. **Post-Merge Production Verification**:
-   - Waits for Vercel to deploy main to production
-   - Runs smoke tests against `https://minnyagents.com`
-   - Creates GitHub issue with `prod-broken` label if tests fail
-   - Uploads visual regression screenshots as artifacts
+#### Post-merge
 
-#### Blocking Auto-Merge
-
-To prevent a PR from auto-merging (e.g., needs manual review):
-```bash
-gh pr edit <number> --add-label hold
-```
-
-Remove the label when ready:
-```bash
-gh pr edit <number> --remove-label hold
-```
+Production smoke listens for `pull_request` `closed` when merged, and for a successful CI `workflow_run` whose PR is already merged. It does not listen for `push`. A merge made with `GITHUB_TOKEN` does not start `push` workflows. Vercel deploys through its GitHub App webhook, which is separate from Actions, so production deploys still run.
 
 #### Monitoring
 

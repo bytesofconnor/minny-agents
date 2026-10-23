@@ -1,8 +1,21 @@
 name: Production Smoke Tests
 
+# GITHUB_TOKEN merges do not start push workflows. closed+merged covers
+# merges GitHub still delivers. workflow_run covers a CI run whose PR is
+# already merged. Vercel is a GitHub App, so it still receives the push
+# webhook and deploys. This workflow does not deploy.
+
 on:
-  push:
-    branches: [main]
+  pull_request:
+    types: [closed]
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
 
 jobs:
   wait-for-vercel:
@@ -10,39 +23,50 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       deployment-url: ${{ steps.wait.outputs.url }}
+      run: ${{ steps.wait.outputs.run }}
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Wait for Vercel production deployment
+      - name: Run only after a merge to main
         id: wait
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          echo "Waiting for Vercel production deployment..."
-          
-          # Wait up to 5 minutes for deployment
-          MAX_WAIT=300
-          ELAPSED=0
-          INTERVAL=10
-          
-          while [ $ELAPSED -lt $MAX_WAIT ]; do
-            # Check Vercel deployment status via their GitHub app
-            sleep $INTERVAL
-            ELAPSED=$((ELAPSED + INTERVAL))
-            
-            # For now, use fixed production URL
-            # Vercel deploys main automatically via their GitHub app
-            echo "url=https://minnyagents.com" >> $GITHUB_OUTPUT
-            echo "✅ Using production URL: https://minnyagents.com"
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if [ "${{ github.event.pull_request.merged }}" != "true" ]; then
+              echo "run=false" >> "$GITHUB_OUTPUT"
+              echo "Closed without merge"
+              exit 0
+            fi
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "url=https://minnyagents.com" >> "$GITHUB_OUTPUT"
             exit 0
-          done
-          
-          echo "❌ Timeout waiting for deployment"
-          exit 1
+          fi
+
+          if [ "${{ github.event.workflow_run.conclusion }}" != "success" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "CI did not succeed"
+            exit 0
+          fi
+
+          NUM=$(jq -r '.workflow_run.pull_requests[0].number // empty' "$GITHUB_EVENT_PATH")
+          if [ -z "$NUM" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "CI run has no pull request"
+            exit 0
+          fi
+          MERGED=$(gh pr view "$NUM" --json state,baseRefName --jq 'select(.state=="MERGED" and .baseRefName=="main") | .state')
+          if [ "$MERGED" = "MERGED" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "url=https://minnyagents.com" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "PR #$NUM is not merged to main"
+          fi
 
   smoke-prod:
     name: Smoke Test Production
     needs: wait-for-vercel
+    if: needs.wait-for-vercel.outputs.run == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

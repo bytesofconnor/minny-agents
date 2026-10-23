@@ -11,13 +11,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { execFileSync } = require('child_process');
 
-const REQUIRED_CHECKS = [
-  'Lint and Type Check',
-  'Build',
-  'Content Guard',
-  'E2E Smoke Tests',
-  'Check PR Body',
-];
+const REQUIRED_CHECKS = ['checks'];
 
 function latestByName(runs) {
   const map = new Map();
@@ -83,38 +77,38 @@ function selfTest() {
   const extra = [...allGreen, base('Vercel', 'completed', 'success', '2026-01-01T00:00:09Z')];
   assert(evaluate(extra).ok, 'unrelated checks should be ignored');
 
-  const missing = allGreen.filter((r) => r.name !== 'Check PR Body');
+  const missing = allGreen.filter((r) => r.name !== 'checks');
   const miss = evaluate(missing);
-  assert(!miss.ok && miss.missing.includes('Check PR Body'), 'missing required check should fail');
+  assert(!miss.ok && miss.missing.includes('checks'), 'missing required check should fail');
 
   const pending = allGreen.map((r) =>
-    r.name === 'Build' ? { ...r, status: 'in_progress', conclusion: null } : r
+    r.name === 'checks' ? { ...r, status: 'in_progress', conclusion: null } : r
   );
   const pend = evaluate(pending);
-  assert(!pend.ok && pend.pending.some((p) => p.name === 'Build'), 'pending required check should fail');
+  assert(!pend.ok && pend.pending.some((p) => p.name === 'checks'), 'pending required check should fail');
 
   const failed = allGreen.map((r) =>
-    r.name === 'E2E Smoke Tests' ? { ...r, conclusion: 'failure' } : r
+    r.name === 'checks' ? { ...r, conclusion: 'failure' } : r
   );
   const fail = evaluate(failed);
-  assert(!fail.ok && fail.failed.some((f) => f.name === 'E2E Smoke Tests'), 'failed conclusion should fail');
+  assert(!fail.ok && fail.failed.some((f) => f.name === 'checks'), 'failed conclusion should fail');
 
   const skipped = allGreen.map((r) =>
-    r.name === 'Content Guard' ? { ...r, conclusion: 'skipped' } : r
+    r.name === 'checks' ? { ...r, conclusion: 'skipped' } : r
   );
   assert(!evaluate(skipped).ok, 'skipped is not success');
 
   const olderFailNewerPass = [
     ...allGreen,
-    base('Build', 'completed', 'failure', '2026-01-01T00:00:00Z'),
-    base('Build', 'completed', 'success', '2026-01-01T00:01:00Z'),
+    base('checks', 'completed', 'failure', '2026-01-01T00:00:00Z'),
+    base('checks', 'completed', 'success', '2026-01-01T00:01:00Z'),
   ];
   assert(evaluate(olderFailNewerPass).ok, 'latest success should win over older failure');
 
   const olderPassNewerFail = [
     ...allGreen,
-    base('Build', 'completed', 'success', '2026-01-01T00:00:00Z'),
-    base('Build', 'completed', 'failure', '2026-01-01T00:01:00Z'),
+    base('checks', 'completed', 'success', '2026-01-01T00:00:00Z'),
+    base('checks', 'completed', 'failure', '2026-01-01T00:01:00Z'),
   ];
   assert(!evaluate(olderPassNewerFail).ok, 'latest failure should win over older success');
 
@@ -223,4 +217,9 @@ if (require.main === module) {
   main(process.argv.slice(2));
 }
 
-module.exports = { REQUIRED_CHECKS, evaluate, latestByName };
+module.exports = {
+  REQUIRED_CHECKS,
+  evaluate,
+  latestByName,
+  mainIsProtectedWithRequiredChecks,
+};
