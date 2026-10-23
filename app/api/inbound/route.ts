@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { alreadySeen, forwardIdempotencyKey, hasForwardedHeader, rememberKey } from "../../lib/inbound";
+import { CONTACT_FROM, FORWARDED_HEADER, NOTIFY_TO } from "../../lib/mail";
 import { CONTACT_EMAIL } from "../../site";
-
-const CONTACT_FROM = `Minny Agents <${CONTACT_EMAIL}>`;
-const INBOUND_FORWARD_TO = "connor.steven.barrett@gmail.com";
 
 export const runtime = "nodejs";
 
@@ -14,11 +13,6 @@ function senderAddress(from: unknown) {
     if (typeof address === "string") return address;
   }
   return "";
-}
-
-function isLoop(from: string) {
-  const lower = from.toLowerCase();
-  return lower.includes(CONTACT_EMAIL) || lower.includes(INBOUND_FORWARD_TO);
 }
 
 export async function POST(req: Request) {
@@ -52,8 +46,8 @@ export async function POST(req: Request) {
   }
 
   const emailId = event.data.email_id;
-  const fromHeader = senderAddress(event.data.from);
-  if (isLoop(fromHeader)) {
+  const idempotencyKey = forwardIdempotencyKey(emailId);
+  if (alreadySeen(idempotencyKey)) {
     return NextResponse.json({ ok: true });
   }
 
@@ -63,11 +57,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Could not load the email." }, { status: 502 });
   }
 
-  const from = senderAddress(email.from) || fromHeader;
-  if (isLoop(from)) {
+  if (hasForwardedHeader(email.headers)) {
+    rememberKey(idempotencyKey);
     return NextResponse.json({ ok: true });
   }
 
+  const from = senderAddress(email.from) || senderAddress(event.data.from);
   const subject = email.subject || event.data.subject || "(no subject)";
   const text = email.text || undefined;
   const html = email.html || undefined;
@@ -79,18 +74,20 @@ export async function POST(req: Request) {
   const { error: sendError } = await resend.emails.send(
     {
       from: CONTACT_FROM,
-      to: [INBOUND_FORWARD_TO],
+      to: [NOTIFY_TO],
       replyTo: from || CONTACT_EMAIL,
       subject,
       text: text ?? " ",
       html,
+      headers: { [FORWARDED_HEADER]: "1" },
     },
-    { idempotencyKey: `inbound-forward/${emailId}` }
+    { idempotencyKey }
   );
   if (sendError) {
     console.error("inbound forward", sendError.message);
     return NextResponse.json({ error: "Could not forward." }, { status: 502 });
   }
 
+  rememberKey(idempotencyKey);
   return NextResponse.json({ ok: true });
 }
