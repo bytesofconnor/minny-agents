@@ -18,22 +18,25 @@
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
     "convex": "^1.48.0",
-    "next": "15.5.28",
+    "next": "16.4.3",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "resend": "^6.34.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^26",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.28",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "10.13.0",
+    "eslint-config-next": "16.4.3",
     "playwright": "^1.64.1",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0"
   }
 }
