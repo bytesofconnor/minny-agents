@@ -11,9 +11,18 @@ jobs:
   close:
     runs-on: ubuntu-latest
     steps:
-      - name: Close one breaking PR to prove the token can close
+      - name: Close superseded and breaking Dependabot PRs
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: bytesofconnor/minny-agents
         run: |
-          gh pr close 41 --repo "$GH_REPO" --comment "Closed because it breaks. npm ci failed: eslint-config-next@15.5.28 accepts eslint 7, 8, or 9, not eslint 10. Not migrating that pair in this change."
+          set +e
+          close() {
+            gh pr close "$1" --repo "$GH_REPO" --comment "$2"
+          }
+          close 36 "Closed as superseded. GitHub Actions updates now share one Dependabot group. This pull request is not a separate bump anymore."
+          close 38 "Closed as superseded. GitHub Actions updates now share one Dependabot group. This pull request is not a separate bump anymore."
+          close 39 "Closed as superseded. react and react-dom now update in one group. This pull request bumped react to 19.3.1 and left react-dom at 19.1.0, and the build failed on that mismatch."
+          close 40 "Closed as superseded. react and react-dom now update in one group. This pull request bumped react-dom to 19.3.1 while react stayed at 19.1.0, and npm ci failed on the peer dependency."
+          close 41 "Closed because it breaks. npm ci failed: eslint-config-next@15.5.28 accepts eslint 7, 8, or 9, not eslint 10. Not migrating that pair in this change."
+          close 43 "Closed because it breaks. The Next.js 16 build failed: Turbopack could not recognize a reexported dynamic field in a route. Not migrating that route in this change."

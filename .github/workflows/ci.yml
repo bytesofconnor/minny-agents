@@ -3,6 +3,8 @@ name: CI
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, closed]
+  push:
+    branches: [cursor/dependabot-groups-68af]
 
 jobs:
   lint-and-typecheck:
@@ -70,7 +72,7 @@ jobs:
 
   check-pr-body:
     name: Check PR Body
-    if: github.event.pull_request.user.login != 'dependabot[bot]' && (github.event.action != 'closed' || github.event.pull_request.merged == true)
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]' && (github.event.action != 'closed' || github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     steps:
       - name: Check for required sections
