@@ -1,5 +1,9 @@
 {
-  "name": "northernbytes-site",
+  "name": "minny-agents",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bytesofconnor/minny-agents.git"
+  },
   "version": "0.1.0",
   "private": true,
   "scripts": {

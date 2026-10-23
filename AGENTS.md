@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is the production marketing site for Minny Agents, an independent engineering practice that builds AI agents for Twin Cities businesses. Built with Next.js 15 App Router, TypeScript, and Tailwind CSS 4. The GitHub repo remains `northern-bytes`.
+This is the production marketing site for Minny Agents, an independent engineering practice that builds AI agents for Twin Cities businesses. Built with Next.js 15 App Router, TypeScript, and Tailwind CSS 4. The GitHub repo is `bytesofconnor/minny-agents`.
 
 ## Technology Stack
 
@@ -114,7 +114,7 @@ Designed for Vercel deployment:
   - `www.minnyagents.com` → `https://minnyagents.com`
 - `.github/workflows/prod-smoke.yml` and Playwright `BASE_URL` — production checks hit `https://minnyagents.com`
 
-The GitHub repo name remains `northern-bytes`. Do not publish `northern-bytes.vercel.app` in visitor-facing copy.
+The GitHub repo is `bytesofconnor/minny-agents`. The Vercel project is still `northern-bytes`. Do not publish `northern-bytes.vercel.app` in visitor-facing copy.
 
 ### SEO / AEO (in the repo)
 

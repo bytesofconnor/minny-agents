@@ -33,7 +33,7 @@ function assert(cond, msg) {
 }
 
 function selfTest() {
-  const repo = 'bytesofconnor/northern-bytes';
+  const repo = 'bytesofconnor/minny-agents';
   const base = {
     draft: false,
     fork: false,
@@ -87,7 +87,7 @@ function selfTest() {
       input: {
         ...base,
         fork: true,
-        headRepo: 'outsider/northern-bytes',
+        headRepo: 'outsider/minny-agents',
         authorAssociation: 'CONTRIBUTOR',
         actor: 'outsider',
         headRef: 'cursor/from-fork',
