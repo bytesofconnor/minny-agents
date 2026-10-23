@@ -14,17 +14,8 @@ updates:
       - dependency-name: "@types/node"
         versions:
           - ">=21"
-      # #49 failed checks. next 16.4.2: Turbopack "can't recognize the exported dynamic field".
-      - dependency-name: "next"
-        update-types: ["version-update:semver-major"]
-      # #41 failed npm ci: eslint-config-next@15 peers eslint 7, 8, or 9. Not eslint 10.
-      - dependency-name: "eslint"
-        update-types: ["version-update:semver-major"]
       # #49 lint: typescript-eslint does not support TS 7.0.
       - dependency-name: "typescript"
-        update-types: ["version-update:semver-major"]
-      # #47 lint failed on ESLint 9. 16.x tracks the next 16 major above.
-      - dependency-name: "eslint-config-next"
         update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
