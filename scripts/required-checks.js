@@ -223,4 +223,9 @@ if (require.main === module) {
   main(process.argv.slice(2));
 }
 
-module.exports = { REQUIRED_CHECKS, evaluate, latestByName };
+module.exports = {
+  REQUIRED_CHECKS,
+  evaluate,
+  latestByName,
+  mainIsProtectedWithRequiredChecks,
+};

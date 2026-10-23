@@ -140,6 +140,8 @@ When working on this codebase:
 
 Work under /poteto-mode for all non-trivial tasks. pstack model choices live in .cursor/rules/pstack-models.mdc (Cursor models first; non-Cursor models are opt-in only).
 
+Do not merge pull requests yourself. Open the PR and let `.github/workflows/automerge.yml` squash-merge it when the policy allows. A PR that changes `.github/**`, `.cursor/rules/**`, or this file waits for Connor.
+
 1. **Preserve design**: Do not alter visual design, copy, or branding
 2. **Maintain structure**: Keep component organization intact
 3. **Type safety**: All changes must pass TypeScript checks
@@ -175,47 +177,26 @@ Every PR must:
 
 ### Merge Policy
 
-**Autonomous merge is enabled**: PRs automatically merge to `main` when required checks pass. See [CONTRIBUTING.md](./CONTRIBUTING.md). Connor Barrett has authorized this workflow, so checks must be genuinely sufficient.
+Open the PR. Do not squash-merge it yourself. `.github/workflows/automerge.yml` runs on `pull_request` (never `pull_request_target`) and calls `gh pr merge --auto --squash` only when every condition below holds. `allow_auto_merge` is on. `--auto` waits only when `main` has required status checks. This token cannot write branch protection. If those checks are missing, the workflow does not enable auto-merge, because GitHub would merge immediately.
 
-#### How Auto-Merge Works
+Auto-merge applies only to:
 
-1. **PR Requirements**:
-   - PR must not be draft (open as non-draft)
-   - PR must not have `hold` label
-   - PR body must contain `## Verification` section (non-empty)
-   - PR body must contain `## Blast Radius` section (non-empty)
+- Same-repo branches named `cursor/*`
+- Dependabot patch and minor updates (`dependabot/fetch-metadata` `update-type` is `version-update:semver-patch` or `version-update:semver-minor`)
 
-2. **CI Checks** (all must pass):
-   - **Lint and Type Check**: ESLint and TypeScript compilation
-   - **Build**: Next.js production build must succeed
-   - **Content Guard**: No banned claims (prices, fake metrics, invented clients)
-   - **E2E Smoke Tests**: Home page, navigation, static files, JSON-LD, internal links, visual screenshots
-   - **PR Hygiene**: Verification and blast-radius sections present and non-empty
+Connor merges these. The workflow skips them:
 
-3. **Auto-Merge Trigger**:
-   - On PR open: enable GitHub squash auto-merge (`--auto`) only if `main` has required status checks. Unprotected `main` skips enable so GitHub cannot merge before CI.
-   - Safety net (schedule + after CI completes) and CI `Queue squash merge`: enable auto-merge (direct squash as fallback) only after `scripts/required-checks.js` sees success conclusions for Lint, Build, Content Guard, E2E, and Check PR Body on the current head SHA. `mergeStateStatus=CLEAN` is not a gate.
-   - Does not require a `cursor/` branch prefix
-   - Native `--auto` needs repo `allow_auto_merge` (admin setting; this token cannot enable it)
-   - Deletes source branch automatically
+- Dependabot major bumps
+- Any PR that changes `.github/**`, `.cursor/rules/**`, or `AGENTS.md`
+- Forks and outside contributors (author association other than `OWNER`, `MEMBER`, or `COLLABORATOR`, except Dependabot patch/minor)
 
-4. **Post-Merge Production Verification**:
-   - Waits for Vercel to deploy main to production
-   - Runs smoke tests against `https://minnyagents.com`
-   - Creates GitHub issue with `prod-broken` label if tests fail
-   - Uploads visual regression screenshots as artifacts
+This file is `AGENTS.md`. A PR that edits it, a workflow, or `.cursor/rules/**` stays open for Connor.
 
-#### Blocking Auto-Merge
+Required CI before GitHub completes the squash: Lint and Type Check, Build, Content Guard, E2E Smoke Tests, and Check PR Body. The PR body still needs non-empty `## Verification` and `## Blast Radius` sections.
 
-To prevent a PR from auto-merging (e.g., needs manual review):
-```bash
-gh pr edit <number> --add-label hold
-```
+#### Post-merge
 
-Remove the label when ready:
-```bash
-gh pr edit <number> --remove-label hold
-```
+Production smoke listens for `pull_request` `closed` when merged, and for a successful CI `workflow_run` whose PR is already merged. It does not listen for `push`. A merge made with `GITHUB_TOKEN` does not start `push` workflows. Vercel deploys through its GitHub App webhook, which is separate from Actions, so production deploys still run.
 
 #### Monitoring
 

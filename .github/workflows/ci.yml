@@ -1,13 +1,13 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, closed]
 
 jobs:
   lint-and-typecheck:
     name: Lint and Type Check
+    if: github.event.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,9 +19,11 @@ jobs:
       - run: npm run lint
       - run: npx tsc --noEmit
       - run: node scripts/required-checks.js --self-test
+      - run: node scripts/automerge-policy.js --self-test
 
   build:
     name: Build
+    if: github.event.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +36,7 @@ jobs:
 
   content-guard:
     name: Content Guard
+    if: github.event.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +47,7 @@ jobs:
 
   e2e-smoke:
     name: E2E Smoke Tests
+    if: github.event.action != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -63,56 +67,3 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
-
-  # Enable native auto-merge only after required check-run conclusions
-  # succeed on this head SHA (includes Check PR Body from PR Hygiene).
-  maybe-merge:
-    name: Queue squash merge
-    needs: [lint-and-typecheck, build, content-guard, e2e-smoke]
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      checks: read
-      statuses: read
-    steps:
-      - uses: actions/checkout@v4
-      - name: Enable auto-merge after required checks on the head SHA
-        env:
-          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
-        run: |
-          set -euo pipefail
-          HOLD=$(gh pr view "$PR" --json labels --jq '[.labels[].name] | index("hold") != null')
-          if [ "$HOLD" = "true" ]; then
-            echo "Skip: hold label"
-            exit 0
-          fi
-
-          ready=0
-          for i in 1 2 3 4 5 6; do
-            if node scripts/required-checks.js --pr "$PR"; then
-              ready=1
-              break
-            fi
-            echo "Required checks not all green yet (attempt $i); retrying in 10s"
-            sleep 10
-          done
-          if [ "$ready" != "1" ]; then
-            echo "Required checks still incomplete on the head SHA; not merging"
-            exit 0
-          fi
-
-          if gh pr merge "$PR" --squash --auto --delete-branch; then
-            echo "Native auto-merge enabled (or completed) on #$PR"
-            exit 0
-          fi
-
-          TITLE=$(gh pr view "$PR" --json title --jq '.title')
-          echo "Native auto-merge unavailable; squash-merging after verified checks"
-          gh pr merge "$PR" --squash --delete-branch --subject "$TITLE" \
-            --body "Auto-merged after required check-run conclusions succeeded on the head SHA" \
-            || echo "Could not merge #$PR"
-          exit 0
