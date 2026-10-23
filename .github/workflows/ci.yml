@@ -67,3 +67,25 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  checks:
+    name: checks
+    needs: [lint-and-typecheck, build, content-guard, e2e-smoke]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail unless every needed job succeeded
+        run: |
+          fail=0
+          for result in \
+            "${{ needs.lint-and-typecheck.result }}" \
+            "${{ needs.build.result }}" \
+            "${{ needs.content-guard.result }}" \
+            "${{ needs.e2e-smoke.result }}"
+          do
+            echo "result $result"
+            if [ "$result" != "success" ]; then
+              fail=1
+            fi
+          done
+          exit "$fail"

@@ -187,7 +187,7 @@ Every same-repo pull request squash auto-merges, including:
 
 Connor reviews only a fork, or an outside contributor (author association other than `OWNER`, `MEMBER`, or `COLLABORATOR`, and not `dependabot[bot]`). Paths and Dependabot update types are not a reason to wait. Drafts stay drafts until marked ready.
 
-`allow_auto_merge` is on. `--auto` waits for CI when `main` has required status checks. This token cannot write branch protection. Until an admin adds those checks, the workflow waits until Lint and Type Check, Build, Content Guard, E2E Smoke Tests, and Check PR Body have succeeded, then enables `--auto`. The PR body still needs non-empty `## Verification` and `## Blast Radius` sections.
+`allow_auto_merge` is on. The workflow's only merge command is `gh pr merge --auto --squash`. GitHub waits on the required status check. That check is the CI job named `checks`. Do not rename `checks` without telling Connor first. The job `needs` Lint and Type Check, Build, Content Guard, and E2E Smoke Tests, uses `if: always()`, and fails unless every one of those results is `success`. There is no schedule, no `workflow_run` merge, and no direct squash fallback. The PR body still needs non-empty `## Verification` and `## Blast Radius` sections.
 
 #### Post-merge
 

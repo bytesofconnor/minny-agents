@@ -7,9 +7,7 @@
  *   node scripts/automerge-policy.js --self-test
  */
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { execFileSync, spawnSync } = require('child_process');
-const path = require('path');
-const { mainIsProtectedWithRequiredChecks } = require('./required-checks');
+const { execFileSync } = require('child_process');
 
 const TRUSTED = new Set(['OWNER', 'MEMBER', 'COLLABORATOR']);
 
@@ -148,30 +146,6 @@ function writeOutput(merge, reason) {
   require('fs').appendFileSync(output, `merge=${merge ? 'true' : 'false'}\nreason=${reason}\n`);
 }
 
-function checksGreen(prNumber) {
-  const result = spawnSync(process.execPath, [
-    path.join(__dirname, 'required-checks.js'),
-    '--pr',
-    String(prNumber),
-  ], { encoding: 'utf8' });
-  if (result.stdout) process.stdout.write(result.stdout);
-  if (result.stderr) process.stderr.write(result.stderr);
-  return result.status === 0;
-}
-
-// --auto waits only when main requires status checks. This token cannot
-// set that protection. Until an admin does, wait here, then enable --auto.
-function waitUntilChecksPass(prNumber) {
-  const attempts = 50;
-  for (let i = 1; i <= attempts; i++) {
-    if (checksGreen(prNumber)) return true;
-    if (i === attempts) return false;
-    console.log(`required checks not green yet (${i}/${attempts}); retrying in 30s`);
-    spawnSync('sleep', ['30']);
-  }
-  return false;
-}
-
 function runEvent() {
   const event = require(process.env.GITHUB_EVENT_PATH);
   const input = fromEvent(event);
@@ -187,11 +161,6 @@ function runEvent() {
     return;
   }
 
-  const protection = mainIsProtectedWithRequiredChecks();
-  if (!protection.protected && !waitUntilChecksPass(input.number)) {
-    writeOutput(false, 'required checks did not succeed');
-    return;
-  }
   writeOutput(true, decision.reason);
 }
 

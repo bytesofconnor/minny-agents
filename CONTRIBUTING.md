@@ -10,14 +10,8 @@ Open PRs as **non-draft** against `main`. Every PR body must include non-empty `
 
 A fork or an outside contributor waits for Connor. Agents open the PR and do not merge it themselves.
 
-The workflow is `pull_request` only. It does not use `pull_request_target`, a schedule, or a direct squash fallback.
+The workflow is `pull_request` only. It does not use `pull_request_target`, a schedule, or a direct squash fallback. Its only merge command is `gh pr merge --auto --squash`, so GitHub waits on the required status check.
 
-`allow_auto_merge` is already on. `--auto` waits for CI when `main` has required status checks. This token cannot write branch protection. Until an admin adds them, the workflow waits for these checks to succeed, then enables `--auto`:
-
-- `Lint and Type Check`
-- `Build`
-- `Content Guard`
-- `E2E Smoke Tests`
-- `Check PR Body`
+That check is the CI job named `checks`. Do not rename `checks` without telling Connor first. It needs Lint and Type Check, Build, Content Guard, and E2E Smoke Tests, runs with `if: always()`, and fails unless every needed job succeeded.
 
 Vercel deploys `main` through its GitHub App. That path does not depend on an Actions `push` workflow. Production smoke runs on `pull_request` `closed` when merged, and on a CI `workflow_run` whose PR is already merged.
