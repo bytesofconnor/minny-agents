@@ -113,7 +113,9 @@ Designed for Vercel deployment:
   - `northern-bytes.vercel.app` → `https://minnyagents.com`
   - `www.minnyagents.com` → `https://minnyagents.com`
 - `.github/workflows/prod-smoke.yml` and Playwright `BASE_URL` — production checks hit `https://minnyagents.com`
-- `vercel.json` `ignoreCommand` — exit 0 skips a Vercel build, exit 1 runs it. Preview builds whose ref starts with `dependabot/` or `cursor/` are skipped. Any build with no file changes versus `HEAD^` is skipped. If `HEAD^` does not exist, the build runs. Production builds of `main` still run when the commit changes files. Bot branches get no Vercel previews. CI `checks` is the gate for those branches.
+### Vercel builds
+
+`vercel.json` `ignoreCommand` is `bash scripts/vercel-ignore-build.sh`. Exit 0 skips the build. Exit 1 runs it. Preview builds whose ref starts with `dependabot/` or `cursor/` are skipped. A commit with no changes versus `HEAD^` is skipped. If `HEAD^` does not exist, the build runs. Production builds of `main` still run when files changed. Bot branches get no Vercel previews. CI `checks` is the gate for those branches.
 
 The GitHub repo is `bytesofconnor/minny-agents`. The Vercel project is still `northern-bytes`. Do not publish `northern-bytes.vercel.app` in visitor-facing copy.
 
