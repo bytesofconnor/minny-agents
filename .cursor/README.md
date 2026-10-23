@@ -1,6 +1,6 @@
-# Cursor Integration — Northern Bytes Marketing Site
+# Cursor Integration — Minny Agents Marketing Site
 
-This directory contains Cursor-specific configuration for AI-assisted development of the Northern Bytes marketing site.
+This directory contains Cursor-specific configuration for AI-assisted development of the Minny Agents marketing site.
 
 ## Overview
 
@@ -209,7 +209,7 @@ For issues with Cursor integration:
 1. Check this README
 2. Review error messages
 3. Consult Cursor documentation
-4. Reach out to hello@northernbytes.co for project-specific questions
+4. Reach out to connor@minnyagents.com for project-specific questions
 
 ## Version
 
