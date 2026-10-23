@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { FAVICON_STAR_D, INK, TEAL } from "./mark";
 
 export const dynamic = "force-static";
 export const size = { width: 32, height: 32 };
@@ -14,11 +15,12 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#060A1A",
+          backgroundColor: INK,
+          borderRadius: 6,
         }}
       >
-        <svg width="22" height="22" viewBox="0 0 16 16">
-          <path fill="#3CDBC0" d="M8 0l1.15 6.85L16 8l-6.85 1.15L8 16l-1.15-6.85L0 8l6.85-1.15L8 0z" />
+        <svg width="32" height="32" viewBox="0 0 32 32">
+          <path fill={TEAL} d={FAVICON_STAR_D} />
         </svg>
       </div>
     ),

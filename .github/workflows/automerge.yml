@@ -1,124 +1,33 @@
 name: Auto-merge
 
-# Prefer GitHub native squash auto-merge. Never merge just because
-# mergeStateStatus is CLEAN — without required status checks on main,
-# CLEAN is true as soon as the PR opens.
-#
-# enable-automerge (PR events):
-#   If main has required status checks, enable native auto-merge so
-#   GitHub merges after those checks. If main is unprotected, do not
-#   enable auto-merge (GitHub would merge immediately).
-#
-# merge-ready (CI success / schedule / dispatch):
-#   Verify the five required check-run conclusions on the current head
-#   SHA, then enable native auto-merge. Direct squash merge is a fallback
-#   only after that verification.
+# pull_request only. Never pull_request_target.
 
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review, synchronize, labeled, unlabeled]
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-  schedule:
-    - cron: "*/10 * * * *"
-  workflow_dispatch:
-
-concurrency:
-  group: automerge
-  cancel-in-progress: false
+    types: [opened, reopened, ready_for_review, synchronize]
 
 permissions:
-  contents: write
-  pull-requests: write
-  checks: read
-  statuses: read
+  contents: read
 
 jobs:
-  enable-automerge:
-    name: Enable auto-merge
-    if: github.event_name == 'pull_request'
+  merge:
+    name: Enable squash auto-merge
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Enable native auto-merge only when it will wait for checks
+      - uses: actions/checkout@v7
+
+      - name: Decide
+        id: policy
+        run: node scripts/automerge-policy.js
+
+      - name: Enable squash auto-merge
+        if: steps.policy.outputs.merge == 'true'
         env:
-          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
-        run: |
-          set -euo pipefail
-          DRAFT=$(gh pr view "$PR" --json isDraft --jq '.isDraft')
-          HOLD=$(gh pr view "$PR" --json labels --jq '[.labels[].name] | index("hold") != null')
-
-          if [ "$DRAFT" = "true" ]; then
-            echo "Skip: draft PR"
-            exit 0
-          fi
-
-          if [ "$HOLD" = "true" ]; then
-            echo "Hold label present — disabling auto-merge if set"
-            gh pr merge "$PR" --disable-auto || true
-            exit 0
-          fi
-
-          if node scripts/required-checks.js --main-protected; then
-            if gh pr merge "$PR" --squash --auto --delete-branch; then
-              echo "Native auto-merge enabled on #$PR (main has required status checks)"
-            else
-              echo "Could not enable native auto-merge on #$PR (allow_auto_merge or token)."
-            fi
-            exit 0
-          fi
-
-          echo "main has no required status checks (classic protection off, no rulesets)."
-          echo "Enabling native auto-merge now would merge immediately — skipping."
-          echo "Connor: Settings → Branches → add a rule on main requiring:"
-          echo "  Lint and Type Check, Build, Content Guard, E2E Smoke Tests, Check PR Body"
-          echo "Also keep Settings → General → Pull Requests → Allow auto-merge enabled."
-          gh pr merge "$PR" --disable-auto || true
-
-  merge-ready:
-    name: Squash-merge ready PRs
-    if: >
-      github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Merge only after required check-run conclusions on the head SHA
-        env:
-          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          gh pr list --state open --json number,isDraft,labels,title > /tmp/prs.json
-          jq -c '.[] | select(.isDraft == false) | select([.labels[].name] | index("hold") | not)' \
-            /tmp/prs.json > /tmp/open.json
-
-          if [ ! -s /tmp/open.json ]; then
-            echo "No open non-draft, non-hold PRs"
-            exit 0
-          fi
-
-          while read -r row; do
-            NUM=$(echo "$row" | jq -r '.number')
-            TITLE=$(echo "$row" | jq -r '.title')
-            echo "Evaluating #$NUM — $TITLE"
-
-            if ! node scripts/required-checks.js --pr "$NUM"; then
-              echo "Skip #$NUM: required checks have not all succeeded on the head SHA"
-              continue
-            fi
-
-            if gh pr merge "$NUM" --squash --auto --delete-branch; then
-              echo "Native auto-merge enabled (or completed) on #$NUM"
-              continue
-            fi
-
-            echo "Native auto-merge unavailable for #$NUM; squash-merging after verified checks"
-            gh pr merge "$NUM" --squash --delete-branch --subject "$TITLE" \
-              --body "Auto-merged after required check-run conclusions succeeded on the head SHA" \
-              || echo "Could not merge #$NUM"
-          done < /tmp/open.json
+        run: gh pr merge "$PR" --auto --squash

@@ -1,15 +1,24 @@
 import { MetadataRoute } from "next";
+import { SITE_URL } from "./site";
 
 export const dynamic = "force-static";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://northern-bytes.vercel.app";
+const aiBots = [
+  "GPTBot",
+  "ChatGPT-User",
+  "Google-Extended",
+  "PerplexityBot",
+  "ClaudeBot",
+  "anthropic-ai",
+  "Applebot-Extended",
+];
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-    },
-    sitemap: `${siteUrl}/sitemap.xml`,
+    rules: [
+      { userAgent: "*", allow: "/" },
+      ...aiBots.map((userAgent) => ({ userAgent, allow: "/" })),
+    ],
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

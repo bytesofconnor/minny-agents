@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: [major, minor, patch]
+    ignore:
+      # CI runs Node 20 (actions/setup-node node-version). No .nvmrc or engines field.
+      - dependency-name: "@types/node"
+        versions:
+          - ">=21"
+      # #49 lint: typescript-eslint does not support TS 7.0.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: [major, minor, patch]

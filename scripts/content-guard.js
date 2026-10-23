@@ -44,19 +44,30 @@ const BANNED_PATTERNS = [
   // Unowned / not-final brand contact (do not publish)
   { pattern: /hello@northernbytes\.co/gi, reason: 'Unowned email; brand name not final' },
   { pattern: /mailto:[^\s"'<>]*northernbytes\.co/gi, reason: 'Unowned northernbytes.co mailto' },
+  { pattern: /mailto:(?!connor@minnyagents\.com)(?!\$\{CONTACT_EMAIL\})[^\s"'<>]+/gi, reason: 'Only publish mailto:connor@minnyagents.com' },
 ];
 
 // Retired brand name — must not appear in anything visitors see
 const RENDERED_BANNED_PATTERNS = [
   { pattern: /Northern Bytes/g, reason: 'Old brand name must not appear in rendered output' },
+  { pattern: /northern-bytes\.vercel\.app/g, reason: 'Production URL is https://minnyagents.com; do not publish the old Vercel alias' },
 ];
 
 // Files to check (app source and public content)
 const FILES_TO_CHECK = [
   'app/page.tsx',
   'app/layout.tsx',
+  'app/seo.ts',
+  'app/Chrome.tsx',
+  'app/IndustryPage.tsx',
+  'app/restaurants/page.tsx',
+  'app/home-services/page.tsx',
+  'app/clinics/page.tsx',
   'app/opengraph-image.tsx',
+  'app/ContactForm.tsx',
+  'app/site.ts',
   'public/llms.txt',
+  'public/llms-full.txt',
   'README.md',
   'AGENTS.md',
 ];
@@ -64,8 +75,17 @@ const FILES_TO_CHECK = [
 const RENDERED_FILES = [
   'app/page.tsx',
   'app/layout.tsx',
+  'app/seo.ts',
+  'app/Chrome.tsx',
+  'app/IndustryPage.tsx',
+  'app/restaurants/page.tsx',
+  'app/home-services/page.tsx',
+  'app/clinics/page.tsx',
   'app/opengraph-image.tsx',
+  'app/ContactForm.tsx',
+  'app/site.ts',
   'public/llms.txt',
+  'public/llms-full.txt',
 ];
 
 let violations = [];

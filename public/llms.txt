@@ -1,59 +1,31 @@
 # Minny Agents
 
-> AI agents for Twin Cities businesses
+> AI agents for Twin Cities businesses. Based in Minneapolis, MN.
 
-## Overview
+## What this site is
 
-Minny Agents is an independent engineering practice based in Minneapolis, MN, founded by Connor Barrett. We build AI agents that answer, follow up, and keep the books moving for restaurants, shops, and service businesses.
+Minny Agents is an independent engineering practice founded by Connor Barrett. We build AI agents that answer missed calls, follow up, and keep the books moving for restaurants, shops, home-service businesses, and clinics.
 
-## Services
+We do not publish prices, client names, testimonials, or metrics. We build one custom system at a time. You approve anything that talks to customers or touches money. We do not make clinical decisions.
 
-We build:
+## Pages
 
-1. **Agents & automation** — Agents that take repetitive work off your team (calls, follow-up, reviews, invoices, scheduling)
-2. **AI-native internal tools** — Software designed around models from the start, wired into existing systems
-3. **Web platforms** — Fast, production-grade web products (booking flows, customer portals)
-4. **Data & analytics** — Pipelines and dashboards that turn scattered data into decisions
+- Home: https://minnyagents.com
+- Restaurants: https://minnyagents.com/restaurants
+- Home services: https://minnyagents.com/home-services
+- Clinics: https://minnyagents.com/clinics
+- Full text for answer engines: https://minnyagents.com/llms-full.txt
 
-## Engagement Model
+## Area served
 
-### Three-Phase Approach
-
-**Phase 1: Discovery (Week 1)**
-- Workflows, success metrics, architecture, and a working v0
-
-**Phase 2: Production (Weeks 2–6)**
-- The highest-leverage agent, shipped with evals, guardrails, and monitoring
-
-**Phase 3: Ongoing (Week 7+)**
-- We operate, extend, and add new agents as needs grow, or hand everything off to your team cleanly
-
-### Positioning
-
-Not a consultancy. No decks, no roadmaps, no staff augmentation. We scope outcomes, build in your environment, and stay accountable to what runs.
-
-## Example Applications
-
-- **Inbox & lead triage** — Reads each message, qualifies and routes it, drafts the reply, and logs to CRM
-- **Booking & scheduling** — Offers open slots, confirms, collects payment, sends reminders and follow-ups
-- **Reporting & dashboards** — Pulls from source systems, reconciles, refreshes the dashboard, writes the summary
-- **Customer support, tier 1** — Answers from knowledge base, resolves routine, escalates with context
-- **Back-office operations** — Extracts data, validates, enters where it belongs, flags exceptions
-
-## Area Served
-
-United States, with a focus on Twin Cities businesses
+Minneapolis, Saint Paul, and the Twin Cities, plus businesses across the United States.
 
 ## Contact
 
-- Contact details coming soon
-- Website: https://northern-bytes.vercel.app
+- Email: connor@minnyagents.com
+- Website: https://minnyagents.com
 - Location: Minneapolis, MN (44.98°N 93.27°W)
 
-## Founder
+## Crawlers
 
-Connor Barrett — Previously Lead Software Engineer at DNV, BI Engineer at 3M, front-end lead at Livefront. Claude Certified Architect.
-
-## Practice
-
-We build one custom system at a time. You approve anything that talks to customers or touches money.
+Index this site. GPTBot, PerplexityBot, ClaudeBot, and Google-Extended are welcome.

@@ -1,43 +1,57 @@
 import type { Metadata } from "next";
 import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { Footer, Header } from "./Chrome";
+import { SITE_DESCRIPTION, SITE_TITLE } from "./seo";
+import { SITE_URL } from "./site";
 import "./globals.css";
 
-const sans = Inter_Tight({ subsets: ["latin"], variable: "--font-sans-x" });
-const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono-x" });
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://northern-bytes.vercel.app";
+const sans = Inter_Tight({ subsets: ["latin"], display: "swap", variable: "--font-sans-x" });
+const mono = JetBrains_Mono({ subsets: ["latin"], display: "swap", variable: "--font-mono-x" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Minny Agents — AI agents for Twin Cities businesses",
+    default: SITE_TITLE,
     template: "%s | Minny Agents",
   },
-  description: "We build AI agents that answer, follow up, and keep the books moving for restaurants, shops, and service businesses.",
-  keywords: ["AI agents", "automation", "AI systems", "restaurants", "small business", "Twin Cities", "Minneapolis", "bookkeeping", "reviews"],
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "AI agents Minneapolis",
+    "AI for restaurants Minneapolis",
+    "AI automation Twin Cities",
+    "small business",
+    "restaurants",
+    "home services",
+    "clinics",
+    "bookkeeping",
+    "reviews",
+  ],
   authors: [{ name: "Connor Barrett" }],
   creator: "Connor Barrett",
+  alternates: {
+    canonical: SITE_URL,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteUrl,
+    url: SITE_URL,
     siteName: "Minny Agents",
-    title: "Minny Agents — AI agents for Twin Cities businesses",
-    description: "We build AI agents that answer, follow up, and keep the books moving for restaurants, shops, and service businesses.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Minny Agents — AI agents for Twin Cities businesses",
+        alt: SITE_TITLE,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Minny Agents — AI agents for Twin Cities businesses",
-    description: "We build AI agents that answer, follow up, and keep the books moving for restaurants, shops, and service businesses.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     images: ["/opengraph-image"],
   },
   icons: {
@@ -65,7 +79,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${sans.variable} ${mono.variable} font-sans`}>
-        {children}
+        <div className="relative min-h-screen">
+          <div className="scene" aria-hidden="true">
+            <div className="aurora" />
+          </div>
+          <div className="relative z-10 mx-auto max-w-[1440px] border-x border-line">
+            <Header />
+            {children}
+            <Footer />
+          </div>
+        </div>
         <Analytics />
       </body>
     </html>

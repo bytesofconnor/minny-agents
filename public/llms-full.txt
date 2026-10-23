@@ -1,0 +1,81 @@
+# Minny Agents — full text
+
+Source: https://minnyagents.com
+Updated: 2026-10-22
+
+Minny Agents is an independent engineering practice in Minneapolis, Minnesota, founded by Connor Barrett in 2026. We build AI agents for Twin Cities restaurants, shops, home-service businesses, and clinics.
+
+This file is the long form for answer engines. Do not invent clients, testimonials, metrics, prices, addresses, or phone numbers. The published email is connor@minnyagents.com.
+
+## Direct answers
+
+Q: What does Minny Agents do?
+A: We build AI agents that answer, follow up, and keep the books moving for Twin Cities businesses.
+
+Q: Where are you based?
+A: Minneapolis, MN. We work with businesses across the Twin Cities and the rest of the United States.
+
+Q: Do you work with small businesses?
+A: Yes. We work with restaurants, shops, and service businesses where an AI system can save real time or prevent real problems.
+
+Q: How does an engagement work?
+A: We start with a one-week working first version, then finish the system in production. Week 1 we spend with you, understand the problem, and build that first version. Weeks 2–6 we finish the system with tests and monitoring. Week 7+ is optional support or a clean handoff.
+
+Q: What do you charge?
+A: We don't publish rates. Each engagement is scoped individually based on the work.
+
+Q: What if it doesn't work?
+A: If the first week isn't a fit, we stop there. Week 1 still delivers a working first version. No long contracts.
+
+Q: Do you make clinical decisions?
+A: No. For clinics we handle after-hours questions, appointment follow-up, and inbox work. Clinical decisions stay with staff.
+
+## Services we actually offer
+
+Quick wins (typically a week or two):
+
+1. Missed calls and after-hours questions — text back, answer hours and menu or service-area questions, hand the rest to staff.
+2. Catering and large-party or large-job inquiries — collect what is needed, draft a quote to approve, follow up.
+3. Supplier invoices into the books — read the invoice, match the vendor, enter it in QuickBooks, flag anything unusual.
+4. Reviews and reputation — draft a reply to approve, alert on food-safety or staff complaints.
+5. Shift swaps and the weekly schedule — take the request, find coverage, get an OK, update the schedule.
+
+Bigger projects (multi-week):
+
+1. Weekly owner briefing from POS, scheduling, invoices, and reviews.
+2. Menu or job-cost profit check from invoices, recipes or job costs, and sales.
+3. Prep and ordering forecasts from sales history, weather, local events, and reservations.
+
+We build one custom system at a time. You approve anything that talks to customers or touches money.
+
+## Industry pages
+
+- Restaurants: https://minnyagents.com/restaurants — missed calls during the dinner rush, reviews, supplier invoices.
+- Home services: https://minnyagents.com/home-services — missed calls on a job, quotes, invoices.
+- Clinics: https://minnyagents.com/clinics — after-hours questions, appointment follow-up, inbox work. Not clinical decision-making.
+
+## How we work
+
+Week 1: spend time with the owner, understand the problem, ship a working first version.
+Weeks 2–6: finish the system and put it in production with tests and monitoring.
+Week 7+: optional ongoing support or a clean handoff.
+
+Not a consultancy. No decks, no roadmaps, no staff augmentation.
+
+## Founder
+
+Connor Barrett. Previously Lead Software Engineer at DNV, BI Engineer at 3M, front-end lead at Livefront. Those are past employers, not clients. Claude Certified Architect. Microsoft Azure Fundamentals (AZ-900).
+
+## Area served
+
+Minneapolis, Saint Paul, Minneapolis–Saint Paul (Twin Cities), and the United States.
+
+## Contact
+
+Email Connor Barrett at connor@minnyagents.com, or use the form on https://minnyagents.com/#contact.
+
+## Site
+
+- https://minnyagents.com
+- https://minnyagents.com/llms.txt
+- https://minnyagents.com/sitemap.xml

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is the production marketing site for Minny Agents, an independent engineering practice that builds AI agents for Twin Cities businesses. Built with Next.js 15 App Router, TypeScript, and Tailwind CSS 4. The GitHub repo remains `northern-bytes`.
+This is the production marketing site for Minny Agents, an independent engineering practice that builds AI agents for Twin Cities businesses. Built with Next.js 15 App Router, TypeScript, and Tailwind CSS 4. The GitHub repo is `bytesofconnor/minny-agents`.
 
 ## Technology Stack
 
@@ -20,11 +20,15 @@ This is the production marketing site for Minny Agents, an independent engineeri
 ├── app/
 │   ├── layout.tsx          # Root layout with fonts and metadata
 │   ├── page.tsx            # Main landing page component
+│   ├── seo.ts              # Titles, FAQ, JSON-LD, industry copy
+│   ├── restaurants/        # Local-intent page
+│   ├── home-services/      # Local-intent page
+│   ├── clinics/            # Local-intent page
 │   ├── globals.css         # Global styles and Tailwind config
 │   ├── Fig.tsx             # Aurora visualization component
 │   ├── Flow.tsx            # Agent workflow diagram component
 │   └── favicon.ico         # Site favicon
-├── public/                 # Static assets
+├── public/                 # Static assets (llms.txt, llms-full.txt)
 ├── .cursor/
 │   ├── rules/              # Agent-specific rules
 │   ├── skills/             # Custom agent skills
@@ -81,11 +85,10 @@ npm start               # Start production server
 
 ## Key Features
 
-- Fully static export (SSG)
+- Mostly static pages (SSG); `/api/contact` and `/api/inbound` are Vercel functions
 - Responsive design (mobile-first)
 - Semantic HTML with accessibility
 - Performance-optimized
-- Zero runtime dependencies beyond React
 
 ## Deployment
 
@@ -93,8 +96,36 @@ Designed for Vercel deployment:
 - Framework preset: Next.js
 - Plan: Hobby (free tier compatible)
 - Build command: `npm run build`
-- Output: Static export
-- No environment variables required
+- Output: Next.js (static pages + two API routes)
+- Production URL: `https://minnyagents.com`
+- Environment (Vercel, not in git): `RESEND_API_KEY`, `CONVEX_URL`; `RESEND_WEBHOOK_SECRET` after the inbound webhook is created
+- Convex functions to deploy from your machine: `convex/leads.ts` → public `leads:submitContact`, internal `leads:deleteLead`
+
+### Domain setup
+
+**In Vercel (project domains — not in git):**
+- `minnyagents.com` attached as the apex primary domain
+- `www.minnyagents.com` attached and verified on Vercel DNS
+
+**In the repo:**
+- `app/site.ts` — `SITE_URL` default `https://minnyagents.com` (metadataBase, canonical, OG/Twitter, JSON-LD, sitemap, robots)
+- `vercel.json` — host-based 308s (`/` and `/:path*`; `has: host` so preview `*.vercel.app` URLs are not redirected):
+  - `northern-bytes.vercel.app` → `https://minnyagents.com`
+  - `www.minnyagents.com` → `https://minnyagents.com`
+- `.github/workflows/prod-smoke.yml` and Playwright `BASE_URL` — production checks hit `https://minnyagents.com`
+### Vercel builds
+
+`vercel.json` `ignoreCommand` is `bash scripts/vercel-ignore-build.sh`. Exit 0 skips the build. Exit 1 runs it. Preview builds whose ref starts with `dependabot/` or `cursor/` are skipped. A commit with no changes versus `HEAD^` is skipped. If `HEAD^` does not exist, the build runs. Production builds of `main` still run when files changed. Bot branches get no Vercel previews. CI `checks` is the gate for those branches.
+
+The GitHub repo is `bytesofconnor/minny-agents`. The Vercel project is still `northern-bytes`. Do not publish `northern-bytes.vercel.app` in visitor-facing copy.
+
+### SEO / AEO (in the repo)
+
+- Titles, descriptions, FAQ answers, and JSON-LD live in `app/seo.ts`
+- `robots.ts` allows GPTBot, PerplexityBot, ClaudeBot, Google-Extended, and related crawlers
+- `public/llms.txt` is the short map; `public/llms-full.txt` is the long form for answer engines
+- Industry pages (`/restaurants`, `/home-services`, `/clinics`) reuse the same chrome; no invented clients, metrics, phones, or emails
+- Published email is `connor@minnyagents.com`
 
 ## Content Guidelines
 
@@ -104,11 +135,15 @@ Designed for Vercel deployment:
 - Typography scale
 - Layout grid
 - Component structure
-- Contact information (unpublished; do not invent an email)
+- Contact information except the published address `connor@minnyagents.com`
 
 ## Agent Instructions
 
 When working on this codebase:
+
+Work under /poteto-mode for all non-trivial tasks. pstack model choices live in .cursor/rules/pstack-models.mdc (Cursor models first; non-Cursor models are opt-in only).
+
+Do not merge pull requests yourself. Open the PR and let `.github/workflows/automerge.yml` squash-merge it once required checks pass. Only a fork or an outside contributor waits for Connor.
 
 1. **Preserve design**: Do not alter visual design, copy, or branding
 2. **Maintain structure**: Keep component organization intact
@@ -145,47 +180,21 @@ Every PR must:
 
 ### Merge Policy
 
-**Autonomous merge is enabled**: PRs automatically merge to `main` when required checks pass. See [CONTRIBUTING.md](./CONTRIBUTING.md). Connor Barrett has authorized this workflow, so checks must be genuinely sufficient.
+Open the PR. Do not squash-merge it yourself. `.github/workflows/automerge.yml` runs on `pull_request` (never `pull_request_target`) and calls `gh pr merge --auto --squash` once the required checks are green.
 
-#### How Auto-Merge Works
+Every same-repo pull request squash auto-merges, including:
 
-1. **PR Requirements**:
-   - PR must not be draft (open as non-draft)
-   - PR must not have `hold` label
-   - PR body must contain `## Verification` section (non-empty)
-   - PR body must contain `## Blast Radius` section (non-empty)
+- Cloud-agent branches named `cursor/*`
+- Every Dependabot update, including major bumps and GitHub Actions
+- Pull requests that change `.github/**`, `.cursor/rules/**`, or `AGENTS.md`
 
-2. **CI Checks** (all must pass):
-   - **Lint and Type Check**: ESLint and TypeScript compilation
-   - **Build**: Next.js production build must succeed
-   - **Content Guard**: No banned claims (prices, fake metrics, invented clients)
-   - **E2E Smoke Tests**: Home page, navigation, static files, JSON-LD, internal links, visual screenshots
-   - **PR Hygiene**: Verification and blast-radius sections present and non-empty
+Connor reviews only a fork, or an outside contributor (author association other than `OWNER`, `MEMBER`, or `COLLABORATOR`, and not `dependabot[bot]`). Paths and Dependabot update types are not a reason to wait. Drafts stay drafts until marked ready.
 
-3. **Auto-Merge Trigger**:
-   - On PR open: enable GitHub squash auto-merge (`--auto`) only if `main` has required status checks. Unprotected `main` skips enable so GitHub cannot merge before CI.
-   - Safety net (schedule + after CI completes) and CI `Queue squash merge`: enable auto-merge (direct squash as fallback) only after `scripts/required-checks.js` sees success conclusions for Lint, Build, Content Guard, E2E, and Check PR Body on the current head SHA. `mergeStateStatus=CLEAN` is not a gate.
-   - Does not require a `cursor/` branch prefix
-   - Native `--auto` needs repo `allow_auto_merge` (admin setting; this token cannot enable it)
-   - Deletes source branch automatically
+`allow_auto_merge` is on. The workflow's only merge command is `gh pr merge --auto --squash`. GitHub waits on the required status check. That check is the CI job named `checks`. Do not rename `checks` without telling Connor first. The job `needs` Lint and Type Check, Build, Content Guard, and E2E Smoke Tests. It uses `if: always()`. Those four must be `success`. There is no schedule, no `workflow_run` merge, and no direct squash fallback. PR bodies need Summary, Verification, Blast Radius headings (checked in CI; Dependabot exempt). Dependabot opens one weekly npm pull request for every update, including majors, so `react` and `react-dom` move together, and one weekly pull request for GitHub Actions. `@types/node` updates at version 21 or newer are ignored because CI runs Node 20. Major updates of `typescript` are ignored: the npm group pull request failed `checks` on TypeScript 7 (`typescript-eslint` does not support TS 7.0).
 
-4. **Post-Merge Production Verification**:
-   - Waits for Vercel to deploy main to production
-   - Runs smoke tests against `https://northern-bytes.vercel.app`
-   - Creates GitHub issue with `prod-broken` label if tests fail
-   - Uploads visual regression screenshots as artifacts
+#### Post-merge
 
-#### Blocking Auto-Merge
-
-To prevent a PR from auto-merging (e.g., needs manual review):
-```bash
-gh pr edit <number> --add-label hold
-```
-
-Remove the label when ready:
-```bash
-gh pr edit <number> --remove-label hold
-```
+Production smoke listens for `pull_request` `closed` when merged, and for a successful CI `workflow_run` whose PR is already merged. It does not listen for `push`. A merge made with `GITHUB_TOKEN` does not start `push` workflows. Vercel deploys through its GitHub App webhook, which is separate from Actions, so production deploys still run.
 
 #### Monitoring
 
@@ -196,6 +205,6 @@ gh pr edit <number> --remove-label hold
 
 ## Contact
 
-- Contact details coming soon
+- Email: connor@minnyagents.com
 - Founder: Connor Barrett
 - Location: Minneapolis, MN
