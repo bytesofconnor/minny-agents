@@ -113,6 +113,7 @@ Designed for Vercel deployment:
   - `northern-bytes.vercel.app` → `https://minnyagents.com`
   - `www.minnyagents.com` → `https://minnyagents.com`
 - `.github/workflows/prod-smoke.yml` and Playwright `BASE_URL` — production checks hit `https://minnyagents.com`
+- `vercel.json` `ignoreCommand` — exit 0 skips a Vercel build, exit 1 runs it. Preview builds whose ref starts with `dependabot/` or `cursor/` are skipped. Any build with no file changes versus `HEAD^` is skipped. If `HEAD^` does not exist, the build runs. Production builds of `main` still run when the commit changes files. Bot branches get no Vercel previews. CI `checks` is the gate for those branches.
 
 The GitHub repo is `bytesofconnor/minny-agents`. The Vercel project is still `northern-bytes`. Do not publish `northern-bytes.vercel.app` in visitor-facing copy.
 
@@ -187,7 +188,7 @@ Every same-repo pull request squash auto-merges, including:
 
 Connor reviews only a fork, or an outside contributor (author association other than `OWNER`, `MEMBER`, or `COLLABORATOR`, and not `dependabot[bot]`). Paths and Dependabot update types are not a reason to wait. Drafts stay drafts until marked ready.
 
-`allow_auto_merge` is on. The workflow's only merge command is `gh pr merge --auto --squash`. GitHub waits on the required status check. That check is the CI job named `checks`. Do not rename `checks` without telling Connor first. The job `needs` Lint and Type Check, Build, Content Guard, E2E Smoke Tests, and Check PR Body. It uses `if: always()`. Those first four must be `success`. Check PR Body may be `skipped`: `dependabot[bot]` skips that job, and a skip counts as a pass. There is no schedule, no `workflow_run` merge, and no direct squash fallback. Human PR bodies still need non-empty `## Verification` and `## Blast Radius` sections. Dependabot groups minor and patch npm updates, groups every GitHub Actions update, and groups `react` with `react-dom`. `@types/node` updates at version 21 or newer are ignored because CI runs Node 20.
+`allow_auto_merge` is on. The workflow's only merge command is `gh pr merge --auto --squash`. GitHub waits on the required status check. That check is the CI job named `checks`. Do not rename `checks` without telling Connor first. The job `needs` Lint and Type Check, Build, Content Guard, E2E Smoke Tests, and Check PR Body. It uses `if: always()`. Those first four must be `success`. Check PR Body may be `skipped`: `dependabot[bot]` skips that job, and a skip counts as a pass. There is no schedule, no `workflow_run` merge, and no direct squash fallback. Human PR bodies still need non-empty `## Verification` and `## Blast Radius` sections. Dependabot opens one weekly npm pull request for every update, including majors, so `react` and `react-dom` move together, and one weekly pull request for GitHub Actions. `@types/node` updates at version 21 or newer are ignored because CI runs Node 20.
 
 #### Post-merge
 
