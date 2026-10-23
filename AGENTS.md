@@ -138,6 +138,8 @@ The GitHub repo name remains `northern-bytes`. Do not publish `northern-bytes.ve
 
 When working on this codebase:
 
+Work under /poteto-mode for all non-trivial tasks; pstack model choices live in .cursor/rules/pstack-models.mdc.
+
 1. **Preserve design**: Do not alter visual design, copy, or branding
 2. **Maintain structure**: Keep component organization intact
 3. **Type safety**: All changes must pass TypeScript checks
