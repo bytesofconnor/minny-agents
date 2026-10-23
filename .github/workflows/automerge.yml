@@ -18,6 +18,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
 
@@ -34,6 +36,5 @@ jobs:
       - name: Enable squash auto-merge
         if: steps.policy.outputs.merge == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
         run: gh pr merge "$PR" --auto --squash
