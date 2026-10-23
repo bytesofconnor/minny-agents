@@ -3,7 +3,8 @@
  * site calls it from /api/contact. Everything else stays internal.
  *
  * Deploy this file from your machine: `npx convex deploy`
- * Mutation: leads:submitContact
+ * Public: leads:submitContact
+ * Internal: leads:deleteLead, plus the existing CRM helpers
  */
 import { v } from "convex/values";
 import { internalMutation, internalQuery, mutation } from "./_generated/server";
@@ -72,6 +73,16 @@ const leadFields = {
   nextAction: v.optional(v.string()),
   nextActionDate: v.optional(v.number()),
 };
+
+export const deleteLead = internalMutation({
+  args: { id: v.id("leads") },
+  handler: async (ctx, { id }) => {
+    const existing = await ctx.db.get(id);
+    if (!existing) throw new Error("Lead not found");
+    await ctx.db.delete(id);
+    return id;
+  },
+});
 
 export const upsertLead = internalMutation({
   args: {

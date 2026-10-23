@@ -99,7 +99,7 @@ Designed for Vercel deployment:
 - Output: Next.js (static pages + two API routes)
 - Production URL: `https://minnyagents.com`
 - Environment (Vercel, not in git): `RESEND_API_KEY`, `CONVEX_URL`; `RESEND_WEBHOOK_SECRET` after the inbound webhook is created
-- Convex mutation to deploy from your machine: `convex/leads.ts` → `leads:submitContact`
+- Convex functions to deploy from your machine: `convex/leads.ts` → public `leads:submitContact`, internal `leads:deleteLead`
 
 ### Domain setup
 

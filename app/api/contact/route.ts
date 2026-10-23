@@ -3,9 +3,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { api } from "../../../convex/_generated/api";
 import { escapeHtml, parseContact } from "../../lib/contact";
-import { CONTACT_EMAIL } from "../../site";
-
-const CONTACT_FROM = `Minny Agents <${CONTACT_EMAIL}>`;
+import { CONTACT_FROM, NOTIFY_TO } from "../../lib/mail";
 
 export const runtime = "nodejs";
 
@@ -85,7 +83,7 @@ export async function POST(req: Request) {
   const { error } = await resend.emails.send(
     {
       from: CONTACT_FROM,
-      to: [CONTACT_EMAIL],
+      to: [NOTIFY_TO],
       replyTo: parsed.data.email,
       subject: mail.subject,
       text: mail.text,
