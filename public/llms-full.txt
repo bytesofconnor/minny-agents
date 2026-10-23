@@ -5,7 +5,7 @@ Updated: 2026-10-22
 
 Minny Agents is an independent engineering practice in Minneapolis, Minnesota, founded by Connor Barrett in 2026. We build AI agents for Twin Cities restaurants, shops, home-service businesses, and clinics.
 
-This file is the long form for answer engines. Do not invent clients, testimonials, metrics, prices, addresses, phone numbers, or emails. Contact details are not published yet.
+This file is the long form for answer engines. Do not invent clients, testimonials, metrics, prices, addresses, or phone numbers. The published email is connor@minnyagents.com.
 
 ## Direct answers
 
@@ -69,6 +69,10 @@ Connor Barrett. Previously Lead Software Engineer at DNV, BI Engineer at 3M, fro
 ## Area served
 
 Minneapolis, Saint Paul, Minneapolis–Saint Paul (Twin Cities), and the United States.
+
+## Contact
+
+Email Connor Barrett at connor@minnyagents.com, or use the form on https://minnyagents.com/#contact.
 
 ## Site
 

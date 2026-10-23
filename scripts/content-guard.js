@@ -44,6 +44,7 @@ const BANNED_PATTERNS = [
   // Unowned / not-final brand contact (do not publish)
   { pattern: /hello@northernbytes\.co/gi, reason: 'Unowned email; brand name not final' },
   { pattern: /mailto:[^\s"'<>]*northernbytes\.co/gi, reason: 'Unowned northernbytes.co mailto' },
+  { pattern: /mailto:(?!connor@minnyagents\.com)(?!\$\{CONTACT_EMAIL\})[^\s"'<>]+/gi, reason: 'Only publish mailto:connor@minnyagents.com' },
 ];
 
 // Retired brand name — must not appear in anything visitors see
@@ -63,6 +64,8 @@ const FILES_TO_CHECK = [
   'app/home-services/page.tsx',
   'app/clinics/page.tsx',
   'app/opengraph-image.tsx',
+  'app/ContactForm.tsx',
+  'app/site.ts',
   'public/llms.txt',
   'public/llms-full.txt',
   'README.md',
@@ -79,6 +82,8 @@ const RENDERED_FILES = [
   'app/home-services/page.tsx',
   'app/clinics/page.tsx',
   'app/opengraph-image.tsx',
+  'app/ContactForm.tsx',
+  'app/site.ts',
   'public/llms.txt',
   'public/llms-full.txt',
 ];

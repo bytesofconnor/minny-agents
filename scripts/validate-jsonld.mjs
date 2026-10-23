@@ -6,7 +6,15 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
-const OUT = "out";
+const OUT = process.env.JSONLD_DIR || (statExists(".next/server/app") ? ".next/server/app" : "out");
+
+function statExists(p) {
+  try {
+    return statSync(p).isDirectory();
+  } catch {
+    return false;
+  }
+}
 const errors = [];
 const notes = [];
 
@@ -28,7 +36,7 @@ function findByType(graph, type) {
 
 function walkHtml(dir, acc = []) {
   for (const name of readdirSync(dir)) {
-    if (name === "_next" || name === "404.html") continue;
+    if (name === "_next" || name === "404.html" || name === "_not-found.html") continue;
     const full = join(dir, name);
     if (statSync(full).isDirectory()) walkHtml(full, acc);
     else if (name.endsWith(".html")) acc.push(full);
@@ -70,7 +78,8 @@ function validateHome(graph, html) {
   else {
     requireFields(org, ["name", "url", "address", "founder"], "Organization");
     if (org.name !== "Minny Agents") fail("Organization.name");
-    if (org.telephone || org.email) fail("Organization must not invent telephone/email");
+    if (org.telephone) fail("Organization must not invent a telephone");
+    if (org.email !== "connor@minnyagents.com") fail("Organization.email must be connor@minnyagents.com");
     if (org.address?.addressLocality !== "Minneapolis") fail("Organization.address.addressLocality");
   }
 

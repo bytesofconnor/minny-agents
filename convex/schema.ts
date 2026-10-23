@@ -2,6 +2,7 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export const STAGES = [
+  "new",
   "found",
   "researched",
   "contacted",
@@ -13,6 +14,7 @@ export const STAGES = [
 ] as const;
 
 export const stageValidator = v.union(
+  v.literal("new"),
   v.literal("found"),
   v.literal("researched"),
   v.literal("contacted"),

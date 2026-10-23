@@ -70,7 +70,7 @@ body { background: var(--color-ink); color: var(--color-paper); -webkit-font-smo
   mask-image: radial-gradient(ellipse 58% 54% at 78% 80%, #000 0 46%, transparent 76%);
 }
 .contact .contours {
-  /* Empty lower-right around “coming soon”; off the contact headline. */
+  /* Empty lower-right around the form; off the contact headline. */
   -webkit-mask-image: radial-gradient(ellipse 52% 50% at 86% 78%, #000 0 48%, transparent 76%);
   mask-image: radial-gradient(ellipse 52% 50% at 86% 78%, #000 0 48%, transparent 76%);
 }

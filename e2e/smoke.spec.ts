@@ -117,16 +117,44 @@ test.describe('Smoke Tests', () => {
     }
   });
 
-  test('contact links are correct', async ({ page }) => {
+  test('contact form and mailto are present', async ({ page }) => {
     await page.goto('/');
 
-    // Unowned address must not appear
-    const emailLinks = await page.locator('a[href^="mailto:"]').all();
-    expect(emailLinks.length).toBe(0);
+    const emailLinks = page.locator('a[href="mailto:connor@minnyagents.com"]');
+    expect(await emailLinks.count()).toBeGreaterThan(0);
+    await expect(emailLinks.first()).toBeVisible();
 
     const contactCtas = await page.locator('a[href="#contact"], a[href="/#contact"]').all();
     expect(contactCtas.length).toBeGreaterThan(0);
-    await expect(page.getByText('Contact details coming soon.')).toBeVisible();
+    await expect(page.getByText('Contact details coming soon.')).toHaveCount(0);
+
+    await expect(page.locator('#contact form')).toBeVisible();
+    await expect(page.locator('#contact input[name="name"]')).toBeVisible();
+    await expect(page.locator('#contact input[name="email"]')).toBeVisible();
+    await expect(page.locator('#contact input[name="business"]')).toBeVisible();
+    await expect(page.locator('#contact textarea[name="message"]')).toBeVisible();
+    const honeypot = page.locator('#contact input[name="website"]');
+    await expect(honeypot).toBeAttached();
+    await expect(honeypot).toBeHidden();
+  });
+
+  test('contact and inbound APIs reject bad input safely', async ({ request }) => {
+    const missing = await request.post('/api/contact', { data: { name: 'Ada' } });
+    expect(missing.status()).toBe(400);
+
+    const badEmail = await request.post('/api/contact', {
+      data: { name: 'Ada', email: 'not-an-email', business: 'Cafe', message: 'Need a missed-call agent.' },
+    });
+    expect(badEmail.status()).toBe(400);
+
+    const honeypot = await request.post('/api/contact', {
+      data: { name: 'Ada', email: 'ada@example.com', business: 'Cafe', message: 'Need a missed-call agent.', website: 'http://spam.test' },
+    });
+    expect(honeypot.status()).toBe(200);
+    expect(await honeypot.json()).toEqual({ ok: true });
+
+    const inbound = await request.post('/api/inbound', { data: { type: 'email.received' } });
+    expect([400, 503]).toContain(inbound.status());
   });
 
   test('no broken internal links', async ({ page }) => {
@@ -245,7 +273,7 @@ test.describe('Smoke Tests', () => {
     expect(org.founder).toBeDefined();
     expect(org.founder.name).toBe('Connor Barrett');
     expect(org.telephone).toBeUndefined();
-    expect(org.email).toBeUndefined();
+    expect(org.email).toBe('connor@minnyagents.com');
 
     const biz = jsonLd['@graph'].find((item: { '@type': string | string[] }) => typesOf(item).includes('LocalBusiness'));
     const served = JSON.stringify(biz.areaServed);
