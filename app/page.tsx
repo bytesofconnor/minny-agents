@@ -1,4 +1,5 @@
 import { Btn, Mono } from "./Chrome";
+import ContactForm from "./ContactForm";
 import Contours from "./Contours";
 import ExampleCard from "./ExampleCard";
 import Fig from "./Fig";
@@ -201,12 +202,7 @@ export default function Home() {
           <div className="relative overflow-hidden px-5 pb-20 pt-10 md:px-6 md:pb-28 md:pt-8">
             <Contours lake="contact" />
             <h2 className="relative z-10 max-w-[12ch] text-5xl font-medium leading-[0.95] tracking-[-0.035em] md:text-[96px]">Tell us what problem you need to solve.</h2>
-            <div className="relative z-10 mt-12 grid gap-8 border-t border-line pt-8 md:grid-cols-9">
-              <p className="text-lg leading-relaxed text-mute md:col-span-4 md:text-xl">We&apos;ll let you know if we can help.</p>
-              <div className="flex flex-wrap items-center gap-4 md:col-span-5 md:justify-end">
-                <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-mute">Contact details coming soon.</p>
-              </div>
-            </div>
+            <ContactForm />
           </div>
         </Sec>
     </>

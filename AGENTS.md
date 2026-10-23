@@ -85,11 +85,10 @@ npm start               # Start production server
 
 ## Key Features
 
-- Fully static export (SSG)
+- Mostly static pages (SSG); `/api/contact` and `/api/inbound` are Vercel functions
 - Responsive design (mobile-first)
 - Semantic HTML with accessibility
 - Performance-optimized
-- Zero runtime dependencies beyond React
 
 ## Deployment
 
@@ -97,9 +96,10 @@ Designed for Vercel deployment:
 - Framework preset: Next.js
 - Plan: Hobby (free tier compatible)
 - Build command: `npm run build`
-- Output: Static export
-- No environment variables required
+- Output: Next.js (static pages + two API routes)
 - Production URL: `https://minnyagents.com`
+- Environment (Vercel, not in git): `RESEND_API_KEY`, `CONVEX_URL`; `RESEND_WEBHOOK_SECRET` after the inbound webhook is created
+- Convex mutation to deploy from your machine: `convex/leads.ts` → `leads:submitContact`
 
 ### Domain setup
 
@@ -122,6 +122,7 @@ The GitHub repo name remains `northern-bytes`. Do not publish `northern-bytes.ve
 - `robots.ts` allows GPTBot, PerplexityBot, ClaudeBot, Google-Extended, and related crawlers
 - `public/llms.txt` is the short map; `public/llms-full.txt` is the long form for answer engines
 - Industry pages (`/restaurants`, `/home-services`, `/clinics`) reuse the same chrome; no invented clients, metrics, phones, or emails
+- Published email is `connor@minnyagents.com`
 
 ## Content Guidelines
 
@@ -131,7 +132,7 @@ The GitHub repo name remains `northern-bytes`. Do not publish `northern-bytes.ve
 - Typography scale
 - Layout grid
 - Component structure
-- Contact information (unpublished; do not invent an email)
+- Contact information except the published address `connor@minnyagents.com`
 
 ## Agent Instructions
 
@@ -223,6 +224,6 @@ gh pr edit <number> --remove-label hold
 
 ## Contact
 
-- Contact details coming soon
+- Email: connor@minnyagents.com
 - Founder: Connor Barrett
 - Location: Minneapolis, MN

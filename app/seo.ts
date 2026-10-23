@@ -1,4 +1,4 @@
-import { SITE_URL } from "./site";
+import { CONTACT_EMAIL, SITE_URL } from "./site";
 
 export const SITE_TITLE = "AI Agents in Minneapolis | Minny Agents";
 export const SITE_DESCRIPTION =
@@ -152,9 +152,11 @@ export function homeJsonLd() {
           name: "Connor Barrett",
         },
         address,
+        email: CONTACT_EMAIL,
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "Business Inquiries",
+          email: CONTACT_EMAIL,
         },
         areaServed,
       },

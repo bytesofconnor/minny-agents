@@ -1,10 +1,62 @@
 /**
- * Internal-only lead CRM. Not in the public Convex API.
- * The marketing site does not import or call these functions.
+ * Lead CRM. `submitContact` is the only public mutation — the marketing
+ * site calls it from /api/contact. Everything else stays internal.
+ *
+ * Deploy this file from your machine: `npx convex deploy`
+ * Mutation: leads:submitContact
  */
 import { v } from "convex/values";
-import { internalMutation, internalQuery } from "./_generated/server";
+import { internalMutation, internalQuery, mutation } from "./_generated/server";
 import { directionValidator, stageValidator } from "./schema";
+
+const CONTACT_LIMITS = {
+  name: 80,
+  email: 120,
+  business: 120,
+  message: 2000,
+} as const;
+
+function cap(value: string, max: number) {
+  return value.trim().slice(0, max);
+}
+
+function isEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+export const submitContact = mutation({
+  args: {
+    name: v.string(),
+    email: v.string(),
+    business: v.string(),
+    message: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const name = cap(args.name, CONTACT_LIMITS.name);
+    const email = cap(args.email, CONTACT_LIMITS.email).toLowerCase();
+    const business = cap(args.business, CONTACT_LIMITS.business);
+    const message = cap(args.message, CONTACT_LIMITS.message);
+
+    if (!name || !email || !business || !message) {
+      throw new Error("All fields are required");
+    }
+    if (!isEmail(email)) {
+      throw new Error("Invalid email");
+    }
+
+    const now = Date.now();
+    return await ctx.db.insert("leads", {
+      businessName: business,
+      contactName: name,
+      contactEmail: email,
+      notes: message,
+      source: "website",
+      stage: "new",
+      createdAt: now,
+      updatedAt: now,
+    });
+  },
+});
 
 const leadFields = {
   businessName: v.string(),
