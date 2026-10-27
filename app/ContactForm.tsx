@@ -55,11 +55,7 @@ export default function ContactForm() {
     }
     if (parsed.ok && !parsed.honeypot) {
       const props = contactSubmitProps(pathname);
-      if (props) {
-        try {
-          track(CONTACT_SUBMIT_EVENT, props);
-        } catch {}
-      }
+      if (props) track(CONTACT_SUBMIT_EVENT, props);
     }
   }
 
