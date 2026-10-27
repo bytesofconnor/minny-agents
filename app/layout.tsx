@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Footer, Header } from "./Chrome";
 import { SITE_DESCRIPTION, SITE_TITLE } from "./seo";
 import { SITE_URL } from "./site";
@@ -90,6 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </div>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { track } from "@vercel/analytics";
+import { usePathname } from "next/navigation";
+import { CONTACT_SUBMIT_EVENT, contactSubmitProps } from "./contact-submit";
+import { parseContact } from "./lib/contact";
 import { CONTACT_EMAIL } from "./site";
 
 const field =
   "mt-2 w-full border border-line bg-ink2 px-4 py-3 text-[15px] text-paper outline-none transition-colors placeholder:text-dim focus:border-teal";
 
 export default function ContactForm() {
+  const pathname = usePathname();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState("");
 
@@ -14,6 +19,13 @@ export default function ContactForm() {
     e.preventDefault();
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
+    const parsed = parseContact({
+      name: data.name,
+      email: data.email,
+      business: data.business,
+      message: data.message,
+      website: data.website,
+    });
     setStatus("sending");
     setError("");
     try {
@@ -39,6 +51,15 @@ export default function ContactForm() {
     } catch {
       setStatus("error");
       setError("Could not send. Email Connor instead.");
+      return;
+    }
+    if (parsed.ok && !parsed.honeypot) {
+      const props = contactSubmitProps(pathname);
+      if (props) {
+        try {
+          track(CONTACT_SUBMIT_EVENT, props);
+        } catch {}
+      }
     }
   }
 
