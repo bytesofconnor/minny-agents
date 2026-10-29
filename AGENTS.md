@@ -2,16 +2,18 @@
 
 ## Project Overview
 
-This is the production marketing site for Minny Agents, an independent engineering practice that builds AI agents for Twin Cities businesses. Built with Next.js 15 App Router, TypeScript, and Tailwind CSS 4. The GitHub repo is `bytesofconnor/minny-agents`.
+This is the production marketing site for Minny Agents, an independent engineering practice that builds AI agents for Twin Cities businesses. Built with Next.js 16 App Router, TypeScript, and Tailwind CSS 4. The GitHub repo is `bytesofconnor/minny-agents`.
 
 ## Technology Stack
 
-- **Framework**: Next.js 15.5.28 (App Router)
+The versioned lines name majors. Exact versions are in `package.json`.
+
+- **Framework**: Next.js 16 (App Router)
 - **Runtime**: React 19
 - **Language**: TypeScript 5
 - **Styling**: Tailwind CSS 4
 - **Fonts**: Inter Tight (sans), JetBrains Mono (monospace)
-- **Linting**: ESLint 9 with Next.js config
+- **Linting**: ESLint 10 with Next.js config
 - **Testing**: Playwright
 
 ## Project Structure
