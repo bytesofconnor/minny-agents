@@ -214,4 +214,4 @@ For issues with Cursor integration:
 ## Version
 
 Last updated: 2026-10-20
-Compatible with: Cursor 0.41+, Next.js 15, React 19
+Compatible with: Cursor 0.41+, Next.js 16, React 19
