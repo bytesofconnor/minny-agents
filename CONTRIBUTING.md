@@ -14,4 +14,4 @@ The workflow is `pull_request` only. It does not use `pull_request_target`, a sc
 
 That check is the CI job named `checks`. Do not rename `checks` without telling Connor first. It needs Lint and Type Check, Build, Content Guard, and E2E Smoke Tests. It runs with `if: always()`. Those four must succeed. The PR body gate runs inside `checks`.
 
-Vercel deploys `main` through its GitHub App. That path does not depend on an Actions `push` workflow. Production smoke runs on `pull_request` `closed` when merged, and on a CI `workflow_run` whose PR is already merged.
+Vercel deploys `main` through its GitHub App. That path does not depend on an Actions `push` workflow.

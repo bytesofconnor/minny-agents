@@ -114,7 +114,7 @@ Designed for Vercel deployment:
 - `vercel.json` — host-based 308s (`/` and `/:path*`; `has: host` so preview `*.vercel.app` URLs are not redirected):
   - `northern-bytes.vercel.app` → `https://minnyagents.com`
   - `www.minnyagents.com` → `https://minnyagents.com`
-- `.github/workflows/prod-smoke.yml` and Playwright `BASE_URL` — production checks hit `https://minnyagents.com`
+
 ### Vercel builds
 
 `vercel.json` `ignoreCommand` is `bash scripts/vercel-ignore-build.sh`. Exit 0 skips the build. Exit 1 runs it. Preview builds whose ref starts with `dependabot/` or `cursor/` are skipped. A commit with no changes versus `HEAD^` is skipped. If `HEAD^` does not exist, the build runs. Production builds of `main` still run when files changed. Bot branches get no Vercel previews. CI `checks` is the gate for those branches.
@@ -196,14 +196,7 @@ Connor reviews only a fork, or an outside contributor (author association other 
 
 #### Post-merge
 
-Production smoke listens for `pull_request` `closed` when merged, and for a successful CI `workflow_run` whose PR is already merged. It does not listen for `push`. A merge made with `GITHUB_TOKEN` does not start `push` workflows. Vercel deploys through its GitHub App webhook, which is separate from Actions, so production deploys still run.
-
-#### Monitoring
-
-- **CI runs**: All PRs trigger CI checks before merge
-- **Production health**: Post-merge smoke tests validate production deployment
-- **Visual regression**: Full-page screenshots (desktop + mobile) uploaded as artifacts
-- **Failure alerts**: GitHub issues auto-created for production failures
+Vercel deploys `main` through its GitHub App. That path does not depend on an Actions `push` workflow.
 
 ## Contact
 
