@@ -60,6 +60,11 @@ test.describe('Smoke Tests', () => {
 
     // Check main sections exist
     await expect(page.getByText('What we can take off your plate')).toBeVisible();
+    const whatWeBuild = page.locator('#what-we-build');
+    await expect(whatWeBuild.getByText('The examples above are a restaurant. We build the same agents for shops and service businesses.')).toBeVisible();
+    await expect(whatWeBuild.getByRole('link', { name: 'Restaurants', exact: true })).toHaveAttribute('href', '/restaurants');
+    await expect(whatWeBuild.getByRole('link', { name: 'Home services', exact: true })).toHaveAttribute('href', '/home-services');
+    await expect(whatWeBuild.getByRole('link', { name: 'Clinics', exact: true })).toHaveAttribute('href', '/clinics');
     await expect(page.getByText('Quick wins')).toBeVisible();
     await expect(page.getByText('Bigger projects')).toBeVisible();
     await expect(page.getByText('Frequently asked questions')).toBeVisible();
