@@ -116,8 +116,7 @@ export default function Home() {
             <Mono className="text-paper">Fig. 01 — A restaurant&apos;s day</Mono>
             <Mono className="hidden text-dim sm:inline">7 channels · open to close · example</Mono>
           </div>
-          <div className="overflow-x-auto px-2 pb-2 pt-4 md:overflow-hidden md:px-6"><div className="min-w-[760px] md:min-w-0"><Fig /></div></div>
-          <Mono className="block px-5 pb-2 text-dim md:hidden">← scroll figure →</Mono>
+          <div className="overflow-hidden px-2 pb-2 pt-4 md:px-6"><div className="min-w-0"><Fig /></div></div>
           <figcaption className="grid grid-cols-4 gap-4 border-t border-line px-5 py-3 md:grid-cols-12 md:px-6">
             <span className="col-span-4 font-mono text-[11px] text-dim md:col-span-6">Illustrative example. Not real data.</span>
             <div className="col-span-4 flex flex-wrap gap-5 md:col-span-6 md:justify-end">

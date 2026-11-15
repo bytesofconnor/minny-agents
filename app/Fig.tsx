@@ -109,7 +109,119 @@ function Annotation({
   );
 }
 
-export default function Fig() {
+const READ = "#8b95ad";
+
+function PhoneText({
+  x,
+  y,
+  fill,
+  children,
+  anchor = "start",
+  baseline = "auto",
+}: {
+  x: number;
+  y: number;
+  fill: string;
+  children: string;
+  anchor?: "start" | "middle" | "end";
+  baseline?: "auto" | "central";
+}) {
+  return (
+    <text
+      x={x}
+      y={y}
+      fill={fill}
+      fontSize={12}
+      textAnchor={anchor}
+      dominantBaseline={baseline === "central" ? "central" : undefined}
+      style={{ fontFamily: "var(--font-mono-x)" }}
+    >
+      {children}
+    </text>
+  );
+}
+
+function PhoneFig() {
+  const W = 340;
+  const L = 124;
+  const R = 8;
+  const PW = W - L - R;
+  const AMP = 40;
+  const STEP = 22;
+  const y0At = (i: number) => 154 + i * STEP;
+  const ridges = Array.from({ length: N }, (_, i) => {
+    const y0 = y0At(i);
+    const pts = Array.from({ length: M + 1 }, (_, k) => {
+      const x = k / M;
+      return [L + x * PW, y0 - sig(i, x) * AMP] as const;
+    });
+    const line = "M" + pts.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" L");
+    return { line, fill: `${line} L${L + PW},${y0} L${L},${y0} Z`, y0, startY: pts[0][1], pts };
+  });
+  const crest = (i: number, from: number, to: number) => {
+    const lo = L + from * PW;
+    const hi = L + to * PW;
+    let best = ridges[i].pts[0];
+    for (const p of ridges[i].pts) {
+      if (p[0] >= lo && p[0] <= hi && p[1] < best[1]) best = p;
+    }
+    return { x: best[0], y: best[1] };
+  };
+  const lunch = crest(0, LUNCH - 0.08, LUNCH + 0.08);
+  const dinner = crest(3, DINNER - 0.08, DINNER + 0.08);
+  const kpY = y0At(N - 1) + 40;
+  const kpH = 36;
+  const axisY = kpY + kpH;
+  const H = axisY + 62;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="draw block h-auto w-full max-w-full" role="img" aria-label="Illustrative chart of a restaurant day across seven incoming channels from open to close">
+      <defs>
+        <pattern id="hatch-phone" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="4" stroke="#1a2340" strokeWidth="1"/></pattern>
+      </defs>
+      <PhoneText x={8} y={18} fill="#eaf0f6">A — Lunch rush</PhoneText>
+      <PhoneText x={8} y={34} fill={READ}>calls go unanswered</PhoneText>
+      <PhoneText x={8} y={54} fill="#9b8cff">B — Dinner rush</PhoneText>
+      <PhoneText x={8} y={70} fill={READ}>reviews and messages pile up</PhoneText>
+      {TICKS.map((h, i) => {
+        const x = L + hourToX(h) * PW;
+        const y = axisY + (i % 2 === 0 ? 18 : 36);
+        return (
+          <g key={h}>
+            <line x1={x} x2={x} y1={axisY} y2={axisY + 5} stroke={READ} strokeWidth="1" />
+            <PhoneText x={x} y={y} fill={READ} anchor="middle">{fmtHour(h)}</PhoneText>
+          </g>
+        );
+      })}
+      <PhoneText x={W - 8} y={axisY + 54} fill={READ} anchor="end">TIME OF DAY →</PhoneText>
+      {ridges.map((r, i) => (
+        <g key={CHANNELS[i]}>
+          <path className="f" d={r.fill} fill="#060a1a" style={{ animationDelay: `${0.2 + i * 0.08}s` }} />
+          <path className="r" d={r.line} fill="none" stroke={colors[i]} strokeWidth="1.6" strokeOpacity="0.92" strokeLinecap="round" strokeLinejoin="round" style={{ animationDelay: `${i * 0.12}s` }} />
+          <PhoneText x={L - 8} y={r.startY} fill={colors[i]} anchor="end" baseline="central">{CHANNELS[i]}</PhoneText>
+        </g>
+      ))}
+      <circle cx={lunch.x} cy={lunch.y} r="4" fill="#060a1a" stroke="#eaf0f6" strokeWidth="1.5" />
+      <circle cx={dinner.x} cy={dinner.y} r="4" fill="#060a1a" stroke="#9b8cff" strokeWidth="1.5" />
+      <rect x={L} y={kpY} width={PW} height={kpH} fill="url(#hatch-phone)" opacity="0.6" />
+      <line x1={L} x2={L + PW} y1={axisY} y2={axisY} stroke={READ} strokeWidth="1" />
+      {kp.map((v, k) => {
+        const bw = PW / 48;
+        const inset = Math.min(0.6, bw * 0.18);
+        const h = (v / 9) * kpH;
+        const c = v >= 7 ? "#9b8cff" : v >= 5 ? "#3cdbc0" : "#7cf2a0";
+        return (
+          <rect key={k} className="k" x={L + k * bw + inset} y={kpY + kpH - h} width={Math.max(0.8, bw - inset * 2)} height={h} fill={c} opacity={v >= 5 ? 0.95 : 0.55} style={{ animationDelay: `${1 + k * 0.015}s` }} />
+        );
+      })}
+      <PhoneText x={L - 8} y={kpY + 14} fill={READ} anchor="end">REQ</PhoneText>
+      <PhoneText x={L - 8} y={axisY} fill={READ} anchor="end">0</PhoneText>
+      <PhoneText x={L} y={kpY - 8} fill={READ}>Incoming requests per hour</PhoneText>
+    </svg>
+  );
+}
+
+function DesktopFig() {
   const lunch = peakOnRidge(0, LUNCH - 0.08, LUNCH + 0.08);
   const dinner = peakOnRidge(3, DINNER - 0.08, DINNER + 0.08);
 
@@ -150,5 +262,18 @@ export default function Fig() {
       <text x={L - 10} y={kpY + kpH} fill="#4a5470" fontSize="10" style={{fontFamily:"var(--font-mono-x)"}} textAnchor="end">0</text>
       <text x={L + 8} y={kpY - 6} fill="#4a5470" fontSize="10" style={{fontFamily:"var(--font-mono-x)"}} letterSpacing="0.6">Incoming requests per hour</text>
     </svg>
+  );
+}
+
+export default function Fig() {
+  return (
+    <>
+      <div className="min-w-0 md:hidden">
+        <PhoneFig />
+      </div>
+      <div className="hidden min-w-0 md:block">
+        <DesktopFig />
+      </div>
+    </>
   );
 }
