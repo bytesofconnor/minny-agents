@@ -25,8 +25,9 @@ function demoHeaders() {
 }
 
 export async function streamDemoReply(profile: DemoProfile, message: string): Promise<Response> {
+  const now = new Date();
   const apiKey = process.env.AI_GATEWAY_API_KEY?.trim();
-  const fallback = reply(profile, message);
+  const fallback = reply(profile, message, now);
   if (!apiKey) return textResponse(fallback.text);
 
   try {
@@ -34,7 +35,7 @@ export async function streamDemoReply(profile: DemoProfile, message: string): Pr
     const gateway = createGateway({ apiKey });
     const result = streamText({
       model: gateway.chat(DEMO_MODEL),
-      system: groundingPrompt(profile),
+      system: groundingPrompt(profile, now),
       prompt: message,
       temperature: 0,
       maxOutputTokens: 400,

@@ -82,7 +82,10 @@ test("fixture demo is private and answers from the config", async ({ page }) => 
   await expect(menu).toContainText("$28");
 
   await page.getByRole("button", { name: "What are your hours?" }).click();
-  await expect(page.getByTestId("assistant-message").last()).toContainText("Tuesday through Thursday, 5pm to 9pm");
+  const hoursMessage = page.getByTestId("assistant-message").last();
+  await expect(hoursMessage).toContainText("Tuesday through Thursday, 5pm to 9pm");
+  await expect(hoursMessage).toContainText("Today is");
+  await expect(hoursMessage).toContainText("today's hours:");
 
   await page.getByLabel("Message").fill("Who won the Super Bowl?");
   await page.getByRole("button", { name: "Send" }).click();
