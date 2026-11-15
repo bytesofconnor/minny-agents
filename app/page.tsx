@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Btn, Mono } from "./Chrome";
 import ContactForm from "./ContactForm";
 import Contours from "./Contours";
@@ -98,7 +99,13 @@ export default function Home() {
             </div>
 
             <div className="mt-12 border-t border-paper/60 pt-6">
-              <p className="text-[13px] text-dim">We build one custom system at a time. You approve anything that talks to customers or touches money.</p>
+              <p className="max-w-3xl text-[15px] leading-relaxed text-mute">The examples above are a restaurant. We build the same agents for shops and service businesses.</p>
+              <p className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+                <Link href="/restaurants" className="font-mono text-[11px] uppercase tracking-[0.08em] text-dim hover:text-paper">Restaurants</Link>
+                <Link href="/home-services" className="font-mono text-[11px] uppercase tracking-[0.08em] text-dim hover:text-paper">Home services</Link>
+                <Link href="/clinics" className="font-mono text-[11px] uppercase tracking-[0.08em] text-dim hover:text-paper">Clinics</Link>
+              </p>
+              <p className="mt-6 text-[13px] text-dim">We build one custom system at a time. You approve anything that talks to customers or touches money.</p>
             </div>
           </div>
         </Sec>
