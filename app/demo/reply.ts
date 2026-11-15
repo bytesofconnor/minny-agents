@@ -1,3 +1,4 @@
+import { resolveToday } from "./hours";
 import type { DemoProfile } from "./profile";
 
 export const CALL_LINE = "Please call the restaurant.";
@@ -19,7 +20,7 @@ const ABOUT = /\b(you|your|restaurant|menu|food|eat|serve|serving|have|offer|res
 
 type Topic = {
   test: (message: string, profile: DemoProfile) => boolean;
-  read: (message: string, profile: DemoProfile) => string | null;
+  read: (message: string, profile: DemoProfile, now: Date) => string | null;
 };
 
 function formatItem(item: DemoProfile["menu"][number]) {
@@ -47,7 +48,10 @@ const topics: Topic[] = [
   },
   {
     test: (message) => HOURS.test(message),
-    read: (_message, profile) => (profile.hours ? `Hours: ${profile.hours}` : null),
+    read: (_message, profile, now) => {
+      if (!profile.hours) return null;
+      return `Hours: ${profile.hours}\n${resolveToday(profile.hours, now).line}`;
+    },
   },
   {
     test: (message) => LOCATION.test(message),
@@ -90,7 +94,7 @@ function unknown(profile: DemoProfile): DemoReply {
   };
 }
 
-export function reply(profile: DemoProfile, message: string): DemoReply {
+export function reply(profile: DemoProfile, message: string, now: Date = new Date()): DemoReply {
   const faq = matchingFaq(message, profile);
   const matched = topics.filter((topic) => topic.test(message, profile));
   if (!faq && matched.length === 0) {
@@ -105,7 +109,7 @@ export function reply(profile: DemoProfile, message: string): DemoReply {
   if (faq) parts.push(faq.answer);
   let missing = false;
   for (const topic of matched) {
-    const text = topic.read(message, profile);
+    const text = topic.read(message, profile, now);
     if (text) parts.push(text);
     else missing = true;
   }
@@ -118,7 +122,7 @@ function line(label: string, value: string | undefined) {
   return `${label}: ${value?.trim() ? value.trim() : "Not in the notes."}`;
 }
 
-export function groundingPrompt(profile: DemoProfile) {
+export function groundingPrompt(profile: DemoProfile, now: Date = new Date()) {
   const menu = profile.menu.length
     ? profile.menu.map((item) => `- ${formatItem(item)}`).join("\n")
     : "Not in the notes.";
@@ -135,6 +139,7 @@ export function groundingPrompt(profile: DemoProfile) {
     `Restaurant: ${profile.restaurantName}`,
     line("Neighborhood", profile.neighborhood),
     line("Hours", profile.hours),
+    resolveToday(profile.hours, now).line,
     "Menu:",
     menu,
     line("Reservations", profile.reservations),
