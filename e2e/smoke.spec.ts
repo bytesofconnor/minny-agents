@@ -350,9 +350,68 @@ test.describe('Smoke Tests', () => {
     await page.goto('/');
     const figMobile = page.getByRole('img', { name: /restaurant day/i });
     await expect(figMobile).toBeVisible();
+    await expect(figMobile.getByText('A — Lunch rush')).toBeVisible();
+    await expect(figMobile.getByText('B — Dinner rush')).toBeVisible();
+    await expect(page.getByText('scroll figure')).toHaveCount(0);
+
+    const fit = await figMobile.evaluate((svg: SVGSVGElement) => {
+      const lin = (c: number) => {
+        const s = c / 255;
+        return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+      };
+      const lum = (rgb: number[]) => 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2]);
+      const inkL = lum([6, 10, 26]);
+      const figure = svg.closest('figure');
+      if (!figure) throw new Error('figure missing');
+      const ctm = svg.getScreenCTM();
+      const scale = ctm ? Math.hypot(ctm.a, ctm.b) : 1;
+      const texts = [...svg.querySelectorAll('text')].map((el) => {
+        const cs = getComputedStyle(el);
+        const m = cs.fill.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        const fg = m ? [Number(m[1]), Number(m[2]), Number(m[3])] : [0, 0, 0];
+        const fgL = lum(fg);
+        const box = el.getBoundingClientRect();
+        return {
+          text: el.textContent ?? '',
+          rendered: parseFloat(cs.fontSize) * scale,
+          contrast: (Math.max(fgL, inkL) + 0.05) / (Math.min(fgL, inkL) + 0.05),
+          left: box.left,
+          right: box.right,
+          top: box.top,
+          bottom: box.bottom,
+        };
+      });
+      const svgBox = svg.getBoundingClientRect();
+      return {
+        docOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        overflowing: [...figure.querySelectorAll('*')].filter((el) => el.scrollWidth > el.clientWidth + 1).length,
+        viewport: window.innerWidth,
+        svgLeft: svgBox.left,
+        svgRight: svgBox.right,
+        texts,
+      };
+    });
+
+    expect(fit.docOverflow).toBeLessThanOrEqual(1);
+    expect(fit.overflowing).toBe(0);
+    expect(fit.svgLeft).toBeGreaterThanOrEqual(-1);
+    expect(fit.svgRight).toBeLessThanOrEqual(fit.viewport + 1);
+    for (const t of fit.texts) {
+      expect(t.rendered, t.text).toBeGreaterThanOrEqual(12);
+      expect(t.contrast, t.text).toBeGreaterThanOrEqual(4.5);
+      expect(t.left, t.text).toBeGreaterThanOrEqual(-1);
+      expect(t.right, t.text).toBeLessThanOrEqual(fit.viewport + 1);
+    }
+    for (let i = 0; i < fit.texts.length; i++) {
+      for (let j = i + 1; j < fit.texts.length; j++) {
+        const a = fit.texts[i];
+        const b = fit.texts[j];
+        const iw = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+        const ih = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+        expect(iw > 1 && ih > 1, `${a.text} overlaps ${b.text}`).toBe(false);
+      }
+    }
     await figMobile.screenshot({ path: 'test-results/figure-mobile.png', animations: 'disabled' });
-    await page.locator('figure .overflow-x-auto').evaluate((el) => { el.scrollLeft = el.scrollWidth; });
-    await figMobile.screenshot({ path: 'test-results/figure-mobile-dinner.png', animations: 'disabled' });
   });
 
   test('hero example card does not overlap headline or nav', async ({ page }) => {
