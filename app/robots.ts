@@ -13,12 +13,13 @@ const aiBots = [
   "Applebot-Extended",
 ];
 
+function rule(userAgent: string) {
+  return { userAgent, allow: "/", disallow: "/demo/" };
+}
+
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [
-      { userAgent: "*", allow: "/" },
-      ...aiBots.map((userAgent) => ({ userAgent, allow: "/" })),
-    ],
+    rules: [rule("*"), ...aiBots.map(rule)],
     sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

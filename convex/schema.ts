@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { demoConfigFields } from "./demoConfig";
 
 export const STAGES = [
   "new",
@@ -65,4 +66,6 @@ export default defineSchema({
     .index("by_due", ["due"])
     .index("by_lead", ["leadId"])
     .index("by_done_and_due", ["done", "due"]),
+
+  demoConfigs: defineTable(demoConfigFields).index("by_token", ["token"]),
 });

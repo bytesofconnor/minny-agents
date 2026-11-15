@@ -23,6 +23,8 @@ export default defineConfig({
     : {
         command: 'npx next start -p 3000',
         url: 'http://localhost:3000',
+        // Demo e2e asserts config answers. A gateway key in this process would call the model instead.
+        env: { ...process.env, AI_GATEWAY_API_KEY: "" },
         reuseExistingServer: !process.env.CI,
         timeout: 30000,
         stdout: 'pipe',
