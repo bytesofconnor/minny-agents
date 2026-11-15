@@ -1,5 +1,93 @@
 import { readFileSync } from 'node:fs';
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
+
+type Rgb = { r: number; g: number; b: number; a: number };
+type PaintNode = { color: string; backgroundColor: string; opacity: number; filter: string };
+
+function parseCssColor(input: string): Rgb | null {
+  const match = input.match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)(?:[,\s/]+([\d.]+))?\s*\)/);
+  if (!match) return null;
+  return {
+    r: Number(match[1]),
+    g: Number(match[2]),
+    b: Number(match[3]),
+    a: match[4] === undefined ? 1 : Number(match[4]),
+  };
+}
+
+function channel(value: number) {
+  const s = value / 255;
+  return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+}
+
+function contrastRatio(fg: Rgb, bg: Rgb) {
+  const lum = (color: Rgb) => 0.2126 * channel(color.r) + 0.7152 * channel(color.g) + 0.0722 * channel(color.b);
+  const [hi, lo] = [lum(fg), lum(bg)].sort((a, b) => b - a);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+function blend(fg: Rgb, bg: Rgb, alpha: number): Rgb {
+  return {
+    r: fg.r * alpha + bg.r * (1 - alpha),
+    g: fg.g * alpha + bg.g * (1 - alpha),
+    b: fg.b * alpha + bg.b * (1 - alpha),
+    a: 1,
+  };
+}
+
+function backdropBehind(chain: PaintNode[]): Rgb {
+  const layers: Rgb[] = [];
+  for (let i = chain.length - 1; i >= 1; i--) {
+    const bg = parseCssColor(chain[i].backgroundColor);
+    if (bg && bg.a > 0) layers.push(bg);
+  }
+  let acc = layers[0] ?? { r: 0, g: 0, b: 0, a: 1 };
+  for (const layer of layers.slice(1)) acc = blend(layer, acc, layer.a);
+  return acc;
+}
+
+function groupOpacity(chain: PaintNode[]) {
+  return chain.reduce((acc, node) => acc * node.opacity, 1);
+}
+
+function textContrast(chain: PaintNode[]) {
+  const color = parseCssColor(chain[0].color);
+  if (!color) throw new Error(`unparsed text color ${chain[0].color}`);
+  const own = parseCssColor(chain[0].backgroundColor);
+  const page = backdropBehind(chain);
+  const alpha = groupOpacity(chain);
+  const visualText = blend(color, page, alpha);
+  const visualBg = own && own.a >= 1 ? blend(own, page, alpha) : page;
+  return contrastRatio(visualText, visualBg);
+}
+
+function logoContrast(chain: PaintNode[]) {
+  const page = backdropBehind(chain);
+  const alpha = groupOpacity(chain);
+  const painted = chain[0].filter.includes('invert')
+    ? { r: 255, g: 255, b: 255, a: 1 }
+    : parseCssColor(chain[0].color);
+  if (!painted) throw new Error(`unparsed logo color ${chain[0].color}`);
+  return contrastRatio(blend(painted, page, alpha), page);
+}
+
+async function paintChain(locator: Locator): Promise<PaintNode[]> {
+  return locator.evaluate((el) => {
+    const chain: PaintNode[] = [];
+    let node: Element | null = el;
+    while (node) {
+      const style = getComputedStyle(node);
+      chain.push({
+        color: style.color,
+        backgroundColor: style.backgroundColor,
+        opacity: Number(style.opacity),
+        filter: style.filter,
+      });
+      node = node.parentElement;
+    }
+    return chain;
+  });
+}
 
 test.describe('Smoke Tests', () => {
   test('vercel.json redirects old hosts to minnyagents.com', () => {
@@ -215,9 +303,59 @@ test.describe('Smoke Tests', () => {
 
     // Check for AI tooling items
     await expect(page.getByText('Claude', { exact: true })).toBeVisible();
-    await expect(page.getByText('Grok Bot').first()).toBeVisible();
+    await expect(page.getByText('Grok Bot', { exact: true })).toHaveCount(1);
     await expect(page.getByText('Cursor', { exact: true })).toBeVisible();
     await expect(page.getByText('Codex')).toBeVisible();
+  });
+
+  test('credentials and AI tooling meet contrast and name each tool once', async ({ page }) => {
+    await page.goto('/');
+    const pills = ['Claude Certified Architect', 'Microsoft Azure Fundamentals (AZ-900)'];
+    const captions = ['Claude', 'Cursor', 'Codex'];
+    const logos = [
+      page.locator('img[src="/icons/claude.svg"]'),
+      page.locator('img[src="/icons/cursor.svg"]'),
+      page.locator('svg[aria-label="OpenAI"]'),
+    ];
+
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 390, height: 844 },
+    ]) {
+      await page.setViewportSize(viewport);
+      const size = `${viewport.width}x${viewport.height}`;
+
+      for (const name of ['Claude', 'Grok Bot', 'Cursor', 'Codex']) {
+        const matches = page.getByText(name, { exact: true });
+        expect.soft(await matches.count(), `${name} at ${size}`).toBe(1);
+        await expect(matches.first()).toBeVisible();
+      }
+
+      for (const label of pills) {
+        const pill = page.getByText(label, { exact: true });
+        await expect(pill).toBeVisible();
+        const ratio = textContrast(await paintChain(pill));
+        expect.soft(ratio, `${label} at ${size} is ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(4.5);
+      }
+
+      for (const name of captions) {
+        const ratio = textContrast(await paintChain(page.getByText(name, { exact: true })));
+        expect.soft(ratio, `${name} caption at ${size} is ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(4.5);
+      }
+
+      const grok = page.getByText('Grok Bot', { exact: true });
+      const grokCount = await grok.count();
+      for (let i = 0; i < grokCount; i++) {
+        const ratio = textContrast(await paintChain(grok.nth(i)));
+        expect.soft(ratio, `Grok Bot ${i} at ${size} is ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(4.5);
+      }
+
+      for (const logo of logos) {
+        const ratio = logoContrast(await paintChain(logo));
+        const src = (await logo.evaluate((el) => el.getAttribute('src') || el.getAttribute('aria-label') || el.tagName));
+        expect.soft(ratio, `${src} logo at ${size} is ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(3);
+      }
+    }
   });
 
   test('static SEO files return 200', async ({ page }) => {
