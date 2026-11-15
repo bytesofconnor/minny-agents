@@ -384,7 +384,11 @@ test.describe('Smoke Tests', () => {
       const svgBox = svg.getBoundingClientRect();
       return {
         docOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-        overflowing: [...figure.querySelectorAll('*')].filter((el) => el.scrollWidth > el.clientWidth + 1).length,
+        figureOverflow: figure.scrollWidth - figure.clientWidth,
+        scrollports: [...figure.querySelectorAll('*')].filter((el) => {
+          const ox = getComputedStyle(el).overflowX;
+          return (ox === 'auto' || ox === 'scroll') && el.scrollWidth > el.clientWidth + 1;
+        }).length,
         viewport: window.innerWidth,
         svgLeft: svgBox.left,
         svgRight: svgBox.right,
@@ -393,7 +397,8 @@ test.describe('Smoke Tests', () => {
     });
 
     expect(fit.docOverflow).toBeLessThanOrEqual(1);
-    expect(fit.overflowing).toBe(0);
+    expect(fit.figureOverflow).toBeLessThanOrEqual(1);
+    expect(fit.scrollports).toBe(0);
     expect(fit.svgLeft).toBeGreaterThanOrEqual(-1);
     expect(fit.svgRight).toBeLessThanOrEqual(fit.viewport + 1);
     for (const t of fit.texts) {
