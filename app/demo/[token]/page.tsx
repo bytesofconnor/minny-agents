@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { Btn, Mono } from "../../Chrome";
 import { bannerText } from "../profile";
-import { loadDemoProfile } from "../load";
+import { resolveDemoPage } from "../resolve";
 import { DemoChat } from "./Chat";
 
 export const dynamic = "force-dynamic";
@@ -11,9 +10,9 @@ type Params = { params: Promise<{ token: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { token } = await params;
-  const profile = await loadDemoProfile(token);
+  const profile = await resolveDemoPage(token);
   return {
-    title: profile ? `${profile.restaurantName} demo` : "Demo",
+    title: `${profile.restaurantName} demo`,
     robots: {
       index: false,
       follow: false,
@@ -24,8 +23,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function DemoPage({ params }: Params) {
   const { token } = await params;
-  const profile = await loadDemoProfile(token);
-  if (!profile) notFound();
+  const profile = await resolveDemoPage(token);
 
   return (
     <>

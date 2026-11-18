@@ -13,6 +13,7 @@ export const demoFaq = v.object({
 
 export const demoConfigFields = {
   token: v.string(),
+  slug: v.optional(v.string()),
   restaurantName: v.string(),
   neighborhood: v.string(),
   hours: v.string(),
