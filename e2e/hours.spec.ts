@@ -223,8 +223,9 @@ test("unparsed hours name the Chicago day and do not invent a range", () => {
   expect(today.hoursLabel).toBeNull();
   expect(today.openNow).toBeNull();
   expect(today.line).toContain("Today is Saturday");
-  expect(today.line).toContain("Do not guess");
+  expect(today.line).not.toContain("Do not guess");
   const prompt = groundingPrompt({ ...fixture, hours: "call us whenever" }, now);
+  expect(prompt).toContain("read the Hours schedule");
   expect(prompt).toContain(today.line);
   expect(prompt).not.toContain(`8:00 AM${DASH}`);
   const answer = reply({ ...fixture, hours: "call us whenever" }, "Are you open?", now);

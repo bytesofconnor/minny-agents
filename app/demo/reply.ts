@@ -140,6 +140,7 @@ export function groundingPrompt(profile: DemoProfile, now: Date = new Date()) {
     line("Neighborhood", profile.neighborhood),
     line("Hours", profile.hours),
     resolveToday(profile.hours, now).line,
+    "The Today line is computed from the Hours schedule and is not an invented fact. When it states today's hours, answer with those hours and whether the restaurant is open now. When it does not, read the Hours schedule and answer for today if that weekday is covered. Do not say today's hours are missing when the weekday is covered.",
     "Menu:",
     menu,
     line("Reservations", profile.reservations),

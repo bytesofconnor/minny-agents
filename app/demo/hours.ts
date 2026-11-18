@@ -255,7 +255,7 @@ export function resolveToday(hours: string, now: Date): TodayHours {
   }
   const slots = compileHours(hours);
   if (!slots) {
-    return unresolved(clock.weekday, "today's hours are not resolved from the notes. Do not guess today's hours or whether the restaurant is open.");
+    return unresolved(clock.weekday, "today's hours are not resolved from the notes.");
   }
   const slot = slots[clock.index];
   if (!slot.known) {
