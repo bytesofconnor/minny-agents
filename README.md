@@ -47,6 +47,17 @@ npx convex run demoConfigs:upsert '{
 }'
 ```
 
-Add `--prod` to write the production deployment. The private link is `https://minnyagents.com/demo/<token>`.
+Add `--prod` to write the production deployment. The long link is `https://minnyagents.com/demo/<token>`.
+
+Set a readable slug on that token. The slug is lowercase words, hyphens, and a 4 to 16 character hex code. `setSlug` only changes the slug. A later `upsert` of the same token keeps it.
+
+```bash
+npx convex run demoConfigs:setSlug '{
+  "token": "<same token>",
+  "slug": "imaginary-supper-7cd4"
+}'
+```
+
+The readable link is `https://minnyagents.com/demo/imaginary-supper-7cd4`. A long token that has a slug redirects there. Deploy these Convex functions to production before a slug lookup works on the production site.
 
 When `AI_GATEWAY_API_KEY` is set, the chat answers through Vercel AI Gateway. Otherwise it answers from the config alone.

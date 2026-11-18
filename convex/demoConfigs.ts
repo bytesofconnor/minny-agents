@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { internalMutation, query } from "./_generated/server";
 import { demoFaq, demoMenuItem } from "./demoConfig";
+import { isDemoSlug } from "./demoSlug";
 
 const TOKEN = /^[A-Za-z0-9_-]{24,128}$/;
 
@@ -87,5 +88,48 @@ export const getByToken = query({
       .query("demoConfigs")
       .withIndex("by_token", (q) => q.eq("token", trimmed))
       .unique();
+  },
+});
+
+export const getBySlug = query({
+  args: { slug: v.string() },
+  handler: async (ctx, { slug }) => {
+    const trimmed = slug.trim();
+    if (!isDemoSlug(trimmed)) return null;
+    return await ctx.db
+      .query("demoConfigs")
+      .withIndex("by_slug", (q) => q.eq("slug", trimmed))
+      .unique();
+  },
+});
+
+export const setSlug = internalMutation({
+  args: {
+    token: v.string(),
+    slug: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const token = args.token.trim();
+    const slug = args.slug.trim();
+    if (!TOKEN.test(token)) {
+      throw new Error("Token must be 24 to 128 letters, numbers, underscores, or hyphens");
+    }
+    if (!isDemoSlug(slug)) {
+      throw new Error("Slug must be lowercase words, hyphens, and a 4 to 16 character hex code");
+    }
+    const existing = await ctx.db
+      .query("demoConfigs")
+      .withIndex("by_token", (q) => q.eq("token", token))
+      .unique();
+    if (!existing) throw new Error("Demo not found");
+    const taken = await ctx.db
+      .query("demoConfigs")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .unique();
+    if (taken && taken._id !== existing._id) {
+      throw new Error("Another demo already uses this slug");
+    }
+    await ctx.db.patch(existing._id, { slug });
+    return existing._id;
   },
 });

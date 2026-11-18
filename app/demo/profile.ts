@@ -1,3 +1,5 @@
+import { isDemoSlug } from "../../convex/demoSlug";
+
 export type MenuItem = {
   name: string;
   price?: string;
@@ -11,6 +13,7 @@ export type DemoFaq = {
 
 export type DemoProfile = {
   token: string;
+  slug?: string;
   restaurantName: string;
   neighborhood: string;
   hours: string;
@@ -71,6 +74,8 @@ export function parseProfile(raw: unknown): DemoProfile | null {
   if (!isDemoToken(token) || !restaurantName || !neighborhood || !hours) return null;
   if (!Array.isArray(row.menu) || !Array.isArray(row.faqs) || !Array.isArray(row.sources)) return null;
 
+  const slugRaw = text(row.slug);
+  const slug = slugRaw && isDemoSlug(slugRaw) ? slugRaw : undefined;
   const reservations = text(row.reservations);
   const ordering = text(row.ordering);
   const phone = text(row.phone);
@@ -79,6 +84,7 @@ export function parseProfile(raw: unknown): DemoProfile | null {
 
   return {
     token,
+    ...(slug ? { slug } : {}),
     restaurantName,
     neighborhood,
     hours,

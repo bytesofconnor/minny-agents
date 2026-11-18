@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { fixture, FIXTURE_TOKEN } from "../app/demo/fixture";
+import { fixture, FIXTURE_SLUG, FIXTURE_TOKEN, TOKEN_ONLY_TOKEN } from "../app/demo/fixture";
 import { clearRateLimits, MESSAGE_MAX, RATE_MAX, RATE_WINDOW_MS, rateLimited } from "../app/demo/limits";
 import { CALL_LINE, groundingPrompt, reply } from "../app/demo/reply";
 
@@ -66,6 +66,7 @@ test("fixture demo is private and answers from the config", async ({ page }) => 
   await page.setViewportSize({ width: 1280, height: 900 });
   const response = await page.goto(`/demo/${FIXTURE_TOKEN}`);
   expect(response?.status()).toBe(200);
+  await expect(page).toHaveURL(new RegExp(`/demo/${FIXTURE_SLUG}$`));
   await expect(page.getByText(banner)).toBeVisible();
   await expect(page.getByRole("link", { name: /Talk to Connor/i })).toHaveAttribute("href", "/#contact");
 
@@ -133,6 +134,42 @@ test("long messages are rejected and the chat route rate limits", async ({ reque
     expect(res.status()).toBe(200);
   }
   expect(limited).toBe(true);
+});
+
+test("slug lookup, token redirect, token fallback, and malformed slugs", async ({ request }) => {
+  const slug = await request.get(`/demo/${FIXTURE_SLUG}`, { maxRedirects: 0 });
+  expect(slug.status()).toBe(200);
+  const slugHtml = await slug.text();
+  expect(slugHtml).toContain("noindex");
+  expect(slugHtml).toContain("nofollow");
+  expect(slugHtml).toContain(banner);
+
+  const redirected = await request.get(`/demo/${FIXTURE_TOKEN}`, { maxRedirects: 0 });
+  expect(redirected.status()).toBe(308);
+  const location = redirected.headers().location ?? "";
+  expect(new URL(location, "http://localhost:3000").pathname).toBe(`/demo/${FIXTURE_SLUG}`);
+
+  const fallback = await request.get(`/demo/${TOKEN_ONLY_TOKEN}`, { maxRedirects: 0 });
+  expect(fallback.status()).toBe(200);
+  expect(fallback.headers().location ?? "").toBe("");
+  const fallbackHtml = await fallback.text();
+  expect(fallbackHtml).toContain("Example Lunch Counter");
+  expect(fallbackHtml).toContain("Unofficial demo");
+  expect(fallbackHtml).toContain("noindex");
+
+  const malformed = [
+    "imaginary-supper-7cd",
+    "Imaginary-supper-7cd4",
+    "imaginary_supper-7cd4",
+    "imaginary-supper-7cdg",
+    "imaginary--supper-7cd4",
+    "imaginary-supper-0123456789abcdef0",
+    "missing-counter-a1b2",
+  ];
+  for (const path of malformed) {
+    const res = await request.get(`/demo/${encodeURIComponent(path)}`, { maxRedirects: 0 });
+    expect(res.status(), path).toBe(404);
+  }
 });
 
 test("demo urls stay out of robots and the sitemap", async ({ page }) => {
