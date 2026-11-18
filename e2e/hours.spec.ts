@@ -146,6 +146,76 @@ test("the fictional fixture resolves its own week", () => {
   expect(reply(fixture, "What are your hours today?", atChicago(2026, 11, 14, 23, 26)).text).toContain(saturdayLate.line);
 });
 
+const groupedHours = "Sunday and Tuesday\u2013Saturday 11:00 AM \u2013 9:00 PM. Closed Monday.";
+
+test("grouped days resolve every weekday, including a hyphen, a comma, and abbreviations", () => {
+  const openLabel = `11:00 AM${DASH}9:00 PM`;
+  const cases = [
+    { day: 16, weekday: "Monday", label: "closed", open: false },
+    { day: 17, weekday: "Tuesday", label: openLabel, open: true },
+    { day: 18, weekday: "Wednesday", label: openLabel, open: true },
+    { day: 19, weekday: "Thursday", label: openLabel, open: true },
+    { day: 20, weekday: "Friday", label: openLabel, open: true },
+    { day: 21, weekday: "Saturday", label: openLabel, open: true },
+    { day: 15, weekday: "Sunday", label: openLabel, open: true },
+  ];
+
+  for (const item of cases) {
+    const now = atChicago(2026, 11, item.day, 12, 0);
+    const today = resolveToday(groupedHours, now);
+    const expected = line(item.weekday, item.label, item.open);
+    expect(today.line).toBe(expected);
+    const profile = { ...fixture, hours: groupedHours };
+    expect(groundingPrompt(profile, now)).toContain(expected);
+    expect(reply(profile, "What are your hours today?", now).text).toContain(expected);
+    expect(reply(profile, "What are your hours today?", now).text).toContain(groupedHours);
+  }
+
+  const wednesdayLate = resolveToday(groupedHours, atChicago(2026, 11, 18, 22, 0));
+  expect(wednesdayLate.hoursLabel).toBe(openLabel);
+  expect(wednesdayLate.openNow).toBe(false);
+
+  const hyphen = "Sunday and Tuesday-Saturday 11:00 AM - 9:00 PM. Closed Monday.";
+  expect(resolveToday(hyphen, atChicago(2026, 11, 18, 12, 0)).line).toBe(line("Wednesday", openLabel, true));
+
+  const commas = "Sunday, Tuesday-Saturday 11:00 AM - 9:00 PM. Closed Monday.";
+  expect(resolveToday(commas, atChicago(2026, 11, 18, 12, 0)).line).toBe(line("Wednesday", openLabel, true));
+
+  const short = "Sun and Tue-Sat 11:00 AM - 9:00 PM. Closed Mon.";
+  expect(resolveToday(short, atChicago(2026, 11, 18, 12, 0)).line).toBe(line("Wednesday", openLabel, true));
+  expect(resolveToday(short, atChicago(2026, 11, 16, 12, 0)).hoursLabel).toBe("closed");
+});
+
+test("Saturday 8 AM to 10 PM still resolves that day only", () => {
+  const hours = "Saturday 8 AM\u201310 PM";
+  const noon = resolveToday(hours, atChicago(2026, 11, 21, 12, 0));
+  expect(noon.line).toBe(line("Saturday", `8:00 AM${DASH}10:00 PM`, true));
+  const late = resolveToday(hours, atChicago(2026, 11, 21, 22, 0));
+  expect(late.hoursLabel).toBe(`8:00 AM${DASH}10:00 PM`);
+  expect(late.openNow).toBe(false);
+  const wednesday = resolveToday(hours, atChicago(2026, 11, 18, 12, 0));
+  expect(wednesday.hoursLabel).toBeNull();
+  expect(wednesday.weekday).toBe("Wednesday");
+});
+
+test("an unresolved schedule tells the model to read the weekly hours", () => {
+  const now = atChicago(2026, 11, 18, 12, 0);
+  const today = resolveToday("call us whenever", now);
+  expect(today.weekday).toBe("Wednesday");
+  expect(today.hoursLabel).toBeNull();
+  expect(today.line).toContain("Today is Wednesday");
+  expect(today.line).not.toContain("Do not guess");
+  const prompt = groundingPrompt({ ...fixture, hours: "call us whenever" }, now);
+  expect(prompt).toContain(today.line);
+  expect(prompt).toContain("read the Hours schedule");
+  expect(prompt).toContain("Do not say today's hours are missing when the weekday is covered");
+  expect(prompt).toContain("whether the restaurant is open now");
+  expect(prompt).not.toContain(`8:00 AM${DASH}`);
+  const wednesday = groundingPrompt({ ...fixture, hours: groupedHours }, now);
+  expect(wednesday).toContain(line("Wednesday", `11:00 AM${DASH}9:00 PM`, true));
+  expect(wednesday).toContain("Do not say today's hours are missing when the weekday is covered");
+});
+
 test("unparsed hours name the Chicago day and do not invent a range", () => {
   const now = atChicago(2026, 11, 14, 23, 26);
   const today = resolveToday("call us whenever", now);
