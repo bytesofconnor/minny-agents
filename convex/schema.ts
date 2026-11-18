@@ -67,5 +67,7 @@ export default defineSchema({
     .index("by_lead", ["leadId"])
     .index("by_done_and_due", ["done", "due"]),
 
-  demoConfigs: defineTable(demoConfigFields).index("by_token", ["token"]),
+  demoConfigs: defineTable(demoConfigFields)
+    .index("by_token", ["token"])
+    .index("by_slug", ["slug"]),
 });

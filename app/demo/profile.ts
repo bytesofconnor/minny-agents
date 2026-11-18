@@ -11,6 +11,7 @@ export type DemoFaq = {
 
 export type DemoProfile = {
   token: string;
+  slug?: string;
   restaurantName: string;
   neighborhood: string;
   hours: string;
@@ -25,9 +26,14 @@ export type DemoProfile = {
 };
 
 const TOKEN = /^[A-Za-z0-9_-]{24,128}$/;
+const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*-[a-z0-9]{4,16}$/;
 
 export function isDemoToken(value: string) {
   return TOKEN.test(value);
+}
+
+export function isDemoSlug(value: string) {
+  return SLUG.test(value);
 }
 
 export function bannerText(restaurantName: string) {
@@ -65,6 +71,7 @@ export function parseProfile(raw: unknown): DemoProfile | null {
   if (!raw || typeof raw !== "object") return null;
   const row = raw as Record<string, unknown>;
   const token = text(row.token);
+  const slug = text(row.slug).toLowerCase();
   const restaurantName = text(row.restaurantName);
   const neighborhood = text(row.neighborhood);
   const hours = text(row.hours);
@@ -79,6 +86,7 @@ export function parseProfile(raw: unknown): DemoProfile | null {
 
   return {
     token,
+    ...(isDemoSlug(slug) ? { slug } : {}),
     restaurantName,
     neighborhood,
     hours,

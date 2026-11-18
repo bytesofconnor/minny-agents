@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Btn, Mono } from "../../Chrome";
 import { bannerText } from "../profile";
 import { loadDemoProfile } from "../load";
@@ -26,6 +26,9 @@ export default async function DemoPage({ params }: Params) {
   const { token } = await params;
   const profile = await loadDemoProfile(token);
   if (!profile) notFound();
+  if (token === profile.token && profile.slug && profile.slug !== token) {
+    permanentRedirect(`/demo/${profile.slug}`);
+  }
 
   return (
     <>
@@ -44,7 +47,7 @@ export default async function DemoPage({ params }: Params) {
           {profile.restaurantName}
         </h1>
         <p className="mt-4 max-w-[46ch] text-mute">Ask about the menu, hours, reservations, or how to order.</p>
-        <DemoChat token={profile.token} />
+        <DemoChat token={profile.token} slug={profile.slug} />
       </section>
     </>
   );

@@ -3,6 +3,7 @@ import { internalMutation, query } from "./_generated/server";
 import { demoFaq, demoMenuItem } from "./demoConfig";
 
 const TOKEN = /^[A-Za-z0-9_-]{24,128}$/;
+const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*-[a-z0-9]{4,16}$/;
 
 function clip(value: string, max: number) {
   return value.trim().slice(0, max);
@@ -17,6 +18,7 @@ function optionalClip(value: string | undefined, max: number) {
 export const upsert = internalMutation({
   args: {
     token: v.string(),
+    slug: v.optional(v.string()),
     restaurantName: v.string(),
     neighborhood: v.string(),
     hours: v.string(),
@@ -33,6 +35,21 @@ export const upsert = internalMutation({
     if (!TOKEN.test(token)) {
       throw new Error("Token must be 24 to 128 letters, numbers, underscores, or hyphens");
     }
+    let slug: string | undefined;
+    if (args.slug !== undefined) {
+      const next = args.slug.trim().toLowerCase();
+      if (!SLUG.test(next)) {
+        throw new Error("Slug must be lowercase words and a 4 to 16 character code, separated by hyphens");
+      }
+      const owner = await ctx.db
+        .query("demoConfigs")
+        .withIndex("by_slug", (q) => q.eq("slug", next))
+        .unique();
+      if (owner && owner.token !== token) {
+        throw new Error("Another demo already uses that slug");
+      }
+      slug = next;
+    }
     const restaurantName = clip(args.restaurantName, 120);
     const neighborhood = clip(args.neighborhood, 120);
     const hours = clip(args.hours, 500);
@@ -42,6 +59,7 @@ export const upsert = internalMutation({
 
     const fields = {
       token,
+      ...(slug ? { slug } : {}),
       restaurantName,
       neighborhood,
       hours,
@@ -86,6 +104,18 @@ export const getByToken = query({
     return await ctx.db
       .query("demoConfigs")
       .withIndex("by_token", (q) => q.eq("token", trimmed))
+      .unique();
+  },
+});
+
+export const getBySlug = query({
+  args: { slug: v.string() },
+  handler: async (ctx, { slug }) => {
+    const key = slug.trim().toLowerCase();
+    if (!SLUG.test(key)) return null;
+    return await ctx.db
+      .query("demoConfigs")
+      .withIndex("by_slug", (q) => q.eq("slug", key))
       .unique();
   },
 });

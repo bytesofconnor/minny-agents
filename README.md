@@ -34,6 +34,7 @@ Create a token with `openssl rand -hex 24`. From a machine logged in to the Minn
 ```bash
 npx convex run demoConfigs:upsert '{
   "token": "<openssl rand -hex 24>",
+  "slug": "imaginary-supper-7cd4",
   "restaurantName": "The Imaginary Supper Club",
   "neighborhood": "Example Junction",
   "hours": "Tuesday through Saturday, 5pm to 9pm",
@@ -47,6 +48,6 @@ npx convex run demoConfigs:upsert '{
 }'
 ```
 
-Add `--prod` to write the production deployment. The private link is `https://minnyagents.com/demo/<token>`.
+Add `--prod` to write the production deployment. `slug` is optional. A slug is the public path, for example `imaginary-supper-7cd4`. The private link is `https://minnyagents.com/demo/<token>`. When a slug is set, `https://minnyagents.com/demo/<token>` redirects to `https://minnyagents.com/demo/<slug>`.
 
 When `AI_GATEWAY_API_KEY` is set, the chat answers through Vercel AI Gateway. Otherwise it answers from the config alone.

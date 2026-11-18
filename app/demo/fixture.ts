@@ -4,6 +4,7 @@ export const FIXTURE_TOKEN = "c4e8a1b79d3056f2a8e41c0b67d9f3a5e2b8471c6d90fa38";
 
 export const fixture: DemoProfile = {
   token: FIXTURE_TOKEN,
+  slug: "imaginary-supper-7cd4",
   restaurantName: "The Imaginary Supper Club",
   neighborhood: "Example Junction",
   hours: "Tuesday through Thursday, 5pm to 9pm. Friday and Saturday, 5pm to 10pm. Closed Sunday and Monday.",

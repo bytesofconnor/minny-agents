@@ -14,7 +14,8 @@ function replaceAssistant(turns: Turn[], text: string, error: boolean) {
   return next;
 }
 
-export function DemoChat({ token }: { token: string }) {
+export function DemoChat({ token, slug }: { token: string; slug?: string }) {
+  const key = slug || token;
   const [draft, setDraft] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [busy, setBusy] = useState(false);
@@ -26,7 +27,7 @@ export function DemoChat({ token }: { token: string }) {
     setBusy(true);
     setTurns((current) => [...current, { role: "user", text }, { role: "assistant", text: "" }]);
     try {
-      const res = await fetch(`/api/demo/${encodeURIComponent(token)}`, {
+      const res = await fetch(`/api/demo/${encodeURIComponent(key)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text }),

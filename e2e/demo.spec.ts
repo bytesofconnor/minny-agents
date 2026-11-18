@@ -1,7 +1,10 @@
 import { expect, test } from "@playwright/test";
 import { fixture, FIXTURE_TOKEN } from "../app/demo/fixture";
+import { loadDemoProfile } from "../app/demo/load";
 import { clearRateLimits, MESSAGE_MAX, RATE_MAX, RATE_WINDOW_MS, rateLimited } from "../app/demo/limits";
 import { CALL_LINE, groundingPrompt, reply } from "../app/demo/reply";
+
+const BOTH = "aaaa-bbbb-cccc-dddd-eeee";
 
 const banner =
   "Unofficial demo built by Minny Agents from The Imaginary Supper Club's public info. Not affiliated with The Imaginary Supper Club.";
@@ -55,11 +58,76 @@ test("rate limit is per IP and token", () => {
   expect(rateLimited("203.0.113.5", token, start + RATE_WINDOW_MS)).toBe(false);
 });
 
+test("fixture slug and token resolve and a key that is neither returns null", async () => {
+  expect(await loadDemoProfile("imaginary-supper-7cd4")).toEqual(fixture);
+  expect(await loadDemoProfile(FIXTURE_TOKEN)).toEqual(fixture);
+  expect(await loadDemoProfile("short")).toBeNull();
+});
+
+test("slug lookup falls back to the token", async () => {
+  const slugToken = "b".repeat(32);
+  const slugRow = { ...fixture, token: slugToken, slug: BOTH };
+  const tokenKey = BOTH.toUpperCase();
+  const tokenRow = { ...fixture, token: tokenKey, slug: "nope" };
+
+  function lookup(slugHit: unknown, tokenHit: unknown) {
+    const calls: string[] = [];
+    return {
+      calls,
+      getBySlug: async (slug: string) => {
+        calls.push(`slug:${slug}`);
+        return slugHit;
+      },
+      getByToken: async (token: string) => {
+        calls.push(`token:${token}`);
+        return tokenHit;
+      },
+    };
+  }
+
+  const hit = lookup(slugRow, tokenRow);
+  const slugProfile = await loadDemoProfile(tokenKey, hit);
+  expect(slugProfile?.token).toBe(slugToken);
+  expect(slugProfile?.slug).toBe(BOTH);
+  expect(slugProfile?.restaurantName).toBe("The Imaginary Supper Club");
+  expect(hit.calls).toEqual([`slug:${BOTH}`]);
+
+  const fallback = lookup(null, tokenRow);
+  const tokenProfile = await loadDemoProfile(tokenKey, fallback);
+  expect(tokenProfile?.token).toBe(tokenKey);
+  expect(tokenProfile?.slug).toBeUndefined();
+  expect(tokenProfile?.restaurantName).toBe("The Imaginary Supper Club");
+  expect(fallback.calls).toEqual([`slug:${BOTH}`, `token:${tokenKey}`]);
+
+  const miss = lookup(null, null);
+  expect(await loadDemoProfile(tokenKey, miss)).toBeNull();
+  expect(miss.calls).toEqual([`slug:${BOTH}`, `token:${tokenKey}`]);
+});
+
 test("unknown demo token returns 404", async ({ page }) => {
   const unknown = await page.goto("/demo/00000000000000000000000000000000");
   expect(unknown?.status()).toBe(404);
   const short = await page.goto("/demo/short");
   expect(short?.status()).toBe(404);
+});
+
+test("slug url renders and the token url redirects to it", async ({ page }) => {
+  const slug = await page.goto("/demo/imaginary-supper-7cd4");
+  expect(slug?.status()).toBe(200);
+  await expect(page.getByRole("heading", { name: "The Imaginary Supper Club" })).toBeVisible();
+  const robots = await page.locator('meta[name="robots"]').evaluateAll((els) =>
+    els.map((el) => el.getAttribute("content") ?? ""),
+  );
+  expect(robots.some((content) => content.includes("noindex") && content.includes("nofollow"))).toBe(true);
+
+  await page.goto(`/demo/${FIXTURE_TOKEN}`);
+  await expect(page).toHaveURL(/\/demo\/imaginary-supper-7cd4$/);
+  await expect(page.getByRole("heading", { name: "The Imaginary Supper Club" })).toBeVisible();
+
+  const short = await page.goto("/demo/short");
+  expect(short?.status()).toBe(404);
+  const unknown = await page.goto("/demo/00000000000000000000000000000000");
+  expect(unknown?.status()).toBe(404);
 });
 
 test("fixture demo is private and answers from the config", async ({ page }) => {
