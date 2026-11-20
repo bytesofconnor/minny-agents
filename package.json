@@ -18,20 +18,20 @@
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.1.0",
-    "ai": "^6.0.332",
-    "convex": "^1.49.0",
+    "ai": "^7.0.173",
+    "convex": "^1.50.0",
     "next": "16.4.6",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "resend": "^6.37.0"
+    "resend": "^6.38.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.65.0",
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^26",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "eslint": "10.14.0",
+    "eslint": "10.15.0",
     "eslint-config-next": "16.4.6",
     "playwright": "^1.64.1",
     "tailwindcss": "^4",
